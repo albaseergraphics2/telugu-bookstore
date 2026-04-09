@@ -108,7 +108,7 @@ export default function CategoryPage() {
               <p className="telugu-title">{book.teluguTitle}</p>
               <p className="author">by {book.author}</p>
               <p className="telugu-author">రచయిత: {book.teluguAuthor}</p>
-              <p className="price">{book.price}</p>
+              <p className="price">₹ {book.price}</p>
 
               <div className="book-actions">
                 <Link href={`/books/${book.slug}`}>
