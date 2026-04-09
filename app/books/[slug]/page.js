@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import AddToCart from "../../components/AddToCart";
 import PopularBooks from "../../components/PopularBooks";
 
 export default function BookDetails({ params }) {
-
-  const { slug } = use(params);
+  const { slug } = params;
 
   const [loading, setLoading] = useState(true);
   const [book, setBook] = useState(null);
@@ -16,6 +15,23 @@ export default function BookDetails({ params }) {
   useEffect(() => {
     const fetchBook = async () => {
       try {
+        const cached = localStorage.getItem("books");
+        if (cached) {
+          const books = JSON.parse(cached);
+          const found = books.find((b) => b.slug === slug);
+          if (found) {
+            setBook(found);
+            const imagesArray =
+              found.images && found.images.length > 0
+                ? found.images
+                : found.img
+                ? [found.img]
+                : [];
+            setMainImage(imagesArray[0] || null);
+            setLoading(false);
+            return;
+          }
+        }
         const res = await fetch(`/api/books/${slug}`);
         const data = await res.json();
 
@@ -25,8 +41,9 @@ export default function BookDetails({ params }) {
             data.book.images && data.book.images.length > 0
               ? data.book.images
               : data.book.img
-                ? [data.book.img]
-                : [];
+              ? [data.book.img]
+              : [];
+
           setMainImage(imagesArray[0] || null);
         }
       } catch (err) {
@@ -61,8 +78,8 @@ export default function BookDetails({ params }) {
     book.images && book.images.length > 0
       ? book.images
       : book.img
-        ? [book.img]
-        : [];
+      ? [book.img]
+      : [];
 
   return (
     <section className="book-details">
@@ -71,7 +88,16 @@ export default function BookDetails({ params }) {
         <div className="book-details-img">
           <div className="main-image">
             <img
-              src={mainImage?.trim() ? mainImage.trim() : "/images/No_Image_Available.jpg"}
+              src={
+                mainImage?.trim()
+                  ? mainImage
+                      .trim()
+                      .replace(
+                        "/upload/",
+                        "/upload/f_auto,q_auto,w_500/"
+                      )
+                  : "/images/No_Image_Available.jpg"
+              }
               alt={book.title}
             />
           </div>
@@ -79,13 +105,17 @@ export default function BookDetails({ params }) {
             {imagesList.map((img, i) => (
               <img
                 key={i}
-                src={img.trim()}
+                src={img
+                  .trim()
+                  .replace(
+                    "/upload/",
+                    "/upload/f_auto,q_auto,w_150/"
+                  )}
                 alt="thumbnail"
                 onClick={() => setMainImage(img)}
               />
             ))}
           </div>
-
         </div>
 
         <div className="book-details-info">
@@ -106,7 +136,6 @@ export default function BookDetails({ params }) {
           <div style={{ textAlign: "center" }}>
             <AddToCart book={book} />
           </div>
-
         </div>
       </div>
       <PopularBooks />

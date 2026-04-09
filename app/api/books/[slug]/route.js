@@ -14,10 +14,17 @@ export async function GET(req, { params }) {
       return NextResponse.json({ success: false, message: "Book not found" });
     }
 
-    return NextResponse.json({
-      success: true,
-      book
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        book,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=3600",
+        },
+      }
+    );
 
   } catch (err) {
     console.log(err);
