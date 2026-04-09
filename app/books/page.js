@@ -14,7 +14,10 @@ export default function BooksPage() {
     const fetchBooks = async () => {
       try {
         const cached = localStorage.getItem("books");
-        if (cached) {
+        const cacheTime = localStorage.getItem("books_time");
+
+        const now = Date.now();
+        if (cached && cacheTime && now - cacheTime < 60000) {
           const parsed = JSON.parse(cached);
           setBooks(parsed);
           const categories = [
@@ -34,6 +37,7 @@ export default function BooksPage() {
         if (data.success) {
           setBooks(data.books);
           localStorage.setItem("books", JSON.stringify(data.books));
+          localStorage.setItem("books_time", now);
           const categories = [
             ...new Set(
               data.books.map((b) => b.category).filter(Boolean)
