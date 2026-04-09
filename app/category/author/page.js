@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -11,13 +9,16 @@ export default function AuthorPage() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch("/api/books")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setBooks(data.books);
-        }
-      });
+    const fetchBooks = async () => {
+      const res = await fetch("/api/books");
+      const data = await res.json();
+
+      if (data.success) {
+        setBooks(data.books || []);
+      }
+    };
+
+    fetchBooks();
   }, []);
 
   const authors = [...new Set(books.map((book) => book.author))];
@@ -33,6 +34,7 @@ export default function AuthorPage() {
   return (
     <section className="allbooks">
       <Link href="/" className="back-home">← Back to Home</Link>
+
       <h2 style={{ marginBottom: "20px" }}>Browse by Author</h2>
 
       <div className="search-box" style={{ marginBottom: "25px" }}>
@@ -80,14 +82,19 @@ export default function AuthorPage() {
                 </div>
               ) : (
                 <div className="allbooks-grid">
-                  {filteredBooks.map((book, i) => (
-                    <div className="allbook-card" key={i}>
-                      <img src={book.img} alt={book.title} />
+                  {filteredBooks.map((book) => (
+                    <div className="allbook-card" key={book._id}>
+                      <div className="allbook-img">
+                        <img src={book.img} alt={book.title} />
+                      </div>
+
                       <h3>{book.title}</h3>
                       <p>{book.price}</p>
 
                       <Link href={`/books/${book.slug}`}>
-                        <button className="buy-btn">View Details</button>
+                        <button className="buy-btn">
+                          View Details
+                        </button>
                       </Link>
                     </div>
                   ))}
