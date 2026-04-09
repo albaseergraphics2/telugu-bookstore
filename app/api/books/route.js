@@ -10,14 +10,7 @@ export async function GET() {
       .sort({ createdAt: -1 })
       .lean();
 
-    return NextResponse.json(
-      { success: true, books },
-      {
-        headers: {
-          "Cache-Control": "public, max-age=3600",
-        },
-      }
-    );
+    return NextResponse.json({ success: true, books });
   } catch (err) {
     console.log(err);
     return NextResponse.json({ success: false });
