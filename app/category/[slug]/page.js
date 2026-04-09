@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import books from "../../data/books";
+
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import AddToCart from "../../components/AddToCart";
