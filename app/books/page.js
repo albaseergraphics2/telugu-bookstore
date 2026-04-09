@@ -13,36 +13,18 @@ export default function BooksPage() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const cached = localStorage.getItem("books");
-        const cacheTime = localStorage.getItem("books_time");
-
-        const now = Date.now();
-        if (cached && cacheTime && now - cacheTime < 60000) {
-          const parsed = JSON.parse(cached);
-          setBooks(parsed);
-          const categories = [
-            ...new Set(parsed.map((b) => b.category).filter(Boolean)),
-          ];
-          setCatalog(
-            categories.map((cat) => ({
-              name: cat,
-              slug: cat.toLowerCase(),
-            }))
-          );
-          setLoading(false);
-          return;
-        }
         const res = await fetch("/api/books");
         const data = await res.json();
+
         if (data.success) {
           setBooks(data.books);
-          localStorage.setItem("books", JSON.stringify(data.books));
-          localStorage.setItem("books_time", now);
+
           const categories = [
             ...new Set(
               data.books.map((b) => b.category).filter(Boolean)
             ),
           ];
+
           setCatalog(
             categories.map((cat) => ({
               name: cat,
@@ -53,8 +35,10 @@ export default function BooksPage() {
       } catch (err) {
         console.log(err);
       }
+
       setLoading(false);
     };
+
     fetchBooks();
   }, []);
 
@@ -113,14 +97,7 @@ export default function BooksPage() {
                 <div className="allbook-card" key={book.slug}>
                   <div className="allbook-img">
                     <img
-                      src={
-                        book.img
-                          ? book.img.replace(
-                              "/upload/",
-                              "/upload/f_auto,q_auto,w_300/"
-                            )
-                          : "/images/No_Image_Available.jpg"
-                      }
+                      src={book.img || "/images/No_Image_Available.jpg"}
                       alt={book.title}
                     />
                   </div>
