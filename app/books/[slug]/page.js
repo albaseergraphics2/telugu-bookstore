@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect ,use} from "react";
 import Link from "next/link";
 import AddToCart from "../../components/AddToCart";
 import PopularBooks from "../../components/PopularBooks";
 
 export default function BookDetails({ params }) {
-  const { slug } = params;
+  const { slug } = use(params);
 
   const [loading, setLoading] = useState(true);
   const [book, setBook] = useState(null);
