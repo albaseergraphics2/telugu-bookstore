@@ -33,7 +33,7 @@ export default function HeroCarousel() {
           setImages(data.images);
         } else {
           setImages([
-            "/images/1.jpeg",
+            "/images/1.png",
             "/images/2.jpeg",
             "/images/3.png",
           ]);
