@@ -1,11 +1,24 @@
+export const dynamic = "force-dynamic";
+
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
-export default function AuthorPage({ books = [] }) {
+export default function AuthorPage() {
+  const [books, setBooks] = useState([]);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    fetch("/api/books")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setBooks(data.books);
+        }
+      });
+  }, []);
 
   const authors = [...new Set(books.map((book) => book.author))];
 
@@ -43,9 +56,7 @@ export default function AuthorPage({ books = [] }) {
               display: "flex",
               flexWrap: "wrap",
               gap: "12px",
-              justifyContent: "start",
               marginBottom: "30px",
-              fontSize: "14px",
             }}
           >
             {filteredAuthors.map((author, i) => (
@@ -66,19 +77,14 @@ export default function AuthorPage({ books = [] }) {
               {filteredBooks.length === 0 ? (
                 <div className="no-result">
                   <h2>No books available</h2>
-                  <p>This author currently has no books</p>
                 </div>
               ) : (
                 <div className="allbooks-grid">
                   {filteredBooks.map((book, i) => (
                     <div className="allbook-card" key={i}>
-                      <div className="allbook-img">
-                        <img src={book.img} alt={book.title} />
-                      </div>
-
+                      <img src={book.img} alt={book.title} />
                       <h3>{book.title}</h3>
-                      <p className="telugu-title">{book.teluguTitle}</p>
-                      <p className="price">{book.price}</p>
+                      <p>{book.price}</p>
 
                       <Link href={`/books/${book.slug}`}>
                         <button className="buy-btn">View Details</button>
