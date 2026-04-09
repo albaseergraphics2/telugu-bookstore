@@ -15,23 +15,6 @@ export default function BookDetails({ params }) {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const cached = localStorage.getItem("books");
-        if (cached) {
-          const books = JSON.parse(cached);
-          const found = books.find((b) => b.slug === slug);
-          if (found) {
-            setBook(found);
-            const imagesArray =
-              found.images && found.images.length > 0
-                ? found.images
-                : found.img
-                ? [found.img]
-                : [];
-            setMainImage(imagesArray[0] || null);
-            setLoading(false);
-            return;
-          }
-        }
         const res = await fetch(`/api/books/${slug}`);
         const data = await res.json();
 
@@ -66,7 +49,9 @@ export default function BookDetails({ params }) {
   if (!book) {
     return (
       <section className="book-details">
-        <Link href="/books" className="back-home">← Back to Books</Link>
+        <Link href="/books" className="back-home">
+          ← Back to Books
+        </Link>
         <h2 style={{ textAlign: "center", marginTop: "20px" }}>
           Book Not Found
         </h2>
@@ -83,19 +68,17 @@ export default function BookDetails({ params }) {
 
   return (
     <section className="book-details">
-      <Link href="/books" className="back-home">← Back to Books</Link>
+      <Link href="/books" className="back-home">
+        ← Back to Books
+      </Link>
+
       <div className="book-details-container">
         <div className="book-details-img">
           <div className="main-image">
             <img
               src={
                 mainImage?.trim()
-                  ? mainImage
-                      .trim()
-                      .replace(
-                        "/upload/",
-                        "/upload/f_auto,q_auto,w_500/"
-                      )
+                  ? mainImage.trim()
                   : "/images/No_Image_Available.jpg"
               }
               alt={book.title}
@@ -105,12 +88,7 @@ export default function BookDetails({ params }) {
             {imagesList.map((img, i) => (
               <img
                 key={i}
-                src={img
-                  .trim()
-                  .replace(
-                    "/upload/",
-                    "/upload/f_auto,q_auto,w_150/"
-                  )}
+                src={img.trim()}
                 alt="thumbnail"
                 onClick={() => setMainImage(img)}
               />

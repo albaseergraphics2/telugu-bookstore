@@ -19,11 +19,6 @@ export async function GET(req, { params }) {
         success: true,
         book,
       },
-      {
-        headers: {
-          "Cache-Control": "public, max-age=3600",
-        },
-      }
     );
 
   } catch (err) {
