@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect ,use} from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import AddToCart from "../../components/AddToCart";
 import PopularBooks from "../../components/PopularBooks";
@@ -20,14 +20,27 @@ export default function BookDetails({ params }) {
 
         if (data.success) {
           setBook(data.book);
-          const imagesArray =
-            data.book.images && data.book.images.length > 0
-              ? data.book.images
-              : data.book.img
-              ? [data.book.img]
-              : [];
 
-          setMainImage(imagesArray[0] || null);
+          // ✅ FIX: combine BOTH main img + images[]
+          let imagesArray = [];
+
+          if (data.book.img) {
+            imagesArray.push(data.book.img);
+          }
+
+          if (data.book.images && data.book.images.length > 0) {
+            imagesArray = [
+              ...imagesArray,
+              ...data.book.images,
+            ];
+          }
+
+          // remove empty values
+          imagesArray = imagesArray.filter(
+            (img) => img && img.trim() !== ""
+          );
+
+          setMainImage(imagesArray[0]?.trim() || null);
         }
       } catch (err) {
         console.log(err);
@@ -59,12 +72,18 @@ export default function BookDetails({ params }) {
     );
   }
 
-  const imagesList =
-    book.images && book.images.length > 0
-      ? book.images
-      : book.img
-      ? [book.img]
-      : [];
+  // ✅ FIX: combine images again here
+  let imagesList = [];
+
+  if (book.img) {
+    imagesList.push(book.img);
+  }
+
+  if (book.images && book.images.length > 0) {
+    imagesList = [...imagesList, ...book.images];
+  }
+
+  imagesList = imagesList.filter((img) => img && img.trim() !== "");
 
   return (
     <section className="book-details">
@@ -84,13 +103,14 @@ export default function BookDetails({ params }) {
               alt={book.title}
             />
           </div>
+
           <div className="thumb-images">
             {imagesList.map((img, i) => (
               <img
                 key={i}
-                src={img.trim()}
+                src={img?.trim() || "/images/No_Image_Available.jpg"}
                 alt="thumbnail"
-                onClick={() => setMainImage(img)}
+                onClick={() => setMainImage(img?.trim())}
               />
             ))}
           </div>
@@ -116,6 +136,7 @@ export default function BookDetails({ params }) {
           </div>
         </div>
       </div>
+
       <PopularBooks />
     </section>
   );

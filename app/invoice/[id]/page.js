@@ -42,7 +42,12 @@ export default function InvoicePage() {
     if (id) fetchOrder();
   }, [id]);
 
-  if (!order) return <p style={{ padding: "40px" }}>Loading...</p>;
+  if (!order)  return (
+      <div style={{ textAlign: "center", marginTop: "100px" }}>
+        <div className="loader"></div>
+        <p>Loading...</p>
+      </div>
+    );
 
   return (
     <section className="invoice-page">
