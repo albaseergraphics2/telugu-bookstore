@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 
 export default function CartPage() {
@@ -10,7 +10,6 @@ export default function CartPage() {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(true);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
-
   const [pincode, setPincode] = useState("");
   const [area, setArea] = useState("");
   const [district, setDistrict] = useState("");
@@ -26,14 +25,10 @@ export default function CartPage() {
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCartItems(savedCart);
-
     const user = JSON.parse(localStorage.getItem("user"));
-
     if (user) {
       setName(user.name || "");
       setPhone(user.phone || "");
-
-      // ✅ FIX: handle object + string address
       if (user.address && typeof user.address === "object") {
         setAddress(user.address.full || "");
         setPincode(user.address.pincode || "");
@@ -73,20 +68,19 @@ export default function CartPage() {
     updateStorage(updatedCart);
   };
 
-  const totalPrice = cartItems.reduce((total, item) => {
-    const price = Number(item.price?.replace("₹", "") || 0);
-    return total + (price * item.qty);
-  }, 0);
+  const totalPrice = useMemo(() => {
+    return cartItems.reduce((total, item) => {
+      const price = Number(item.price?.replace("₹", "") || 0);
+      return total + (price * item.qty);
+    }, 0);
+  }, [cartItems]);
 
-  // ✅ FIX: added function (was missing earlier)
   const getAddressFromPincode = async (pin) => {
     try {
       const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
       const data = await res.json();
-
       if (data[0].Status === "Success") {
         const post = data[0].PostOffice[0];
-
         setArea(post.Name);
         setDistrict(post.District);
         setStateName(post.State);
@@ -118,8 +112,7 @@ export default function CartPage() {
 
     const orderList = cartItems.map(item => {
       const price = Number(item.price?.replace("₹", "") || 0);
-      const subtotal = price * item.qty;
-      return `${item.title} (Qty: ${item.qty}) - ₹${subtotal}`;
+      return `${item.title} (Qty: ${item.qty}) - ₹${price * item.qty}`;
     }).join("\n");
 
     const orderData = {
@@ -205,7 +198,14 @@ Address: ${address}`;
 
             return (
               <div className="cart-item" key={item.slug}>
-                <img src={item.img || "/no-image.png"} alt={item.title} />
+                <img
+                  src={
+                    item.img
+                      ? item.img.replace("/upload/", "/upload/f_auto,q_auto,w_150/")
+                      : "/no-image.png"
+                  }
+                  alt={item.title}
+                />
 
                 <div className="cart-info">
                   <h3>{item.title}</h3>
@@ -261,10 +261,14 @@ Address: ${address}`;
                 onChange={(e) => {
                   const val = e.target.value;
                   setPincode(val);
-
-                  if (val.length === 6) {
-                    getAddressFromPincode(val);
-                  }
+                  useEffect(() => {
+                    if (pincode.length === 6) {
+                      const timer = setTimeout(() => {
+                        getAddressFromPincode(pincode);
+                      }, 500);
+                      return () => clearTimeout(timer);
+                    }
+                  }, [pincode]);
                 }}
                 placeholder="Enter pincode"
               />
