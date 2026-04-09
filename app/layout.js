@@ -6,6 +6,7 @@ import MobileBottomBar from "./components/MobileBottomBar";
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import { Toaster } from "react-hot-toast";
+import { Analytics } from '@vercel/analytics/next';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
         <main className="min-h-screen">
           {children}
           <Toaster position="top-center" />
+          <Analytics />
         </main>
         <Footer />
         <MobileBottomBar />
