@@ -54,29 +54,29 @@ export default function AddBookPopup({
         <h3>Add Book</h3>
 
         <form onSubmit={onSubmit} className="book-form">
-          <input name="slug" value={form.slug} readOnly />
-          <input name="title" placeholder="Title" value={form.title} onChange={handleChange} required />
-          <input name="teluguTitle" placeholder="Telugu Title" value={form.teluguTitle} onChange={handleChange} />
-          <input name="author" placeholder="Author" value={form.author} onChange={handleChange} required />
-          <input name="teluguAuthor" placeholder="Telugu Author" value={form.teluguAuthor} onChange={handleChange} />
-          <input name="price" placeholder="Price" value={form.price} onChange={handleChange} required />
-          <input name="pages" placeholder="Pages" value={form.pages} onChange={handleChange} />
-          <input name="binding" placeholder="Binding" value={form.binding} onChange={handleChange} />
-          <input name="size" placeholder="Size" value={form.size} onChange={handleChange} />
-          <input name="language" placeholder="Language" value={form.language} onChange={handleChange} />
-          <input name="paper" placeholder="Paper" value={form.paper} onChange={handleChange} />
-          <input name="publisher" placeholder="Publisher" value={form.publisher} onChange={handleChange} />
-          <input name="weight" placeholder="Weight" value={form.weight} onChange={handleChange} />
-          <input name="category" placeholder="Category" value={form.category} onChange={handleChange} />
-          <input name="tag" placeholder="Tag" value={form.tag} onChange={handleChange} />
+          <input name="slug" value={form.slug || ""} readOnly />
+          <input name="title" placeholder="Title" value={form.title || ""} onChange={handleChange} required />
+          <input name="teluguTitle" placeholder="Telugu Title" value={form.teluguTitle || ""} onChange={handleChange} />
+          <input name="author" placeholder="Author" value={form.author || ""} onChange={handleChange} required />
+          <input name="teluguAuthor" placeholder="Telugu Author" value={form.teluguAuthor || ""} onChange={handleChange} />
+          <input name="price" placeholder="Price" value={form.price || ""} onChange={handleChange} required />
+          <input name="pages" placeholder="Pages" value={form.pages || ""} onChange={handleChange} />
+          <input name="binding" placeholder="Binding" value={form.binding || ""} onChange={handleChange} />
+          <input name="size" placeholder="Size" value={form.size || ""} onChange={handleChange} />
+          <input name="language" placeholder="Language" value={form.language || ""} onChange={handleChange} />
+          <input name="paper" placeholder="Paper" value={form.paper || ""} onChange={handleChange} />
+          <input name="publisher" placeholder="Publisher" value={form.publisher || ""} onChange={handleChange} />
+          <input name="weight" placeholder="Weight" value={form.weight || ""} onChange={handleChange} />
+          <input name="category" placeholder="Category" value={form.category || ""} onChange={handleChange} />
+          <input name="tag" placeholder="Tag" value={form.tag || ""} onChange={handleChange} />
 
           <input type="file" onChange={handleImageUpload} />
           {form.img && <img src={form.img} style={{ width: "80px" }} />}
 
           <input type="file" multiple onChange={handleMultipleImages} />
 
-          <textarea name="desc" placeholder="Description" value={form.desc} onChange={handleChange} />
-          <textarea name="teluguDesc" placeholder="Telugu Description" value={form.teluguDesc} onChange={handleChange} />
+          <textarea name="desc" placeholder="Description" value={form.desc || ""} onChange={handleChange} />
+          <textarea name="teluguDesc" placeholder="Telugu Description" value={form.teluguDesc || ""} onChange={handleChange} />
 
           <button type="submit">Add Book</button>
         </form>
