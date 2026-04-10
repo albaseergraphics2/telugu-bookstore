@@ -109,23 +109,26 @@ export default function AdminBooks() {
   };
 
   const deleteImage = async (imgUrl) => {
-    try {
-      await fetch("/api/delete-image", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url: imgUrl }),
-      });
-      setForm(prev => ({
-        ...prev,
-        images: prev.images.filter(img => img !== imgUrl),
-      }));
-    } catch (err) {
-      console.log(err);
-      alert("Failed to delete image");
-    }
-  };
+  try {
+    await fetch("/api/delete-image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: imgUrl }),
+    });
+
+    setForm(prev => ({
+      ...prev,
+      img: prev.img === imgUrl ? "" : prev.img,
+      images: prev.images.filter(img => img !== imgUrl),
+    }));
+
+  } catch (err) {
+    console.log(err);
+    alert("Failed to delete image");
+  }
+};
 
   const addBook = async (e) => {
     e.preventDefault();
