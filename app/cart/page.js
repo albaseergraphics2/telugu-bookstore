@@ -165,10 +165,21 @@ Address: ${address}`;
 
       localStorage.removeItem("cart");
       setCartItems([]);
+      window.dispatchEvent(new Event("cartUpdated"));
     } else {
       alert("Something went wrong");
     }
   };
+
+  useEffect(() => {
+  if (pincode.length === 6) {
+    const timer = setTimeout(() => {
+      getAddressFromPincode(pincode);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }
+}, [pincode]);
 
   if (loading) {
     return (
@@ -255,23 +266,12 @@ Address: ${address}`;
                 required
               />
 
-              <input
-                type="text"
-                value={pincode}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setPincode(val);
-                  useEffect(() => {
-                    if (pincode.length === 6) {
-                      const timer = setTimeout(() => {
-                        getAddressFromPincode(pincode);
-                      }, 500);
-                      return () => clearTimeout(timer);
-                    }
-                  }, [pincode]);
-                }}
-                placeholder="Enter pincode"
-              />
+<input
+  type="text"
+  value={pincode}
+  onChange={(e) => setPincode(e.target.value)}
+  placeholder="Enter pincode"
+/>
 
               <button
                 type="button"
