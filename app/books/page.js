@@ -15,19 +15,21 @@ export default function BooksPage() {
       try {
         const res = await fetch("/api/books");
         const data = await res.json();
-
         if (data.success) {
           setBooks(data.books);
-
           const categories = [
             ...new Set(
-              data.books.map((b) => b.category).filter(Boolean)
+              data.books.map((b) => b.category?.trim() || "Other")
             ),
           ];
-
+          categories.sort((a, b) => {
+            if (a === "Other") return 1;
+            if (b === "Other") return -1;
+            return a.localeCompare(b);
+          });
           setCatalog(
             categories.map((cat) => ({
-              name: cat,
+              name: cat === "Other" ? "Other Books" : cat,
               slug: cat.toLowerCase(),
             }))
           );
@@ -35,7 +37,6 @@ export default function BooksPage() {
       } catch (err) {
         console.log(err);
       }
-
       setLoading(false);
     };
 
@@ -82,8 +83,7 @@ export default function BooksPage() {
       {catalog.map((cat) => {
         const categoryBooks = filteredBooks.filter(
           (book) =>
-            book.category &&
-            book.category.toLowerCase() === cat.slug
+            (book.category?.trim() || "Other").toLowerCase() === cat.slug
         );
 
         if (categoryBooks.length === 0) return null;
