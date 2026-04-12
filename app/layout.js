@@ -13,10 +13,10 @@ const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
   display: 'swap'
 });
-
 export const metadata = {
   title: 'Telugu Bookstore',
   description: 'Islamic Books Online & Offline Store',
+  manifest: "/manifest.json",
 };
 
 export const viewport = {
