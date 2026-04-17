@@ -2324,6 +2324,13 @@ nav {
     gap: 6px;
   }
 
+  .allbook-card h3 {
+    font-size: 18px;
+  }
+
+  .bookheading{
+     margin: 40px 0px 20px 5px;
+  }
   .allbook-img {
     height: 170px;
   }

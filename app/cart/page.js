@@ -213,7 +213,7 @@ Address: ${address}`;
                   src={
                     item.img
                       ? item.img.replace("/upload/", "/upload/f_auto,q_auto,w_150/")
-                      : "/no-image.png"
+                      : "/images/No_Image_Available.jpg"
                   }
                   alt={item.title}
                 />
