@@ -9,6 +9,7 @@ export default function BooksPage() {
   const [loading, setLoading] = useState(true);
   const [books, setBooks] = useState([]);
   const [catalog, setCatalog] = useState([]);
+  const [sortOrder, setSortOrder] = useState("low"); // ✅ default
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -54,6 +55,18 @@ export default function BooksPage() {
       )
   );
 
+  // ✅ sorting
+  const sortedBooks = [...filteredBooks].sort((a, b) => {
+    return sortOrder === "low"
+      ? a.price - b.price
+      : b.price - a.price;
+  });
+
+  // ✅ toggle function
+  const toggleSort = () => {
+    setSortOrder((prev) => (prev === "low" ? "high" : "low"));
+  };
+
   if (loading) {
     return (
       <div style={{ textAlign: "center", marginTop: "100px" }}>
@@ -78,10 +91,17 @@ export default function BooksPage() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+
+        {/* ✅ SWITCH BUTTON */}
+        <button onClick={toggleSort} className="sort-btn">
+          {sortOrder === "low"
+            ? "Price (Low → High)"
+            : "Price (High → Low)"}
+        </button>
       </div>
 
       {catalog.map((cat) => {
-        const categoryBooks = filteredBooks.filter(
+        const categoryBooks = sortedBooks.filter(
           (book) =>
             (book.category?.trim() || "Other").toLowerCase() === cat.slug
         );
@@ -108,9 +128,9 @@ export default function BooksPage() {
                   <p className="telugu-author">
                     రచయిత: {book.teluguAuthor}
                   </p>
-                  <p className="price">₹ {book.price}</p>
 
                   <div className="book-actions">
+                    <p className="price">₹ {book.price}</p>
                     <Link href={`/books/${book.slug}`}>
                       <button className="buy-btn">View Details</button>
                     </Link>

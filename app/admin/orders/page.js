@@ -95,7 +95,7 @@ export default function AdminOrders() {
                 <p><b>Date: </b>{new Date(order.createdAt).toLocaleString()}</p>
 
                 <div>
-                  <strong><b>Name: </b>{order.name}</strong>
+                  <p><b>Name: </b>{order.name}</p>
                   <p><b>Phone No: </b>{order.phone}</p>
                 </div>
 

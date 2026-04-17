@@ -172,14 +172,14 @@ Address: ${address}`;
   };
 
   useEffect(() => {
-  if (pincode.length === 6) {
-    const timer = setTimeout(() => {
-      getAddressFromPincode(pincode);
-    }, 500);
+    if (pincode.length === 6) {
+      const timer = setTimeout(() => {
+        getAddressFromPincode(pincode);
+      }, 500);
 
-    return () => clearTimeout(timer);
-  }
-}, [pincode]);
+      return () => clearTimeout(timer);
+    }
+  }, [pincode]);
 
   if (loading) {
     return (
@@ -266,12 +266,12 @@ Address: ${address}`;
                 required
               />
 
-<input
-  type="text"
-  value={pincode}
-  onChange={(e) => setPincode(e.target.value)}
-  placeholder="Enter pincode"
-/>
+              <input
+                type="text"
+                value={pincode}
+                onChange={(e) => setPincode(e.target.value)}
+                placeholder="Enter pincode"
+              />
 
               <button
                 type="button"

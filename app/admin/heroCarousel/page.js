@@ -86,10 +86,46 @@ export default function HeroCarouselAdmin() {
     }
   };
 
+  // 🔥 NEW FUNCTIONS
+  const moveLeft = async (index) => {
+    if (index === 0) return;
+
+    const updated = [...images];
+    [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+
+    setImages(updated);
+
+    await fetch("/api/hero-carousel", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ images: updated }),
+    });
+  };
+
+  const moveRight = async (index) => {
+    if (index === images.length - 1) return;
+
+    const updated = [...images];
+    [updated[index], updated[index + 1]] = [updated[index + 1], updated[index]];
+
+    setImages(updated);
+
+    await fetch("/api/hero-carousel", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ images: updated }),
+    });
+  };
+
   return (
     <div className="admin-hero">
       <h2>Hero Carousel</h2>
       <input type="file" multiple onChange={handleUpload} />
+
       <div style={{ display: "flex", gap: "15px", flexWrap: "wrap", marginTop: "20px" }}>
         {images.map((img, i) => (
           <div
@@ -110,8 +146,9 @@ export default function HeroCarouselAdmin() {
               }}
             />
 
+            {/* DELETE BUTTON */}
             <button
-            className="crossmark"
+              className="crossmark"
               onClick={() => {
                 setSelectedImage(img);
                 setShowDeletePopup(true);
@@ -119,6 +156,41 @@ export default function HeroCarouselAdmin() {
             >
               ×
             </button>
+
+            {/* MOVE LEFT */}
+            <button
+              onClick={() => moveLeft(i)}
+              style={{
+                position: "absolute",
+                bottom: "5px",
+                left: "5px",
+                background: "#000",
+                color: "#fff",
+                border: "none",
+                padding: "1px 1px",
+                cursor: "pointer"
+              }}
+            >
+              ⬅️
+            </button>
+
+            {/* MOVE RIGHT */}
+            <button
+              onClick={() => moveRight(i)}
+              style={{
+                position: "absolute",
+                bottom: "5px",
+                right: "5px",
+                background: "#000",
+                color: "#fff",
+                border: "none",
+                padding: "1px 1px",
+                cursor: "pointer"
+              }}
+            >
+              ➡️
+            </button>
+
           </div>
         ))}
       </div>

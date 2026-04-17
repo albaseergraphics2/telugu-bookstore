@@ -16,8 +16,8 @@ export async function GET() {
       return total + (order.totalAmount || 0);
     }, 0);
 
-    const pending = await Order.countDocuments({ status: "pending" });
-    const completed = await Order.countDocuments({ status: "completed" });
+    const pending = await Order.countDocuments({ status: "Pending" });
+    const completed = await Order.countDocuments({ status: "Completed" });
 
     // today filter
     const today = new Date();
