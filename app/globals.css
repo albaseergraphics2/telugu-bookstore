@@ -2170,11 +2170,10 @@ nav {
   }
 
   .navbar1 {
-    flex-direction: flex;
-    justify-content: center;
-    gap: 0px;
-    padding: 16px 16px;
-    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .logo h2 {
@@ -2321,7 +2320,7 @@ nav {
 
   .allbooks-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 191px);
     gap: 6px;
   }
 
