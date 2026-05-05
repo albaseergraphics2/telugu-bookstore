@@ -50,6 +50,10 @@ export default function Categories() {
             {cat.name}
           </Link>
         ))}
+
+        <Link href="/books" className="cat-tab">
+          View All Books
+        </Link>
       </div>
     </section>
   );

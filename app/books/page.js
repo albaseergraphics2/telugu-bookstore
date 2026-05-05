@@ -8,8 +8,7 @@ export default function BooksPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [books, setBooks] = useState([]);
-  const [catalog, setCatalog] = useState([]);
-  const [sortOrder, setSortOrder] = useState("low"); // ✅ default
+  const [sortOrder, setSortOrder] = useState("high");
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -18,22 +17,6 @@ export default function BooksPage() {
         const data = await res.json();
         if (data.success) {
           setBooks(data.books);
-          const categories = [
-            ...new Set(
-              data.books.map((b) => b.category?.trim() || "Other")
-            ),
-          ];
-          categories.sort((a, b) => {
-            if (a === "Other") return 1;
-            if (b === "Other") return -1;
-            return a.localeCompare(b);
-          });
-          setCatalog(
-            categories.map((cat) => ({
-              name: cat === "Other" ? "Other Books" : cat,
-              slug: cat.toLowerCase(),
-            }))
-          );
         }
       } catch (err) {
         console.log(err);
@@ -55,14 +38,21 @@ export default function BooksPage() {
       )
   );
 
-  // ✅ sorting
   const sortedBooks = [...filteredBooks].sort((a, b) => {
+
+    if ((b.sold || 0) !== (a.sold || 0)) {
+      return (b.sold || 0) - (a.sold || 0);
+    }
+
+    if ((b.views || 0) !== (a.views || 0)) {
+      return (b.views || 0) - (a.views || 0);
+    }
+
     return sortOrder === "low"
       ? a.price - b.price
       : b.price - a.price;
   });
 
-  // ✅ toggle function
   const toggleSort = () => {
     setSortOrder((prev) => (prev === "low" ? "high" : "low"));
   };
@@ -92,7 +82,6 @@ export default function BooksPage() {
           />
         </div>
 
-        {/* ✅ SWITCH BUTTON */}
         <button onClick={toggleSort} className="sort-btn">
           {sortOrder === "low"
             ? "Price (Low → High)"
@@ -100,48 +89,55 @@ export default function BooksPage() {
         </button>
       </div>
 
-      {catalog.map((cat) => {
-        const categoryBooks = sortedBooks.filter(
-          (book) =>
-            (book.category?.trim() || "Other").toLowerCase() === cat.slug
-        );
+      <h2 className="bookheading">
+        All Books
+        <span style={{ fontSize: "24px", color: "#5b5656" }}>
+          {" "}({sortedBooks.length})
+        </span>
+      </h2>
 
-        if (categoryBooks.length === 0) return null;
+      <div className="allbooks-grid">
+        {sortedBooks.map((book) => (
+          <div className="allbook-card" key={book.slug}>
+            <div className="allbook-img">
+              <img
+                src={book.img || "/images/No_Image_Available.jpg"}
+                alt={book.title}
+              />
+            </div>
 
-        return (
-          <div key={cat.slug}>
-            <h2 className="bookheading">{cat.name}</h2>
+            <h3>{book.title}</h3>
+            <p className="telugu-title">{book.teluguTitle}</p>
+            <p className="author">by {book.author}</p>
+            <p className="telugu-author">
+              రచయిత: {book.teluguAuthor}
+            </p>
 
-            <div className="allbooks-grid">
-              {categoryBooks.map((book) => (
-                <div className="allbook-card" key={book.slug}>
-                  <div className="allbook-img">
-                    <img
-                      src={book.img || "/images/No_Image_Available.jpg"}
-                      alt={book.title}
-                    />
-                  </div>
+            {/* OPTIONAL BADGES */}
+            {(book.sold > 50) && (
+              <p style={{ color: "green", fontSize: "12px" }}>
+                ⭐ Best Seller
+              </p>
+            )}
 
-                  <h3>{book.title}</h3>
-                  <p className="telugu-title">{book.teluguTitle}</p>
-                  <p className="author">by {book.author}</p>
-                  <p className="telugu-author">
-                    రచయిత: {book.teluguAuthor}
-                  </p>
+            {(book.views > 100) && (
+              <p style={{ color: "orange", fontSize: "12px" }}>
+                🔥 Popular
+              </p>
+            )}
 
-                  <div className="book-actions">
-                    <p className="price">₹ {book.price}</p>
-                    <Link href={`/books/${book.slug}`}>
-                      <button className="buy-btn">View Details</button>
-                    </Link>
-                    <AddToCart book={book} />
-                  </div>
-                </div>
-              ))}
+            <div className="book-actions">
+              <p className="price">₹ {book.price}</p>
+
+              <Link href={`/books/${book.slug}`}>
+                <button className="buy-btn">View Details</button>
+              </Link>
+
+              <AddToCart book={book} />
             </div>
           </div>
-        );
-      })}
+        ))}
+      </div>
 
       {filteredBooks.length === 0 && (
         <div className="no-result">
