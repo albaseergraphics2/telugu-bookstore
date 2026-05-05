@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { jwtVerify } from "jose";
+import jwt from "jsonwebtoken";
 
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
@@ -10,22 +10,19 @@ export async function proxy(request) {
 
   if (token) {
     try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-      const { payload } = await jwtVerify(token, secret);
-      user = payload;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      user = decoded;
     } catch {
       user = null;
     }
   }
 
-  // 🔐 ADMIN
   if (pathname.startsWith("/admin")) {
     if (!user || user.role !== "admin") {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
-  // 🔐 ORDERS
   if (pathname.startsWith("/orders")) {
     if (!user) {
       return NextResponse.redirect(new URL("/", request.url));

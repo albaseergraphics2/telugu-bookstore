@@ -13,13 +13,16 @@ export async function POST(req) {
     const body = await req.json();
     const { type, name, username, phone, email, password, loginId } = body;
 
+    if (!JWT_SECRET) {
+      return NextResponse.json({
+        success: false,
+        message: "JWT_SECRET missing in environment",
+      });
+    }
+
     if (type === "register") {
       const existingUser = await User.findOne({
-        $or: [
-          { username },
-          { phone },
-          { email }
-        ]
+        $or: [{ username }, { phone }, { email }],
       });
 
       if (existingUser) {
@@ -62,7 +65,8 @@ export async function POST(req) {
 
       res.cookies.set("token", token, {
         httpOnly: true,
-        secure: false,
+        secure: true,
+        sameSite: "none",
         path: "/",
       });
 
@@ -70,13 +74,12 @@ export async function POST(req) {
     }
 
     if (type === "login") {
-
       const user = await User.findOne({
         $or: [
           { username: loginId },
           { phone: loginId },
-          { email: loginId }
-        ]
+          { email: loginId },
+        ],
       });
 
       if (!user) {
@@ -116,7 +119,8 @@ export async function POST(req) {
 
       res.cookies.set("token", token, {
         httpOnly: true,
-        secure: false,
+        secure: true,       
+        sameSite: "none",
         path: "/",
       });
       return res;
