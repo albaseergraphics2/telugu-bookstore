@@ -5,7 +5,6 @@ const OrderSchema = new mongoose.Schema({
   name: String,
   phone: String,
 
-  // ✅ STRUCTURED ADDRESS
   address: {
     full: String,
     pincode: String,
@@ -14,7 +13,6 @@ const OrderSchema = new mongoose.Schema({
     state: String
   },
 
-  // ✅ ITEMS WITH REFERENCE
   items: [
     {
       bookId: {
@@ -26,6 +24,17 @@ const OrderSchema = new mongoose.Schema({
   ],
 
   totalAmount: Number,
+
+  // ✅ NEW DELIVERY FIELDS
+  deliveryType: {
+    type: String,
+    default: "Not Selected",
+  },
+
+  deliveryCharge: {
+    type: Number,
+    default: 0,
+  },
 
   status: {
     type: String,

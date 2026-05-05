@@ -89,10 +89,13 @@ export default function OrdersPage() {
                   </p>
                   <p><b>Phone No:</b> {order.phone}</p>
                 </div>
-
+                <div>
+                  <p><b>Delivery Type:</b> {order.deliveryType || "Not Set"}</p>
+                  <p><b>Delivery Charges:</b> ₹ {order.deliveryCharge || 0}</p>
+                </div>
                 <div>
                   <p><b>Status:</b> {order.status}</p>
-                  <p><b>Total:</b> ₹ {order.totalAmount}</p>
+                  <p><b>Total:</b> ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}</p>
                 </div>
               </div>
 

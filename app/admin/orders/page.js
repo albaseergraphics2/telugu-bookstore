@@ -21,11 +21,12 @@ export default function AdminOrders() {
     }
   };
 
-  const updateStatus = async (id, status) => {
+  // ✅ SAVE DELIVERY + STATUS
+  const updateStatus = async (id, status, deliveryType, deliveryCharge) => {
     await fetch("/api/admin/orders", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status }),
+      body: JSON.stringify({ id, status, deliveryType, deliveryCharge }),
     });
     fetchOrders();
   };
@@ -50,10 +51,8 @@ export default function AdminOrders() {
           .text { font-size: 16px; margin-bottom: 5px; }
         </style>
       </head>
-
       <body>
         <div class="container">
-
           <div class="box">
             <div class="title">From,</div>
             <div class="text"><b>Abdul Vakeel</b></div>
@@ -61,7 +60,6 @@ export default function AdminOrders() {
             <div class="text">Hyderabad, Telangana</div>
             <div class="text"><b>Phone:</b> 9441055065</div>
           </div>
-
           <div class="box">
             <div class="title">To,</div>
             <div class="text"><b>Name:</b> ${order.name}</div>
@@ -69,11 +67,11 @@ export default function AdminOrders() {
             <div class="text"><b>Pincode:</b> ${order.address?.pincode || ""}</div>
             <div class="text"><b>Phone:</b> ${order.phone}</div>
           </div>
-
         </div>
       </body>
     </html>
   `);
+
     printWindow.document.close();
     printWindow.print();
   };
@@ -91,17 +89,76 @@ export default function AdminOrders() {
             {currentOrders.map((order) => (
               <div key={order._id} className="order-row">
 
-                <p><b>Order ID: </b>{order._id}</p>
-                <p><b>Date: </b>{new Date(order.createdAt).toLocaleString()}</p>
+                <div>
+                  <p><b>Order ID: </b>{order._id}</p>
+                  <p><b>Date: </b>{new Date(order.createdAt).toLocaleString()}</p>
+                </div>
 
                 <div>
                   <p><b>Name: </b>{order.name}</p>
                   <p><b>Phone No: </b>{order.phone}</p>
                 </div>
 
+                {/* ✅ DELIVERY INPUTS (FIXED STATE UPDATE) */}
                 <div>
-                  <p><b>Total: </b>₹{order.totalAmount}</p>
-                  <p><b>Status: </b>{order.status}</p>
+                  <b>Delivery</b>
+                  <input
+                    className="delivery-input"
+                    type="text"
+                    placeholder="Delivery Type"
+                    value={order.deliveryType || ""}
+                    onChange={(e) => {
+                      setOrders(prev =>
+                        prev.map(o =>
+                          o._id === order._id
+                            ? { ...o, deliveryType: e.target.value }
+                            : o
+                        )
+                      );
+                    }}
+                  />
+
+                  <input
+                    className="delivery-input"
+                    type="number"
+                    placeholder="Delivery Charges"
+                    value={order.deliveryCharge || ""}
+                    onChange={(e) => {
+                      setOrders(prev =>
+                        prev.map(o =>
+                          o._id === order._id
+                            ? { ...o, deliveryCharge: Number(e.target.value) }
+                            : o
+                        )
+                      );
+                    }}
+                  />
+
+                  <button
+                    className="save-delivery-btn"
+                    onClick={() =>
+                      updateStatus(
+                        order._id,
+                        order.status,
+                        order.deliveryType,
+                        order.deliveryCharge
+                      )
+                    }
+                  >
+                    Save Delivery
+                  </button>
+                </div>
+
+                <div>
+                  <p><b>Items Total: </b>₹{order.totalAmount}</p>
+
+                  <p><b>Delivery Charges: </b>₹{order.deliveryCharge || 0}</p>
+
+                  <p>
+                    <b>Subtotal: </b>
+                    ₹{(order.totalAmount || 0) + (order.deliveryCharge || 0)}
+                  </p>
+
                 </div>
 
                 <div>
@@ -117,18 +174,20 @@ export default function AdminOrders() {
                   ))}
                 </div>
 
-                <div className="order-actions">
-                  <button onClick={() => updateStatus(order._id, "Completed")}>
-                    Complete
-                  </button>
-                  <button onClick={() => updateStatus(order._id, "Pending")}>
-                    Pending
-                  </button>
-                  <button onClick={() => updateStatus(order._id, "Cancelled")}>
-                    Cancel
-                  </button>
+                <div>
+                  <p><b>Status: </b>{order.status}</p>
+                  <div className="order-actions">
+                    <button onClick={() => updateStatus(order._id, "Completed", order.deliveryType, order.deliveryCharge)}>
+                      Complete
+                    </button>
+                    <button onClick={() => updateStatus(order._id, "Pending", order.deliveryType, order.deliveryCharge)}>
+                      Pending
+                    </button>
+                    <button onClick={() => updateStatus(order._id, "Cancelled", order.deliveryType, order.deliveryCharge)}>
+                      Cancel
+                    </button>
+                  </div>
                 </div>
-
                 <div className="admin-invoice-btns">
                   <Link href={`/invoice-admin/${order._id}`}>
                     <button>View Invoice</button>
@@ -138,6 +197,7 @@ export default function AdminOrders() {
                     Print address slip
                   </button>
                 </div>
+
               </div>
             ))}
           </div>

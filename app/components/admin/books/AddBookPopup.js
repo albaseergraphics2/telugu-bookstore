@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import { compressImage } from "../../../../utils/imageUtils";
 import { uploadToCloudinary } from "../../../lib/cloudinary";
 
@@ -7,6 +9,8 @@ export default function AddBookPopup({
   onSubmit,
   onClose,
 }) {
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,7 +57,15 @@ export default function AddBookPopup({
       <div className="popup" onClick={(e) => e.stopPropagation()}>
         <h3>Add Book</h3>
 
-        <form onSubmit={onSubmit} className="book-form">
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setLoading(true);
+            await onSubmit(e);
+            setLoading(false);
+          }}
+          className="book-form"
+        >
           <input name="slug" value={form.slug || ""} readOnly />
           <input name="title" placeholder="Title" value={form.title || ""} onChange={handleChange} required />
           <input name="teluguTitle" placeholder="Telugu Title" value={form.teluguTitle || ""} onChange={handleChange} />
@@ -78,7 +90,9 @@ export default function AddBookPopup({
           <textarea name="desc" placeholder="Description" value={form.desc || ""} onChange={handleChange} />
           <textarea name="teluguDesc" placeholder="Telugu Description" value={form.teluguDesc || ""} onChange={handleChange} />
 
-          <button type="submit">Add Book</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Adding..." : "Add Book"}
+          </button>
         </form>
       </div>
     </div>

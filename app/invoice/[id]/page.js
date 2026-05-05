@@ -42,12 +42,12 @@ export default function InvoicePage() {
     if (id) fetchOrder();
   }, [id]);
 
-  if (!order)  return (
-      <div style={{ textAlign: "center", marginTop: "100px" }}>
-        <div className="loader"></div>
-        <p>Loading...</p>
-      </div>
-    );
+  if (!order) return (
+    <div style={{ textAlign: "center", marginTop: "100px" }}>
+      <div className="loader"></div>
+      <p>Loading...</p>
+    </div>
+  );
 
   return (
     <section className="invoice-page">
@@ -57,21 +57,13 @@ export default function InvoicePage() {
         <div className="invoice-card">
 
           <h2>Invoice</h2>
-
           <p><b>Order ID:</b> {order._id}</p>
           <p><b>Date:</b> {new Date(order.createdAt).toLocaleString()}</p>
           <p><b>Name:</b> {order.name}</p>
-
-          {/* ✅ FIXED */}
           <p><b>Address:</b> {order.address?.full || "-"}, {order.address?.pincode || "-"}</p>
-
-
           <p><b>Phone:</b> {order.phone}</p>
-
           <hr />
-
           <h3>Items</h3>
-
           {order.items.map((item, i) => (
             <div key={i} className="invoice-item">
               <span>{item.bookId?.title} (x{item.qty})</span>
@@ -80,8 +72,9 @@ export default function InvoicePage() {
           ))}
 
           <hr />
-
-          <h3>Total: ₹{order.totalAmount}</h3>
+          <p><b>Delivery Type:</b> {order.deliveryType || "Not Set"}</p>
+          <p><b>Delivery Charges:</b> ₹{order.deliveryCharge || 0}</p>
+          <h3>Total: ₹{(order.totalAmount || 0) + (order.deliveryCharge || 0)}</h3>
 
         </div>
 

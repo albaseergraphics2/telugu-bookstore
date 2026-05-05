@@ -22,13 +22,17 @@ export async function PUT(req) {
   try {
     await connectDB();
 
-    const { id, status } = await req.json();
+    const { id, status, deliveryType, deliveryCharge } = await req.json();
 
-    await Order.findByIdAndUpdate(id, { status });
+    await Order.findByIdAndUpdate(id, {
+      status,
+      deliveryType,
+      deliveryCharge,
+    });
 
     return NextResponse.json({ success: true });
 
-  } catch {
+  } catch (error) {
     return NextResponse.json({ success: false });
   }
 }

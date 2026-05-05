@@ -240,7 +240,13 @@ Address: ${address}`;
 
           <div className="cart-summary">
             <h2>Total: ₹{totalPrice}</h2>
+            <h6 style={{ fontSize: "16px", marginTop: "10px", marginBottom: "6px" }}>
+              Delivery Charges Apply
+            </h6>
 
+            <h6 style={{ fontSize: "14px", color: "#666" }}>
+              Final charges will be confirmed on WhatsApp.
+            </h6>
             <div className="user-details">
               <input
                 type="text"

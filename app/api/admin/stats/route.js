@@ -16,10 +16,15 @@ export async function GET() {
       return total + (order.totalAmount || 0);
     }, 0);
 
+    const deliveryTotal = allOrders.reduce((total, order) => {
+      return total + (order.deliveryCharge || 0);
+    }, 0);
+
+    const totalWithDelivery = revenue + deliveryTotal;
+
     const pending = await Order.countDocuments({ status: "Pending" });
     const completed = await Order.countDocuments({ status: "Completed" });
 
-    // today filter
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -33,6 +38,10 @@ export async function GET() {
       return total + (order.totalAmount || 0);
     }, 0);
 
+    const todayDelivery = todayOrdersList.reduce((total, order) => {
+      return total + (order.deliveryCharge || 0);
+    }, 0);
+
     const avgOrderValue = orders > 0 ? Math.round(revenue / orders) : 0;
 
     return NextResponse.json({
@@ -41,10 +50,13 @@ export async function GET() {
         users,
         orders,
         revenue,
+        deliveryTotal,
+        totalWithDelivery,
         pending,
         completed,
         todayOrders,
         todayRevenue,
+        todayDelivery,
         avgOrderValue
       }
     });

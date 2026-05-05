@@ -51,6 +51,15 @@ export default function AdminDashboard() {
         </div>
 
         <div className="analytics-card">
+          <h3>Total Delivery Charges</h3>
+          <p>₹{stats.deliveryTotal || 0}</p>
+        </div>
+
+        <div className="analytics-card">
+          <h3>Total Amount (With Delivery)</h3>
+          <p>₹{(stats.revenue || 0) + (stats.deliveryTotal || 0)}</p>
+        </div>
+        <div className="analytics-card">
           <h3>Pending Orders</h3>
           <p>{stats.pending}</p>
         </div>

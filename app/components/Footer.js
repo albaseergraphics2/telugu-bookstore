@@ -11,9 +11,9 @@ export default function Footer() {
         </div>
 
         <div className="footer-right">
-          {/* <Link href="/policies" className="footer-link">
+          <Link href="/policies" className="footer-link">
             Policies
-          </Link> */}
+          </Link>
           <Link href="/aboutus" className="footer-link">
             About Us
           </Link>

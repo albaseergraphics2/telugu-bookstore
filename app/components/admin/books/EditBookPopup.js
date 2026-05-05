@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import { compressImage } from "../../../../utils/imageUtils";
 import { uploadToCloudinary } from "../../../lib/cloudinary";
 
@@ -11,6 +13,8 @@ export default function EditBookPopup({
   setShowDeletePopup,
   deleteImage,
 }) {
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,7 +61,15 @@ export default function EditBookPopup({
       <div className="popup" onClick={(e) => e.stopPropagation()}>
         <h3>Edit Book</h3>
 
-        <form onSubmit={onSubmit} className="book-form">
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setLoading(true);
+            await onSubmit(e);
+            setLoading(false);
+          }}
+          className="book-form"
+        >
           <input name="slug" value={form.slug || ""} readOnly />
           <input name="title" placeholder="Title" value={form.title || ""} onChange={handleChange} required />
           <input name="teluguTitle" placeholder="Telugu Title" value={form.teluguTitle || ""} onChange={handleChange} />
@@ -74,15 +86,9 @@ export default function EditBookPopup({
           <input name="category" placeholder="Category" value={form.category || ""} onChange={handleChange} />
           <input name="tag" placeholder="Tag" value={form.tag || ""} onChange={handleChange} />
 
-          {/* MAIN IMAGE */}
           {form.img && (
             <div style={{ position: "relative", width: "60px" }}>
-              <img
-                src={form.img}
-                width="55"
-                style={{ borderRadius: "6px" }}
-              />
-
+              <img src={form.img} width="55" style={{ borderRadius: "6px" }} />
               <button
                 className="crossmark"
                 type="button"
@@ -103,21 +109,12 @@ export default function EditBookPopup({
             {form.images?.map((img, i) => (
               <div
                 key={i}
-                style={{
-                  position: "relative",
-                  width: "60px",
-                  height: "80px",
-                }}
+                style={{ position: "relative", width: "60px", height: "80px" }}
               >
                 <img
                   src={img}
-                  style={{
-                    width: "55px",
-                    height: "100%",
-                    borderRadius: "6px",
-                  }}
+                  style={{ width: "55px", height: "100%", borderRadius: "6px" }}
                 />
-
                 <button
                   className="crossmark"
                   type="button"
@@ -138,7 +135,9 @@ export default function EditBookPopup({
           <textarea name="desc" placeholder="Description" value={form.desc || ""} onChange={handleChange} />
           <textarea name="teluguDesc" placeholder="Telugu Description" value={form.teluguDesc || ""} onChange={handleChange} />
 
-          <button type="submit">Update Book</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Updating..." : "Update Book"}
+          </button>
         </form>
       </div>
     </div>

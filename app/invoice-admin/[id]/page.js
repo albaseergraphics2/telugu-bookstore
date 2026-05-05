@@ -45,12 +45,12 @@ export default function InvoicePage() {
     if (id) fetchOrder();
   }, [id]);
 
-  if (!order)  return (
-      <div style={{ textAlign: "center", marginTop: "100px" }}>
-        <div className="loader"></div>
-        <p>Loading...</p>
-      </div>
-    );
+  if (!order) return (
+    <div style={{ textAlign: "center", marginTop: "100px" }}>
+      <div className="loader"></div>
+      <p>Loading...</p>
+    </div>
+  );
 
   return (
     <div className="invoice-page">
@@ -83,9 +83,13 @@ export default function InvoicePage() {
           ))}
 
           <hr />
+          
+          <p><b>Delivery Charges:</b> ₹{order.deliveryCharge || 0}</p>
 
-          <h3>Total: ₹{order.totalAmount}</h3>
 
+          <h3>
+            Subtotal: ₹{(order.totalAmount || 0) + (order.deliveryCharge || 0)}
+          </h3>
         </div>
 
         <div className="invoice-buttons-admin">

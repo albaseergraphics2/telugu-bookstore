@@ -1500,6 +1500,41 @@ nav {
   background: #08492b;
 }
 
+.delivery-input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.delivery-input:focus {
+  border-color: #333;
+}
+
+.save-delivery-btn {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #28a745; /* green */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.save-delivery-btn:hover {
+  background-color: #218838;
+}
+
+.save-delivery-btn:active {
+  transform: scale(0.97);
+}
 /* Admin buttons */
 .admin-invoice-btns {
   display: flex;
@@ -1543,12 +1578,13 @@ nav {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  font-size: 16px;
 }
 
 .order-row {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr 1fr;
-  gap: 4px;
+  gap: 8px;
   background: #fff;
   padding: 10px;
   border-radius: 10px;
