@@ -25,7 +25,6 @@ const OrderSchema = new mongoose.Schema({
 
   totalAmount: Number,
 
-  // ✅ NEW DELIVERY FIELDS
   deliveryType: {
     type: String,
     default: "Not Selected",
