@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const BookSchema = new mongoose.Schema({
   slug: String,
   title: String,
@@ -21,6 +20,10 @@ const BookSchema = new mongoose.Schema({
   desc: String,
   teluguDesc: String,
   isActive: {
+    type: Boolean,
+    default: true
+  },
+  inStock: {
     type: Boolean,
     default: true
   }

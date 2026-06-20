@@ -132,7 +132,15 @@ export default function BookDetails({ params }) {
           <p><strong>Category:</strong> {book.category}</p>
 
           <div style={{ textAlign: "center" }}>
-            <AddToCart book={book} />
+            {book.inStock !== false ? (
+              <AddToCart book={book} />
+            ) : (
+              <div className="book-out-of-stock">
+                <span className="book-stock-badge">
+                  Out of Stock
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

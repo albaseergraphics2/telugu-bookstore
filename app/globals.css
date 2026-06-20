@@ -1673,9 +1673,78 @@ nav {
 }
 
 .adminbook-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 6px;
   margin-top: 8px;
+}
+
+.adminbook-actions button {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.hide-btn {
+  background: gray;
+  color: white;
+}
+
+.unhide-btn {
+  background: skyblue;
+  color: white;
+}
+
+.instock-btn {
+  background: #16a34a;
+  color: white;
+}
+
+.outstock-btn {
+  background: #f97316;
+  color: white;
+}
+
+.allbook-img {
+  position: relative;
+}
+
+.stock-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: #dc2626;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.out-of-stock-card {
+  opacity: 0.90;
+  transition: 0.3s;
+}
+
+.out-of-stock-card:hover {
+  opacity: 1;
+}
+
+.book-out-of-stock {
+  margin-top: 15px;
+}
+
+.book-stock-badge {
+  display: inline-block;
+  background: #dc2626;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .adminuserorderlist,

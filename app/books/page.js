@@ -98,12 +98,22 @@ export default function BooksPage() {
 
       <div className="allbooks-grid">
         {sortedBooks.map((book) => (
-          <div className="allbook-card" key={book.slug}>
+          <div
+            className={`allbook-card ${book.inStock === false ? "out-of-stock-card" : ""
+              }`}
+            key={book.slug}
+          >
             <div className="allbook-img">
               <img
                 src={book.img || "/images/No_Image_Available.jpg"}
                 alt={book.title}
               />
+
+              {book.inStock === false && (
+                <span className="stock-badge">
+                  Out of Stock
+                </span>
+              )}
             </div>
 
             <h3>{book.title}</h3>
@@ -113,7 +123,6 @@ export default function BooksPage() {
               రచయిత: {book.teluguAuthor}
             </p>
 
-            {/* OPTIONAL BADGES */}
             {(book.sold > 50) && (
               <p style={{ color: "green", fontSize: "12px" }}>
                 ⭐ Best Seller
@@ -130,10 +139,14 @@ export default function BooksPage() {
               <p className="price">₹ {book.price}</p>
 
               <Link href={`/books/${book.slug}`}>
-                <button className="buy-btn">View Details</button>
+                <button className="buy-btn">
+                  View Details
+                </button>
               </Link>
 
-              <AddToCart book={book} />
+              {book.inStock !== false && (
+                <AddToCart book={book} />
+              )}
             </div>
           </div>
         ))}

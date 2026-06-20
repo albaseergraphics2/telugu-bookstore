@@ -28,7 +28,10 @@ export default function AdminBooks() {
   const fetchBooks = async () => {
     const res = await fetch("/api/admin/books");
     const data = await res.json();
-    if (data.success) setBooks(data.books);
+
+    if (data.success) {
+      setBooks(data.books);
+    }
   };
 
   const addBook = async (e) => {
@@ -36,11 +39,14 @@ export default function AdminBooks() {
 
     const res = await fetch("/api/admin/books", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(form),
     });
 
     const data = await res.json();
+
     if (data.success) {
       setShowAdd(false);
       resetForm();
@@ -53,11 +59,17 @@ export default function AdminBooks() {
 
     const res = await fetch("/api/admin/books", {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, id: editId }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...form,
+        id: editId,
+      }),
     });
 
     const data = await res.json();
+
     if (data.success) {
       setShowEdit(false);
       setEditId(null);
@@ -69,8 +81,12 @@ export default function AdminBooks() {
   const deleteBook = async () => {
     await fetch("/api/admin/books", {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: deleteId }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: deleteId,
+      }),
     });
 
     setDeleteId(null);
@@ -80,10 +96,27 @@ export default function AdminBooks() {
   const toggleActive = async (id, currentStatus) => {
     await fetch("/api/admin/books", {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         id,
         toggleActive: !currentStatus,
+      }),
+    });
+
+    fetchBooks();
+  };
+
+  const toggleStock = async (id, currentStatus) => {
+    await fetch("/api/admin/books", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id,
+        toggleStock: !currentStatus,
       }),
     });
 
@@ -149,6 +182,7 @@ export default function AdminBooks() {
                   onEdit={handleEdit}
                   onDelete={(id) => setDeleteId(id)}
                   onToggle={toggleActive}
+                  onStockToggle={toggleStock}
                 />
               ))}
             </div>
@@ -156,13 +190,20 @@ export default function AdminBooks() {
         );
       })}
 
-      {books.filter(b => !b.category || b.category.trim() === "").length > 0 && (
+      {books.filter(
+        (b) => !b.category || b.category.trim() === ""
+      ).length > 0 && (
         <div>
-          <h2 className="admin-category-heading">Other Books</h2>
+          <h2 className="admin-category-heading">
+            Other Books
+          </h2>
 
           <div className="books-grid">
             {books
-              .filter(b => !b.category || b.category.trim() === "")
+              .filter(
+                (b) =>
+                  !b.category || b.category.trim() === ""
+              )
               .map((book) => (
                 <BookCard
                   key={book._id}
@@ -170,13 +211,13 @@ export default function AdminBooks() {
                   onEdit={handleEdit}
                   onDelete={(id) => setDeleteId(id)}
                   onToggle={toggleActive}
+                  onStockToggle={toggleStock}
                 />
               ))}
           </div>
         </div>
       )}
 
-      {/* ➕ Add */}
       {showAdd && (
         <AddBookPopup
           form={form}

@@ -43,20 +43,31 @@ export async function PUT(req) {
   try {
     await connectDB();
 
-    const { id, toggleActive, ...data } = await req.json();
+    const {
+      id,
+      toggleActive,
+      toggleStock,
+      ...data
+    } = await req.json();
 
     if (toggleActive !== undefined) {
       await Book.findByIdAndUpdate(id, {
         isActive: toggleActive,
       });
-    } else {
-
+    }
+    else if (toggleStock !== undefined) {
+      await Book.findByIdAndUpdate(id, {
+        inStock: toggleStock,
+      });
+    }
+    else {
       await Book.findByIdAndUpdate(id, data);
     }
 
     return NextResponse.json({ success: true });
 
-  } catch {
+  } catch (err) {
+    console.log(err);
     return NextResponse.json({ success: false });
   }
 }
