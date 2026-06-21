@@ -19,7 +19,7 @@ export default function PopularBooks() {
               (book) =>
                 book.tag === "Popular" || book.tag === "Best Seller" || book.tag === "popular"
             )
-            .slice(0, 6);
+            .slice(0, 10);
 
           setBooks(popular);
         }
