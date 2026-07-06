@@ -27,7 +27,7 @@ const OrderSchema = new mongoose.Schema({
 
   deliveryType: {
     type: String,
-    default: "Not Selected",
+    // default: "Not Selected",
   },
 
   deliveryCharge: {

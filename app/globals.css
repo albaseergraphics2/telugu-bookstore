@@ -1502,12 +1502,11 @@ nav {
 
 .delivery-input {
   width: 100%;
-  padding: 10px 12px;
-  margin-top: 10px;
+  padding: 5px 7px;
   margin-top: 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 12px;
   outline: none;
   transition: 0.2s ease;
 }
@@ -1578,7 +1577,7 @@ nav {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .order-row {
@@ -1591,23 +1590,44 @@ nav {
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 
+.order-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+}
+
 .order-actions button {
-  display: block;
-  margin-bottom: 5px;
+  width: 100%;
   padding: 6px 10px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
 }
 
-.order-actions button:first-child {
+.order-actions button:nth-child(1) {
   background: #16a34a;
-  color: white;
+  color: #fff;
+}
+
+.order-actions button:nth-child(2) {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.order-actions button:nth-child(3) {
+  background: #2563eb;
+  color: #fff;
+}
+
+.order-actions button:nth-child(4) {
+  background: #dc2626;
+  color: #fff;
 }
 
 .order-actions button:last-child {
-  background: #dc2626;
-  color: white;
+  margin-bottom: 0;
 }
 
 /* admin books */

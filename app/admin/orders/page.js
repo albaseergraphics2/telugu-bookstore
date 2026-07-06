@@ -95,11 +95,10 @@ export default function AdminOrders() {
                 </div>
 
                 <div>
-                  <p><b>Name: </b>{order.name}</p>
-                  <p><b>Phone No: </b>{order.phone}</p>
+                  <p><b>Name:</b> {order.name}</p>
+                  <p><b>Phone No:</b> {order.phone}</p>
                 </div>
 
-                {/* ✅ DELIVERY INPUTS (FIXED STATE UPDATE) */}
                 <div>
                   <b>Delivery</b>
                   <input
@@ -177,13 +176,55 @@ export default function AdminOrders() {
                 <div>
                   <p><b>Status: </b>{order.status}</p>
                   <div className="order-actions">
-                    <button onClick={() => updateStatus(order._id, "Completed", order.deliveryType, order.deliveryCharge)}>
+                    <button
+                      onClick={() =>
+                        updateStatus(
+                          order._id,
+                          "Completed",
+                          order.deliveryType,
+                          order.deliveryCharge
+                        )
+                      }
+                    >
                       Complete
                     </button>
-                    <button onClick={() => updateStatus(order._id, "Pending", order.deliveryType, order.deliveryCharge)}>
+
+                    <button
+                      onClick={() =>
+                        updateStatus(
+                          order._id,
+                          "Pending",
+                          order.deliveryType,
+                          order.deliveryCharge
+                        )
+                      }
+                    >
                       Pending
                     </button>
-                    <button onClick={() => updateStatus(order._id, "Cancelled", order.deliveryType, order.deliveryCharge)}>
+
+                    <button
+                      onClick={() =>
+                        updateStatus(
+                          order._id,
+                          "Shipped",
+                          order.deliveryType,
+                          order.deliveryCharge
+                        )
+                      }
+                    >
+                      Shipped
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        updateStatus(
+                          order._id,
+                          "Cancelled",
+                          order.deliveryType,
+                          order.deliveryCharge
+                        )
+                      }
+                    >
                       Cancel
                     </button>
                   </div>

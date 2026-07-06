@@ -146,7 +146,6 @@ export default function CartPage() {
 
       const message =
         `Assalamu Alaikum
-Order ID: ${invoiceId}
 
 I want to order these books:
 
@@ -198,7 +197,15 @@ Address: ${address}`;
       {cartItems.length === 0 ? (
         <div className="empty-cart">
           <p>Your cart is empty</p>
-          <Link href="/orders" className="shop-btn">View My Orders</Link>
+          <Link href="/books" className="shop-btn">
+            View Books
+          </Link>
+          <h5 style={{ marginTop: "10px", marginBottom: "10px" }}>
+            OR
+          </h5>
+          <Link href="/orders" className="shop-btn">
+            My Orders
+          </Link>
         </div>
       ) : (
         <div className="cart-container">
@@ -245,7 +252,7 @@ Address: ${address}`;
             </h6>
 
             <h6 style={{ fontSize: "14px", color: "#666" }}>
-              Final charges will be confirmed on WhatsApp.
+              Order details and final charges will be confirmed on WhatsApp.
             </h6>
             <div className="user-details">
               <input
