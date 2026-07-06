@@ -200,12 +200,6 @@ Address: ${address}`;
           <Link href="/books" className="shop-btn">
             View Books
           </Link>
-          <h5 style={{ marginTop: "10px", marginBottom: "10px" }}>
-            OR
-          </h5>
-          <Link href="/orders" className="shop-btn">
-            My Orders
-          </Link>
         </div>
       ) : (
         <div className="cart-container">
