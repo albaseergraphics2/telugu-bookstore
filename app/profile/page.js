@@ -117,7 +117,6 @@ export default function ProfilePage() {
   return (
     <div className="profile-page">
       <h2>My Profile</h2>
-
       <div className="profile-card">
         <div className="profile-row">
           <span>Name</span>
