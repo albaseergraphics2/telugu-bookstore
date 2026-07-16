@@ -2,19 +2,19 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
-
+  const { user } = useSelector((state) => state.auth);
+  
   useEffect(() => {
     let timer;
 
     const fetchOrders = async () => {
       try {
-        const user = JSON.parse(localStorage.getItem("user"));
-
-        if (!user) {
+        if (!user?._id) {
           setLoading(false);
           return;
         }
@@ -39,7 +39,7 @@ export default function OrdersPage() {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, []);
+  }, [user]);
 
   if (loading) {
     return (
