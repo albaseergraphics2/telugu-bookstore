@@ -1,7 +1,14 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  login,
+  register,
+  forgotPassword,
+  clearErrors,
+} from "@/redux/actions/authActions";
 
-export default function AuthPopup({ show, onClose, setUser }) {
+export default function AuthPopup({ show, onClose }) {
 
   const [isRegister, setIsRegister] = useState(false);
   const [isForgot, setIsForgot] = useState(false);
@@ -11,92 +18,60 @@ export default function AuthPopup({ show, onClose, setUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginId, setLoginId] = useState("");
-  const [error, setError] = useState("");
-  const [msg, setMsg] = useState("");
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
-  if (!show) return null;
+  const {
+    loading,
+    error,
+    message,
+    isAuthenticated,
+    user,
+  } = useSelector((state) => state.auth);
 
-  const handleLogin = async (e) => {
+
+  const handleLogin = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
 
-    const res = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "login",
+    dispatch(
+      login({
         loginId,
         password,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setUser(data.user);
-      onClose();
-    } else {
-      setError(data.message);
-    }
-    setLoading(false);
+      })
+    );
   };
 
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
 
-    const res = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "register",
+    dispatch(
+      register({
         name,
         username,
         phone,
         email,
         password,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setUser(data.user);
-      onClose();
-    } else {
-      setError(data.message);
-    }
-    setLoading(false);
+      })
+    );
   };
 
-  const handleForgot = async (e) => {
+  const handleForgot = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-    setMsg("");
 
-    const res = await fetch("/api/auth/forgot-password", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      setMsg("Reset link sent to your email ✅");
-    } else {
-      setError(data.message);
-    }
-    setLoading(false);
+    dispatch(forgotPassword(email));
   };
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      // localStorage.setItem("user", JSON.stringify(user));
+      onClose();
+    }
+
+    if (error) {
+      dispatch(clearErrors());
+    }
+  }, [dispatch, error, isAuthenticated, user, onClose]);
+
+  if (!show) return null;
 
   return (
     <div className="login-overlay" onClick={onClose}>
@@ -110,18 +85,18 @@ export default function AuthPopup({ show, onClose, setUser }) {
             isForgot
               ? handleForgot
               : isRegister
-              ? handleRegister
-              : handleLogin
+                ? handleRegister
+                : handleLogin
           }
           className="login-form"
         >
 
           {isRegister && !isForgot && (
             <>
-              <input type="text" placeholder="Full Name" value={name} onChange={(e)=>setName(e.target.value)} required />
-              <input type="text" placeholder="Username" value={username} onChange={(e)=>setUsername(e.target.value)} required />
-              <input type="text" placeholder="Phone Number" value={phone} onChange={(e)=>setPhone(e.target.value)} required />
-              <input type="email" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} required />
+              <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required />
+              <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+              <input type="text" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+              <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </>
           )}
 
@@ -131,7 +106,7 @@ export default function AuthPopup({ show, onClose, setUser }) {
                 type="text"
                 placeholder="Username | Phone | Email"
                 value={loginId}
-                onChange={(e)=>setLoginId(e.target.value)}
+                onChange={(e) => setLoginId(e.target.value)}
                 required
               />
 
@@ -146,7 +121,7 @@ export default function AuthPopup({ show, onClose, setUser }) {
                 }}
                 onClick={() => {
                   setIsForgot(true);
-                  setError("");
+                  dispatch(clearErrors());
                 }}
               >
                 Forgot Password?
@@ -159,36 +134,40 @@ export default function AuthPopup({ show, onClose, setUser }) {
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e)=>setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           )}
 
           {!isForgot && (
             <>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e)=>setPassword(e.target.value)}
-              required
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
-              
-              </>
-            
+
+            </>
+
           )}
 
           {error && <p className="error">{error}</p>}
-          {msg && <p style={{ color: "green" }}>{msg}</p>}
+          {message && (
+            <p style={{ color: "green" }}>
+              {message}
+            </p>
+          )}
 
           <button type="submit" disabled={loading}>
             {loading
               ? "Please wait..."
               : isForgot
-              ? "Send Link"
-              : isRegister
-              ? "Register"
-              : "Login"}
+                ? "Send Link"
+                : isRegister
+                  ? "Register"
+                  : "Login"}
           </button>
         </form>
 

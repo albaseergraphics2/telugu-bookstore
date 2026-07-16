@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
 export default function ProfilePage() {
   const router = useRouter();
 
-  const [user, setUser] = useState(null);
+  const { user, isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [phoneLocked, setPhoneLocked] = useState(false);
@@ -19,33 +22,28 @@ export default function ProfilePage() {
   const [stateName, setStateName] = useState("");
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-
-    if (!storedUser) {
+    if (!isAuthenticated) {
       router.replace("/");
       return;
     }
 
-    setUser(storedUser);
-    setPhone(storedUser.phone || "");
+    if (user) {
+      setPhone(user.phone || "");
 
-    // ✅ Handle old + new address
-    if (storedUser.address && typeof storedUser.address === "object") {
-      setAddress(storedUser.address.full || "");
-      setPincode(storedUser.address.pincode || "");
-      setArea(storedUser.address.area || "");
-      setDistrict(storedUser.address.district || "");
-      setStateName(storedUser.address.state || "");
-    } else {
-      setAddress(storedUser.address || "");
+      if (user.address && typeof user.address === "object") {
+        setAddress(user.address.full || "");
+        setPincode(user.address.pincode || "");
+        setArea(user.address.area || "");
+        setDistrict(user.address.district || "");
+        setStateName(user.address.state || "");
+      } else {
+        setAddress(user.address || "");
+      }
+
+      setPhoneLocked(!!user.phone);
+      setLoading(false);
     }
-
-    if (storedUser.phone) {
-      setPhoneLocked(true);
-    }
-
-    setLoading(false);
-  }, [router]);
+  }, [user, isAuthenticated, router]);
 
   // ✅ Fetch address from pincode
   const getAddressFromPincode = async (pin) => {
@@ -91,8 +89,6 @@ export default function ProfilePage() {
       const data = await res.json();
 
       if (data.success) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-        setUser(data.user);
         setPhone(data.user.phone || "");
 
         if (typeof data.user.address === "object") {
@@ -104,7 +100,8 @@ export default function ProfilePage() {
         }
 
         setPhoneLocked(true);
-        alert("Profile updated ✅");
+        dispatch(loadUser());
+        alert("Profile updated");
       } else {
         alert(data.message || "Update failed");
       }
@@ -177,23 +174,23 @@ export default function ProfilePage() {
           />
         </div>
 
-{/* ✅ AREA */}
-<div className="profile-row">
-  <span>Area</span>
-  <p>{area || "-"}</p>
-</div>
+        {/* ✅ AREA */}
+        <div className="profile-row">
+          <span>Area</span>
+          <p>{area || "-"}</p>
+        </div>
 
-{/* ✅ DISTRICT */}
-<div className="profile-row">
-  <span>District</span>
-  <p>{district || "-"}</p>
-</div>
+        {/* ✅ DISTRICT */}
+        <div className="profile-row">
+          <span>District</span>
+          <p>{district || "-"}</p>
+        </div>
 
-{/* ✅ STATE */}
-<div className="profile-row">
-  <span>State</span>
-  <p>{stateName || "-"}</p>
-</div>
+        {/* ✅ STATE */}
+        <div className="profile-row">
+          <span>State</span>
+          <p>{stateName || "-"}</p>
+        </div>
 
         <button className="save-btn" onClick={handleSave}>
           Save

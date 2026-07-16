@@ -1,41 +1,34 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToCart,
+  removeFromCart,
+} from "@/redux/actions/cartActions";
 
 export default function AddToCart({ book }) {
-  const [qty, setQty] = useState(0);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const item = cart.find(item => item.slug === book.slug);
-    if (item) setQty(item.qty);
-  }, [book.slug]);
+  const { cartItems } = useSelector((state) => state.cart);
 
-  const updateCart = (newQty) => {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const item = cartItems.find((i) => i.slug === book.slug);
+  const qty = item ? item.qty : 0;
 
-    const index = cart.findIndex(item => item.slug === book.slug);
-
-    if (index !== -1) {
-      if (newQty === 0) {
-        cart.splice(index, 1);
-      } else {
-        cart[index].qty = newQty;
-      }
-    } else {
-      cart.push({ ...book, qty: 1 });
-      newQty = 1;
-    }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-    setQty(newQty);
-
-    window.dispatchEvent(new Event("cartUpdated"));
+  const addFirst = () => {
+    dispatch(addToCart(book, 1));
   };
 
-  const addFirst = () => updateCart(1);
-  const increase = () => updateCart(qty + 1);
-  const decrease = () => (qty > 1 ? updateCart(qty - 1) : updateCart(0));
+  const increase = () => {
+    dispatch(addToCart(book, qty + 1));
+  };
+
+  const decrease = () => {
+    if (qty === 1) {
+      dispatch(removeFromCart(book.slug));
+    } else {
+      dispatch(addToCart(book, qty - 1));
+    }
+  };
 
   if (qty === 0) {
     return (

@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { FaWhatsapp, FaBook, FaShoppingCart } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import AuthPopup from "./AuthPopup";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, loadUser } from "@/redux/actions/authActions";
 
 export default function Navbar() {
   const router = useRouter();
@@ -12,43 +14,26 @@ export default function Navbar() {
   const message = "Hello, I want to enquire about books.";
   const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
-  const [cartCount, setCartCount] = useState(0);
-  const [user, setUser] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const dispatch = useDispatch();
+
+  const { user, isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
+
+  const { cartItems } = useSelector(
+    (state) => state.cart
+  );
 
   useEffect(() => {
-    const updateCart = () => {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      setCartCount(cart.length);
-    };
+    dispatch(loadUser());
+  }, [dispatch]);
 
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(storedUser);
-
-    updateCart();
-    window.addEventListener("cartUpdated", updateCart);
-
-    return () => {
-      window.removeEventListener("cartUpdated", updateCart);
-    };
-  }, []);
-
-  const handleLogout = async () => {
-    setLoggingOut(true);
-
-    try {
-      await fetch("/api/logout", { method: "POST" }); // 🔐 clear JWT cookie
-
-      localStorage.removeItem("user"); // UI user remove
-
-      window.location.replace("/"); // better than href
-    } catch (err) {
-      console.log("Logout error:", err);
-    }
-
-    setLoggingOut(false);
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push("/");
   };
 
   return (
@@ -76,13 +61,15 @@ export default function Navbar() {
             <Link href="/cart" className="bar-itemD cart-iconD">
               <div style={{ position: "relative" }}>
                 <FaShoppingCart />
-                {cartCount > 0 && (
-                  <span className="cart-badge">{cartCount}</span>
+                {cartItems.length > 0 && (
+                  <span className="cart-badge">
+                    {cartItems.reduce((total, item) => total + item.qty, 0)}
+                  </span>
                 )}
               </div>
             </Link>
 
-            {user ? (
+            {isAuthenticated ? (
               <div className="user-dropdown">
                 <span
                   className="user-name"
@@ -109,7 +96,7 @@ export default function Navbar() {
                     </button>
 
                     <button onClick={handleLogout}>
-                      {loggingOut ? "Logging out..." : "Logout"}
+                      Logout
                     </button>
                   </div>
                 )}
@@ -127,7 +114,6 @@ export default function Navbar() {
       <AuthPopup
         show={showLogin}
         onClose={() => setShowLogin(false)}
-        setUser={setUser}
       />
     </>
   );

@@ -7,6 +7,8 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import { Toaster } from "react-hot-toast";
 import { Analytics } from '@vercel/analytics/next';
+import Provider from "./provider";
+import LoadUser from "./components/LoadUser";
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -28,15 +30,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={poppins.className}>
-        <BootstrapClient />
-        <Navbar />
-        <main className="min-h-screen">
-          {children}
-          <Toaster position="top-center" />
-          <Analytics />
-        </main>
-        <Footer />
-        <MobileBottomBar />
+        <Provider>
+          <LoadUser />
+          <BootstrapClient />
+          <Navbar />
+          <main className="min-h-screen">
+            {children}
+            <Toaster position="top-center" />
+            <Analytics />
+          </main>
+          <Footer />
+          <MobileBottomBar />
+        </Provider>
       </body>
     </html>
   )
