@@ -9,7 +9,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export async function POST(req) {
   try {
     await connectDB();
-
     const body = await req.json();
     const { type, name, username, phone, email, password, loginId } = body;
 
