@@ -63,7 +63,7 @@ export default function Navbar() {
                 <FaShoppingCart />
                 {cartItems.length > 0 && (
                   <span className="cart-badge">
-                    {cartItems.reduce((total, item) => total + item.qty, 0)}
+                    {cartItems.length}
                   </span>
                 )}
               </div>

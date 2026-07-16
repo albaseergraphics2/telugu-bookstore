@@ -1,10 +1,15 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToCart,
+  removeFromCart,
+  clearCart,
+} from "@/redux/actions/cartActions";
 import Link from "next/link";
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
@@ -14,6 +19,10 @@ export default function CartPage() {
   const [area, setArea] = useState("");
   const [district, setDistrict] = useState("");
   const [stateName, setStateName] = useState("");
+  const dispatch = useDispatch();
+
+  const { cartItems } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -23,9 +32,6 @@ export default function CartPage() {
   }, []);
 
   useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    setCartItems(savedCart);
-    const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       setName(user.name || "");
       setPhone(user.phone || "");
@@ -39,33 +45,28 @@ export default function CartPage() {
         setAddress(user.address || "");
       }
     }
-  }, []);
-
-  const updateStorage = (updatedCart) => {
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event("cartUpdated"));
-  };
+  }, [user]);
 
   const removeItem = (slug) => {
-    const updatedCart = cartItems.filter(item => item.slug !== slug);
-    updateStorage(updatedCart);
+    dispatch(removeFromCart(slug));
   };
 
   const increaseQty = (slug) => {
-    const updatedCart = cartItems.map(item =>
-      item.slug === slug ? { ...item, qty: item.qty + 1 } : item
-    );
-    updateStorage(updatedCart);
+    const item = cartItems.find((i) => i.slug === slug);
+    if (!item) return;
+
+    dispatch(addToCart(item, item.qty + 1));
   };
 
   const decreaseQty = (slug) => {
-    const updatedCart = cartItems.map(item =>
-      item.slug === slug
-        ? { ...item, qty: item.qty > 1 ? item.qty - 1 : 1 }
-        : item
-    );
-    updateStorage(updatedCart);
+    const item = cartItems.find((i) => i.slug === slug);
+    if (!item) return;
+
+    if (item.qty === 1) {
+      dispatch(removeFromCart(slug));
+    } else {
+      dispatch(addToCart(item, item.qty - 1));
+    }
   };
 
   const totalPrice = useMemo(() => {
@@ -91,8 +92,6 @@ export default function CartPage() {
   };
 
   const placeOrder = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
     if (!user) {
       alert("Please login first");
       return;
@@ -162,9 +161,7 @@ Address: ${address}`;
 
       window.open(whatsappURL, "_blank");
 
-      localStorage.removeItem("cart");
-      setCartItems([]);
-      window.dispatchEvent(new Event("cartUpdated"));
+      dispatch(clearCart());
     } else {
       alert("Something went wrong");
     }
