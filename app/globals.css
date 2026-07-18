@@ -2450,7 +2450,7 @@ nav {
   .book-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 14px;
+    gap: 6px;
   }
 
   .book-card {
