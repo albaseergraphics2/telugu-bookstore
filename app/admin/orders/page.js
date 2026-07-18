@@ -21,7 +21,6 @@ export default function AdminOrders() {
     }
   };
 
-  // ✅ SAVE DELIVERY + STATUS
   const updateStatus = async (id, status, deliveryType, deliveryCharge) => {
     await fetch("/api/admin/orders", {
       method: "PUT",
