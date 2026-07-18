@@ -419,6 +419,7 @@ nav {
 .book-info {
   padding: 10px;
   display: flex;
+  flex-direction: column;
   text-align: center;
   height: 100%;
 }
@@ -1491,12 +1492,6 @@ nav {
 .book-name {
   font-size: 15px;
   font-weight: 500;
-}
-
-.book-info {
-  display: flex;
-  gap: 30px;
-  align-items: center;
 }
 
 .address-card {
@@ -3078,7 +3073,6 @@ nav {
 
   .book-info {
     display: flex;
-    gap: 12px;
     align-items: center;
     font-size: 13px;
   }
