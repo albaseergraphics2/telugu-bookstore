@@ -145,8 +145,8 @@ nav {
 
 .cart-badge {
   position: absolute;
-  top: 3px;
-  right: -10px;
+  top: -7px;
+  right: -7px;
   background: red;
   color: white;
   font-size: 10px;
@@ -419,8 +419,6 @@ nav {
 .book-info {
   padding: 10px;
   display: flex;
-  flex-direction: column;
-  flex: 1;
   text-align: center;
   height: 100%;
 }
@@ -1398,81 +1396,173 @@ nav {
 
 /* user Orders Page */
 .orders-page {
-  padding: 30px 20px;
+  padding: 40px 60px;
+  min-height: 70vh;
 }
 
 .orders-title {
   text-align: center;
-  margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
   color: #0a5c36;
 }
 
 .orders-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 800px;
-  margin: auto;
+  gap: 24px;
+}
+
+.orders-page {
+  padding: 15px 10px !important;
+  min-height: auto !important;
 }
 
 .order-card {
-  background: #ffffff;
-  padding: 18px;
-  border-radius: 10px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
 }
 
-.order-id {
+.order-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px 24px;
+  border-bottom: 1px solid #ececec;
 }
 
-.order-card h3 {
+.order-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #222;
+}
+
+.order-header p {
+  margin-top: 6px;
+  color: #666;
   font-size: 14px;
-  margin-bottom: 6px;
-  color: #555;
 }
 
-.order-card p {
-  margin: 4px 0;
-  font-size: 14px;
-}
-
-.order-items {
-  margin-top: 10px;
-  border-top: 1px solid #eee;
-  padding-top: 10px;
-}
-
-.order-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  padding: 4px 0;
-}
-
-.order-address {
-  display: flex;
-  justify-content: space-between;
-}
-
-.order-address p {
-  text-align: start !important;
-}
-
-.order-card p:nth-of-type(2) {
+.order-status {
+  padding: 7px 18px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
+
+}
+
+.order-status.pending {
+  color: #856404;
+  background: #fff3cd;
+}
+
+.order-section {
+  padding: 10px 24px;
+  border-bottom: 1px solid #ececec;
+}
+
+.order-section:last-child {
+  border-bottom: none;
+}
+
+.order-section h4 {
+  font-size: 17px;
+  color: #222;
+}
+
+.book-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed #eee;
+}
+
+.book-row:last-child {
+  border-bottom: none;
+}
+
+.book-name {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.book-info {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.address-card {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.address-card p {
+  margin: 6px 0;
+  text-align: left;
+}
+
+.customer-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.payment-summary {
+  padding: 10px 24px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 15px;
+}
+
+.grand-total {
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  font-size: 18px;
+  font-weight: 700;
   color: #0a5c36;
 }
 
-.orders-page p {
-  text-align: center;
-  color: #777;
+.order-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 24px;
 }
 
-.invoice-page {
-  padding: 40px 50px;
+.invoice-btn {
+  width: 180px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: #0a5c36;
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 600;
+  transition: .25s;
+}
+
+.invoice-btn:hover {
+  background: #08492b;
+}
+
+.order-count {
+  color: #0a5c36;
+  font-size: 22px;
+  font-weight: 600;
 }
 
 /* admin order page  */
@@ -1518,7 +1608,8 @@ nav {
 .save-delivery-btn {
   margin-top: 8px;
   padding: 8px 12px;
-  background-color: #28a745; /* green */
+  background-color: #28a745;
+  /* green */
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -1534,6 +1625,7 @@ nav {
 .save-delivery-btn:active {
   transform: scale(0.97);
 }
+
 /* Admin buttons */
 .admin-invoice-btns {
   display: flex;
@@ -2453,9 +2545,10 @@ nav {
     font-size: 18px;
   }
 
-  .bookheading{
-     margin: 40px 0px 20px 5px;
+  .bookheading {
+    margin: 40px 0px 20px 5px;
   }
+
   .allbook-img {
     height: 170px;
   }
@@ -2503,6 +2596,13 @@ nav {
     flex-direction: column;
     text-align: center;
     padding: 22px;
+    gap: 30px;
+  }
+
+  .book-details-info p {
+    color: #4b5563;
+    font-size: 15px;
+    line-height: 1.7;
   }
 
   .book-details-info {
@@ -2518,7 +2618,7 @@ nav {
   }
 
   .book-details-info .price {
-    font-size: 20px;
+    font-size: 25px;
   }
 
   .thumb-images img {
@@ -2535,6 +2635,7 @@ nav {
   .footer-container {
     flex-direction: column;
     text-align: center;
+    margin-bottom: 16px;
   }
 
   .footer-left .logo {
@@ -2545,11 +2646,14 @@ nav {
     font-size: 13px;
   }
 
+  .footer-right a {
+    font-size: 12px;
+  }
+
   .footer-right {
     flex-direction: row;
     justify-content: center;
-    gap: 16px;
-    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .footer-link {
@@ -2801,6 +2905,263 @@ nav {
 
   .sort-btn {
     margin-left: auto;
+  }
+
+  /* cart */
+  .price-row {
+    display: flex;
+    align-items: center;
+  }
+
+  .price-row p:last-child {
+    margin-left: auto;
+    font-weight: 600;
+  }
+
+  .cart-summary {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+  }
+
+  .summary-title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .summary-box {
+    background: #f8f8f8;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .summary-note {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.3;
+  }
+
+  .summary-note p {
+    margin-bottom: 10px;
+  }
+
+  .user-details {
+    flex-direction: column;
+    gap: 0px;
+    margin-bottom: 15px;
+    display: flex;
+  }
+
+  .user-details h3 {
+    margin-bottom: 15px;
+  }
+
+  .user-details input,
+  .user-details textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+
+  .user-details textarea {
+    min-height: 90px;
+    resize: vertical;
+  }
+
+  .checkout-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* My order page */
+  .order-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .order-header h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #222;
+  }
+
+  .order-header p {
+    margin: 3px 0 0;
+    font-size: 12px;
+    color: #777;
+  }
+
+  .order-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .order-status.pending {
+    background: #FFF3CD;
+    color: #856404;
+  }
+
+  .order-status.processing {
+    background: #DBEAFE;
+    color: #1D4ED8;
+  }
+
+  .order-status.shipped {
+    background: #EDE9FE;
+    color: #6D28D9;
+  }
+
+  .order-status.delivered {
+    background: #DCFCE7;
+    color: #15803D;
+  }
+
+  .order-section {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .order-section h4 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: #111;
+  }
+
+  .book-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .book-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    max-width: 70%;
+  }
+
+  .book-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 13px;
+  }
+
+  .book-info strong {
+    color: #111;
+  }
+
+  .address-card {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .address-card p {
+    margin: 2px 0;
+    width: 100%;
+    text-align: left;
+  }
+
+  .customer-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 4px;
+  }
+
+  .phone {
+    margin-top: 4px;
+  }
+
+  .payment-summary {
+    padding: 10px 12px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 14px;
+  }
+
+  .grand-total {
+    border-top: 1px solid #ddd;
+    margin-top: 6px;
+    padding-top: 8px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .order-actions {
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px 12px;
+  }
+
+  .invoice-btn,
+  .print-btn {
+    flex: 1;
+    padding: 9px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .invoice-btn {
+    background: #0F766E;
+    color: #fff;
+  }
+
+  .print-btn {
+    border: none;
+    background: #2563EB;
+    color: #fff;
   }
 }
 

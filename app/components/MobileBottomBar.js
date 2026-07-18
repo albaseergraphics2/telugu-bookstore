@@ -1,36 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FaHome, FaHeart, FaShoppingCart, FaBars, FaBook } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import {
+  FaHome,
+  FaShoppingCart,
+  FaBars,
+  FaBook,
+} from "react-icons/fa";
 
 export default function MobileBottomBar() {
-  const [cartCount, setCartCount] = useState(0);
-
-  useEffect(() => {
-    const updateCart = () => {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      setCartCount(cart.length);
-    };
-    updateCart();
-    window.addEventListener("cartUpdated", updateCart);
-    return () => {
-      window.removeEventListener("cartUpdated", updateCart);
-    };
-  }, []);
+  const { cartItems } = useSelector((state) => state.cart);
 
   return (
     <div className="mobile-bar">
-
       <Link href="/" className="bar-item">
         <FaHome />
         <span>Home</span>
       </Link>
-
-      {/* <Link href="/favorites" className="bar-item">
-        <FaHeart />
-        <span>Fav</span>
-      </Link> */}
 
       <Link href="/books" className="bar-item">
         <FaBook />
@@ -40,8 +27,10 @@ export default function MobileBottomBar() {
       <Link href="/cart" className="bar-item cart-icon">
         <div style={{ position: "relative" }}>
           <FaShoppingCart />
-          {cartCount > 0 && (
-            <span className="cart-badge">{cartCount}</span>
+          {cartItems.length > 0 && (
+            <span className="cart-badge">
+              {cartItems.length}
+            </span>
           )}
         </div>
         <span>Cart</span>
@@ -51,7 +40,6 @@ export default function MobileBottomBar() {
         <FaBars />
         <span>Menu</span>
       </Link>
-
     </div>
   );
 }

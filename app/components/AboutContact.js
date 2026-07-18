@@ -1,19 +1,20 @@
 export default function AboutContact() {
   return (
-    <section className="about-contact" id="contact">
+    <section className="about-contact" id="about">
       <div className="about-contact-container">
         <div className="about-box">
           <h2>About Us</h2>
 
           <p>
-            Telugu Bookstore provides authentic Islamic books in
-            Arabic, Urdu, Telugu and English. We supply Tafsir, Hadith,
-            Seerah and children Islamic books.
+            Telugu Bookstore provides a wide range of Islamic books in
+            Arabic, Urdu, Telugu, and English. Our collection includes
+            Tafsir, Hadith, Seerah, children's Islamic books, and more.
           </p>
 
           <p>
-            We also offer book printing, DTP and binding services for
-            schools and individuals.
+            We also provide book printing, DTP, binding, bulk printing,
+            and distribution services for individuals,
+            organizations, and publishers.
           </p>
         </div>
       </div>

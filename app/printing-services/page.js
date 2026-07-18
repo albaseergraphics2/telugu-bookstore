@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import AboutContact from "../components/AboutContact";
-import Contactus from "../components/contactus";
 import PrintingService from "../components/PrintingService";
 
 export default function MenuPage() {
@@ -11,7 +9,7 @@ export default function MenuPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 200);
+    }, 100);
     return () => clearTimeout(timer);
   }, []);
 
@@ -26,7 +24,7 @@ export default function MenuPage() {
 
   return (
     <div className="menu-page">
-      <AboutContact />
+      <PrintingService />
     </div>
   );
 }

@@ -20,10 +20,7 @@ export default function BookDetails({ params }) {
 
         if (data.success) {
           setBook(data.book);
-
-          // ✅ FIX: combine BOTH main img + images[]
           let imagesArray = [];
-
           if (data.book.img) {
             imagesArray.push(data.book.img);
           }
@@ -35,7 +32,6 @@ export default function BookDetails({ params }) {
             ];
           }
 
-          // remove empty values
           imagesArray = imagesArray.filter(
             (img) => img && img.trim() !== ""
           );
@@ -72,7 +68,6 @@ export default function BookDetails({ params }) {
     );
   }
 
-  // ✅ FIX: combine images again here
   let imagesList = [];
 
   if (book.img) {
@@ -86,66 +81,67 @@ export default function BookDetails({ params }) {
   imagesList = imagesList.filter((img) => img && img.trim() !== "");
 
   return (
-    <section className="book-details">
-      <Link href="/books" className="back-home">
-        ← Back to Books
-      </Link>
+    <>
+      <section className="book-details">
+        <Link href="/books" className="back-home">
+          ← Back to Books
+        </Link>
 
-      <div className="book-details-container">
-        <div className="book-details-img">
-          <div className="main-image">
-            <img
-              src={
-                mainImage?.trim()
-                  ? mainImage.trim()
-                  : "/images/No_Image_Available.jpg"
-              }
-              alt={book.title}
-            />
-          </div>
-
-          <div className="thumb-images">
-            {imagesList.map((img, i) => (
+        <div className="book-details-container">
+          <div className="book-details-img">
+            <div className="main-image">
               <img
-                key={i}
-                src={img?.trim() || "/images/No_Image_Available.jpg"}
-                alt="thumbnail"
-                onClick={() => setMainImage(img?.trim())}
+                src={
+                  mainImage?.trim()
+                    ? mainImage.trim()
+                    : "/images/No_Image_Available.jpg"
+                }
+                alt={book.title}
               />
-            ))}
+            </div>
+
+            <div className="thumb-images">
+              {imagesList.map((img, i) => (
+                <img
+                  key={i}
+                  src={img?.trim() || "/images/No_Image_Available.jpg"}
+                  alt="thumbnail"
+                  onClick={() => setMainImage(img?.trim())}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="book-details-info">
+            <h1>{book.title}</h1>
+            <h2 className="telugu-title">{book.teluguTitle}</h2>
+            <p className="author">Author: {book.author}</p>
+            <p className="telugu-author">రచయిత: {book.teluguAuthor}</p>
+            <p className="desc">{book.desc}</p>
+            <p className="telugu-desc">{book.teluguDesc}</p>
+            <p className="price">₹ {book.price}</p>
+
+            <p><strong>Pages:</strong> {book.pages}</p>
+            <p><strong>Binding:</strong> {book.binding}</p>
+            {/* <p><strong>Size:</strong> {book.size}</p> */}
+            <p><strong>Language:</strong> {book.language}</p>
+            {/* <p><strong>Category:</strong> {book.category}</p> */}
+
+            <div style={{ textAlign: "center" }}>
+              {book.inStock !== false ? (
+                <AddToCart book={book} />
+              ) : (
+                <div className="book-out-of-stock">
+                  <span className="book-stock-badge">
+                    Out of Stock
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-
-        <div className="book-details-info">
-          <h1>{book.title}</h1>
-          <h2 className="telugu-title">{book.teluguTitle}</h2>
-          <p className="author">Author: {book.author}</p>
-          <p className="telugu-author">రచయిత: {book.teluguAuthor}</p>
-          <p className="desc">{book.desc}</p>
-          <p className="telugu-desc">{book.teluguDesc}</p>
-          <p className="price">₹ {book.price}</p>
-
-          <p><strong>Pages:</strong> {book.pages}</p>
-          <p><strong>Binding:</strong> {book.binding}</p>
-          <p><strong>Size:</strong> {book.size}</p>
-          <p><strong>Language:</strong> {book.language}</p>
-          <p><strong>Category:</strong> {book.category}</p>
-
-          <div style={{ textAlign: "center" }}>
-            {book.inStock !== false ? (
-              <AddToCart book={book} />
-            ) : (
-              <div className="book-out-of-stock">
-                <span className="book-stock-badge">
-                  Out of Stock
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
+      </section>
       <PopularBooks />
-    </section>
+    </>
   );
 }

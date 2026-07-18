@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -23,6 +23,7 @@ export default function CartPage() {
 
   const { cartItems } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.auth);
+  const router = useRouter();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -62,9 +63,7 @@ export default function CartPage() {
     const item = cartItems.find((i) => i.slug === slug);
     if (!item) return;
 
-    if (item.qty === 1) {
-      dispatch(removeFromCart(slug));
-    } else {
+    if (item.qty > 1) {
       dispatch(addToCart(item, item.qty - 1));
     }
   };
@@ -74,6 +73,10 @@ export default function CartPage() {
       const price = Number(item.price?.replace("₹", "") || 0);
       return total + (price * item.qty);
     }, 0);
+  }, [cartItems]);
+
+  const totalBooks = useMemo(() => {
+    return cartItems.reduce((total, item) => total + item.qty, 0);
   }, [cartItems]);
 
   const getAddressFromPincode = async (pin) => {
@@ -162,6 +165,9 @@ Address: ${address}`;
       window.open(whatsappURL, "_blank");
 
       dispatch(clearCart());
+      setTimeout(() => {
+        router.push("/orders");
+      }, 500);
     } else {
       alert("Something went wrong");
     }
@@ -218,9 +224,10 @@ Address: ${address}`;
 
                 <div className="cart-info">
                   <h3>{item.title}</h3>
-                  <p>{item.author}</p>
-                  <p>Price: {item.price}</p>
-                  <p>Subtotal: ₹{subTotal}</p>
+                  <div className="price-row">
+                    <p>Price: ₹{item.price}</p>
+                    <p>Subtotal: ₹{subTotal}</p>
+                  </div>
 
                   <div className="qty-box">
                     <button onClick={() => decreaseQty(item.slug)}>-</button>
@@ -237,18 +244,32 @@ Address: ${address}`;
           })}
 
           <div className="cart-summary">
-            <h2>Total: ₹{totalPrice}</h2>
-            <h6 style={{ fontSize: "16px", marginTop: "10px", marginBottom: "6px" }}>
-              Delivery Charges Apply
-            </h6>
+            <h2 className="summary-title">Order Summary</h2>
 
-            <h6 style={{ fontSize: "14px", color: "#666" }}>
-              Order details and final charges will be confirmed on WhatsApp.
-            </h6>
+            <div className="summary-box">
+              <div className="summary-row">
+                <span>Total Books</span>
+                <strong>{totalBooks}</strong>
+              </div>
+
+              <div className="summary-row">
+                <span>Total Amount</span>
+                <strong>₹{totalPrice}</strong>
+              </div>
+
+              <hr className="summary-divider" />
+
+              <div className="summary-note">
+                <p>Shipping charges may apply depending on your order and delivery location.</p>
+                <p>Final payable amount will be confirmed on WhatsApp.</p>
+              </div>
+            </div>
+            <hr className="summary-divider" />
             <div className="user-details">
+              <h3>Customer Details</h3>
               <input
                 type="text"
-                placeholder="Enter your name"
+                placeholder="Full Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -256,15 +277,14 @@ Address: ${address}`;
 
               <input
                 type="tel"
-                placeholder="Enter your phone number"
+                placeholder="Phone Number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
               />
 
-              {/* ✅ FIXED */}
               <textarea
-                placeholder="Enter your address"
+                placeholder="Full Address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 required
@@ -274,7 +294,7 @@ Address: ${address}`;
                 type="text"
                 value={pincode}
                 onChange={(e) => setPincode(e.target.value)}
-                placeholder="Enter pincode"
+                placeholder="Pincode"
               />
 
               <button

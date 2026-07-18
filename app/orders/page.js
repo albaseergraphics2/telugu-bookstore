@@ -8,7 +8,7 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
   const { user } = useSelector((state) => state.auth);
-  
+
   useEffect(() => {
     let timer;
 
@@ -54,7 +54,9 @@ export default function OrdersPage() {
     <section className="orders-page">
       <Link href="/" className="back-home">← Back to Home</Link>
 
-      <h1 className="orders-title">My Orders</h1>
+      <h1 className="orders-title">
+        My Orders <span className="order-count">({orders.length})</span>
+      </h1>
 
       {orders.length === 0 ? (
         <p>No orders found</p>
@@ -63,45 +65,100 @@ export default function OrdersPage() {
           {orders.map((order) => (
             <div key={order._id} className="order-card">
 
-              <div className="order-id">
-                <h3><b>Order ID:</b> {order._id}</h3>
-                <p><b>Date:</b> {new Date(order.createdAt).toLocaleString()}</p>
+              {/* Header */}
+              <div className="order-header">
+                <div>
+                  <h3>Order #{order.invoiceId || order._id.slice(-6).toUpperCase()}</h3>
+                  <p>{new Date(order.createdAt).toLocaleString()}</p>
+                </div>
+
+                <span className={`order-status ${order.status?.toLowerCase()}`}>
+                  {order.status}
+                </span>
               </div>
 
-              {/* ✅ FIXED ITEMS */}
-              <div className="order-items">
+              {/* Books */}
+              <div className="order-section">
+                <h4>Books ({order.items.length})</h4>
+
                 {order.items.map((item, index) => (
-                  <div key={index} className="order-item">
-                    <p>
-                      {item.bookId?.title || "Book"} - <b>Qty: {item.qty}</b>
-                    </p>
-                    <p>₹ {item.bookId?.price || "-"}</p>
+                  <div key={index} className="book-row">
+                    <span className="book-name">
+                      {item.bookId?.title || "Book"}
+                    </span>
+
+                    <div className="book-info">
+                      <span>Qty: {item.qty}</span>
+                      <strong>₹ {item.bookId?.price || "-"}</strong>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              {/* ✅ FIXED ADDRESS */}
-              <div className="order-address">
-                <div>
+              {/* Address */}
+              <div className="order-section">
+                <h4>Delivery Address</h4>
+
+                <div className="address-card">
+                  <p className="customer-name">{order.name}</p>
+
+                  <p>{order.address?.full}</p>
+
                   <p>
-                    <b>Address:</b>{" "}
-                    {order.address?.full || "-"}, {order.address?.pincode || "-"}
+                    {order.address?.area}, {order.address?.district}
                   </p>
-                  <p><b>Phone No:</b> {order.phone}</p>
-                </div>
-                <div>
-                  <p><b>Delivery Type:</b> {order.deliveryType || "Not Set"}</p>
-                  <p><b>Delivery Charges:</b> ₹ {order.deliveryCharge || 0}</p>
-                </div>
-                <div>
-                  <p><b>Status:</b> {order.status}</p>
-                  <p><b>Total:</b> ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}</p>
+
+                  <p>
+                    {order.address?.state} - {order.address?.pincode}
+                  </p>
+
+                  <p className="phone">
+                    Phone: {order.phone}
+                  </p>
                 </div>
               </div>
 
-              <Link href={`/invoice/${order._id}`}>
-                View Invoice
-              </Link>
+              {/* Payment */}
+              <div className="payment-summary">
+
+                <div className="summary-row">
+                  <span>Books Total</span>
+                  <span>₹ {order.totalAmount || 0}</span>
+                </div>
+
+                <div className="summary-row">
+                  <span>Delivery Type</span>
+                  <span>{order.deliveryType || "To Be Confirmed"}</span>
+                </div>
+
+                <div className="summary-row">
+                  <span>Delivery Charges</span>
+                  <span>
+                    {order.deliveryCharge > 0
+                      ? `₹ ${order.deliveryCharge}`
+                      : "To Be Confirmed"}
+                  </span>
+                </div>
+
+                <div className="summary-row grand-total">
+                  <span>Grand Total</span>
+                  <strong>
+                    ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}
+                  </strong>
+                </div>
+
+              </div>
+
+
+              <div className="order-actions">
+
+                <Link
+                  href={`/invoice/${order._id}`}
+                  className="invoice-btn"
+                >
+                  View Invoice
+                </Link>
+              </div>
 
             </div>
           ))}
