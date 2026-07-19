@@ -36,7 +36,23 @@ export default function RootLayout({ children }) {
           <Navbar />
           <main className="min-h-screen">
             {children}
-            <Toaster position="top-center" />
+            <Toaster
+              position="top-right"
+              containerStyle={{
+                top: "75px",
+                right: "20px",
+              }}
+              toastOptions={{
+                duration: 2500,
+                style: {
+                  background: "#404040",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  padding: "12px 16px",
+                  fontSize: "14px",
+                }
+              }}
+            />
             <Analytics />
           </main>
           <Footer />

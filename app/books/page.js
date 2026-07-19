@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import AddToCart from "../components/AddToCart";
+import toast from "react-hot-toast";
 
 export default function BooksPage() {
   const [search, setSearch] = useState("");
@@ -19,7 +20,8 @@ export default function BooksPage() {
           setBooks(data.books);
         }
       } catch (err) {
-        console.log(err);
+        console.error(err);
+        toast.error("Failed to load books");
       }
       setLoading(false);
     };

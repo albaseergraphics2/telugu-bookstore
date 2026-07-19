@@ -1046,28 +1046,83 @@ nav {
 
 }
 
-/* invoice page */
+/* Invoice Page */
+.invoice-page {
+  padding: 40px 60px;
+  min-height: 70vh;
+}
+
 .invoice-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
 }
 
 .invoice-card {
-  width: 400px;
+  width: 420px;
   background: #fff;
   padding: 25px;
   border-radius: 10px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
+.invoice-card h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #0a5c36;
+}
+
+.invoice-card h3 {
+  margin: 15px 0 10px;
+  color: #222;
+}
+
+.invoice-card p {
+  margin: 8px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
 .invoice-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 8px 0;
+  gap: 15px;
 }
+
+.invoice-item span:first-child {
+  flex: 1;
+}
+
+.invoice-item span:last-child {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.invoice-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.invoice-buttons button {
+  padding: 10px 20px;
+  background: #0a5c36;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.invoice-buttons button:hover {
+  background: #08492b;
+}
+
 
 .reset-card {
   background: #fff;
@@ -2815,18 +2870,66 @@ nav {
     overflow-x: auto;
   }
 
+  /* invoice page  */
   .invoice-page {
-    flex: 1;
-    padding: 30px !important;
+    padding: 15px 10px;
+    min-height: auto;
+  }
+
+  .invoice-container {
+    width: 100%;
+    padding: 0;
   }
 
   .invoice-card {
-    background: #fff;
-    padding: 25px;
+    width: 100%;
+    max-width: 100%;
+    padding: 18px;
     border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    width: 360px;
+    box-sizing: border-box;
+  }
+
+  .invoice-card h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+
+  .invoice-card h3 {
+    font-size: 18px;
+  }
+
+  .invoice-card p {
     font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .invoice-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 10px 0;
+  }
+
+  .invoice-item span:first-child {
+    flex: 1;
+    word-break: break-word;
+  }
+
+  .invoice-item span:last-child {
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .invoice-buttons {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .invoice-buttons button {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
   }
 
   .books-header {

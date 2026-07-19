@@ -5,6 +5,7 @@ import {
   addToCart,
   removeFromCart,
 } from "@/redux/actions/cartActions";
+import toast from "react-hot-toast";
 
 export default function AddToCart({ book }) {
   const dispatch = useDispatch();
@@ -16,6 +17,7 @@ export default function AddToCart({ book }) {
 
   const addFirst = () => {
     dispatch(addToCart(book, 1));
+    toast.success(`Added to cart`);
   };
 
   const increase = () => {
@@ -25,6 +27,7 @@ export default function AddToCart({ book }) {
   const decrease = () => {
     if (qty === 1) {
       dispatch(removeFromCart(book.slug));
+      toast.success(`Removed from cart`);
     } else {
       dispatch(addToCart(book, qty - 1));
     }
