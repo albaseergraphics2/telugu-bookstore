@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from "react";
-import { FaWhatsapp, FaBook, FaShoppingCart } from "react-icons/fa";
+import { FaWhatsapp, FaBook, FaShoppingCart} from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import AuthPopup from "./AuthPopup";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, loadUser } from "@/redux/actions/authActions";
+
 
 export default function Navbar() {
   const router = useRouter();

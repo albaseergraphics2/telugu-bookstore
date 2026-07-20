@@ -145,7 +145,7 @@ nav {
 
 .cart-badge {
   position: absolute;
-  top: -7px;
+  top: 0px;
   right: -7px;
   background: red;
   color: white;
@@ -1473,10 +1473,7 @@ nav {
   gap: 24px;
 }
 
-.orders-page {
-  padding: 15px 10px !important;
-  min-height: auto !important;
-}
+
 
 .order-card {
   background: #fff;
@@ -2261,6 +2258,15 @@ nav {
   font-weight: 600;
   min-width: 20px;
   text-align: center;
+}
+
+.price-row{
+  display: flex;
+  justify-content: space-between;
+}
+
+.price-row p:last-child{
+  font-weight: 600;
 }
 
 /* USER DETAILS */
@@ -3092,6 +3098,11 @@ nav {
   }
 
   /* My order page */
+  .orders-page {
+    padding: 20px 15px !important;
+    min-height: auto !important;
+  }
+
   .order-card {
     background: #fff;
     border: 1px solid #e5e7eb;
@@ -3260,6 +3271,18 @@ nav {
     background: #2563EB;
     color: #fff;
   }
+
+  .cart-badge {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  background: red;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+}
 }
 
 @media (min-width:769px) {
