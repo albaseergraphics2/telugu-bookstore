@@ -93,10 +93,10 @@ export default function Policies() {
         </p>
 
       </section>
-      <hr/>
+      {/* <hr/> */}
 
       {/* 💰 REFUND */}
-      <section>
+      {/* <section>
         <h2>Refund Policy</h2>
         <p>
           Refunds are only applicable for damaged, defective, or incorrect items.
@@ -111,7 +111,7 @@ export default function Policies() {
         <p>
           Approved refunds will be processed via UPI within 3–5 business days.
         </p>
-      </section>
+      </section> */}
 
 
 

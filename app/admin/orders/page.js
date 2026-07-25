@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
+import toast from "react-hot-toast";
 export default function AdminOrders() {
 
   const [orders, setOrders] = useState([]);
@@ -22,12 +22,37 @@ export default function AdminOrders() {
   };
 
   const updateStatus = async (id, status, deliveryType, deliveryCharge) => {
-    await fetch("/api/admin/orders", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status, deliveryType, deliveryCharge }),
-    });
-    fetchOrders();
+    const toastId = toast.loading("Updating order...");
+
+    try {
+      const res = await fetch("/api/admin/orders", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+          status,
+          deliveryType,
+          deliveryCharge,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        await fetchOrders();
+        toast.success("Order updated successfully", { id: toastId });
+      } else {
+        toast.error(data.message || "Failed to update order", {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      toast.error("Something went wrong", {
+        id: toastId,
+      });
+    }
   };
 
   const indexOfLast = currentPage * ordersPerPage;
@@ -89,7 +114,7 @@ export default function AdminOrders() {
               <div key={order._id} className="order-row">
 
                 <div>
-                  <p><b>Order ID: </b>{order._id}</p>
+                  <p><b>Order ID:</b> {order.invoiceId || order._id.slice(-6).toUpperCase()}</p>
                   <p><b>Date: </b>{new Date(order.createdAt).toLocaleString()}</p>
                 </div>
 

@@ -5,7 +5,7 @@ import BookCard from "./BookCard";
 import AddBookPopup from "./AddBookPopup";
 import EditBookPopup from "./EditBookPopup";
 import DeletePopup from "./DeletePopup";
-
+import toast from "react-hot-toast";
 export default function AdminBooks() {
   const [books, setBooks] = useState([]);
   const [form, setForm] = useState({
@@ -34,9 +34,12 @@ export default function AdminBooks() {
     }
   };
 
-  const addBook = async (e) => {
-    e.preventDefault();
+const addBook = async (e) => {
+  e.preventDefault();
 
+  const toastId = toast.loading("Adding book...");
+
+  try {
     const res = await fetch("/api/admin/books", {
       method: "POST",
       headers: {
@@ -51,12 +54,26 @@ export default function AdminBooks() {
       setShowAdd(false);
       resetForm();
       fetchBooks();
+
+      toast.success("Book added successfully", { id: toastId });
+    } else {
+      toast.error(data.message || "Failed to add book", {
+        id: toastId,
+      });
     }
-  };
+  } catch (error) {
+    toast.error("Something went wrong", {
+      id: toastId,
+    });
+  }
+};
 
-  const updateBook = async (e) => {
-    e.preventDefault();
+const updateBook = async (e) => {
+  e.preventDefault();
 
+  const toastId = toast.loading("Updating book...");
+
+  try {
     const res = await fetch("/api/admin/books", {
       method: "PUT",
       headers: {
@@ -75,11 +92,27 @@ export default function AdminBooks() {
       setEditId(null);
       resetForm();
       fetchBooks();
-    }
-  };
 
-  const deleteBook = async () => {
-    await fetch("/api/admin/books", {
+      toast.success("Book updated successfully", {
+        id: toastId,
+      });
+    } else {
+      toast.error(data.message || "Failed to update book", {
+        id: toastId,
+      });
+    }
+  } catch (error) {
+    toast.error("Something went wrong", {
+      id: toastId,
+    });
+  }
+};
+
+const deleteBook = async () => {
+  const toastId = toast.loading("Deleting book...");
+
+  try {
+    const res = await fetch("/api/admin/books", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -89,12 +122,34 @@ export default function AdminBooks() {
       }),
     });
 
-    setDeleteId(null);
-    fetchBooks();
-  };
+    const data = await res.json();
 
-  const toggleActive = async (id, currentStatus) => {
-    await fetch("/api/admin/books", {
+    if (data.success) {
+      setDeleteId(null);
+      fetchBooks();
+
+      toast.success("Book deleted successfully", {
+        id: toastId,
+      });
+    } else {
+      toast.error(data.message || "Failed to delete book", {
+        id: toastId,
+      });
+    }
+  } catch (error) {
+    toast.error("Something went wrong", {
+      id: toastId,
+    });
+  }
+};
+
+const toggleActive = async (id, currentStatus) => {
+  const toastId = toast.loading(
+    currentStatus ? "Hiding book..." : "Showing book..."
+  );
+
+  try {
+    const res = await fetch("/api/admin/books", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -105,11 +160,36 @@ export default function AdminBooks() {
       }),
     });
 
-    fetchBooks();
-  };
+    const data = await res.json();
 
-  const toggleStock = async (id, currentStatus) => {
-    await fetch("/api/admin/books", {
+    if (data.success) {
+      fetchBooks();
+
+      toast.success(
+        currentStatus
+          ? "Book hidden successfully"
+          : "Book visible successfully",
+        { id: toastId }
+      );
+    } else {
+      toast.error(data.message || "Operation failed", {
+        id: toastId,
+      });
+    }
+  } catch {
+    toast.error("Something went wrong", {
+      id: toastId,
+    });
+  }
+};
+
+const toggleStock = async (id, currentStatus) => {
+  const toastId = toast.loading(
+    currentStatus ? "Marking out of stock..." : "Marking in stock..."
+  );
+
+  try {
+    const res = await fetch("/api/admin/books", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -120,8 +200,28 @@ export default function AdminBooks() {
       }),
     });
 
-    fetchBooks();
-  };
+    const data = await res.json();
+
+    if (data.success) {
+      fetchBooks();
+
+      toast.success(
+        currentStatus
+          ? "Book marked as Out of Stock"
+          : "Book marked as In Stock",
+        { id: toastId }
+      );
+    } else {
+      toast.error(data.message || "Operation failed", {
+        id: toastId,
+      });
+    }
+  } catch {
+    toast.error("Something went wrong", {
+      id: toastId,
+    });
+  }
+};
 
   const resetForm = () => {
     setForm({

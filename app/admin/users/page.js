@@ -162,7 +162,7 @@ export default function AdminUsers() {
                     padding: "10px 0",
                   }}
                 >
-                  <p><b>Order ID:</b> {order._id}</p>
+                  <p><b>Order ID:</b> {order.invoiceId || order._id.slice(-6).toUpperCase()}</p>
                   <p><b>Date:</b> {new Date(order.createdAt).toLocaleString()}</p>
                   <p><b>Total:</b> ₹{order.totalAmount}</p>
                   <p><b>Status:</b> {order.status}</p>

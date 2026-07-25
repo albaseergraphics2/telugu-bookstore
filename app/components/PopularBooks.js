@@ -52,7 +52,7 @@ export default function PopularBooks() {
           <div className="book-card" key={book._id}>
 
             <div className="book-img">
-              <img src={book.img || "/placeholder.png"} alt={book.title} />
+              <img src={book.img || "/images/No_Image_Available.jpg"} alt={book.title} />
             </div>
 
             <div className="book-info">

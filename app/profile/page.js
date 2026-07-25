@@ -125,7 +125,7 @@ export default function ProfilePage() {
 
         <div className="profile-row">
           <span>Username</span>
-          <p>@{user.username}</p>
+          <p>{user.username}</p>
         </div>
 
         <div className="profile-row">

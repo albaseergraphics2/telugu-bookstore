@@ -123,7 +123,7 @@ export default function BookDetails({ params }) {
 
             <p><strong>Pages:</strong> {book.pages}</p>
             <p><strong>Binding:</strong> {book.binding}</p>
-            {/* <p><strong>Size:</strong> {book.size}</p> */}
+            <p><strong>Size:</strong> {book.size}</p>
             <p><strong>Language:</strong> {book.language}</p>
             {/* <p><strong>Category:</strong> {book.category}</p> */}
 
