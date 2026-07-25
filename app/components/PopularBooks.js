@@ -48,29 +48,31 @@ export default function PopularBooks() {
       <h1 className="popular-title">Popular Books</h1>
 
       <div className="book-grid">
-        {books.map((book) => (
-          <div className="book-card" key={book._id}>
+{books.map((book) => (
+  <Link
+    key={book._id}
+    className="cardlink"
+    href={`/books/${book.slug}`}
+  >
+    <div className="book-card">
+      <div className="book-img">
+        <img
+          src={book.img || "/images/No_Image_Available.jpg"}
+          alt={book.title}
+        />
+      </div>
 
-            <div className="book-img">
-              <img src={book.img || "/images/No_Image_Available.jpg"} alt={book.title} />
-            </div>
+      <div className="book-info">
+        <h3>{book.title}</h3>
+        <p className="telugu-title">{book.teluguTitle}</p>
 
-            <div className="book-info">
-              <h3>{book.title}</h3>
-              <p className="telugu-title">{book.teluguTitle}</p>
-              <p className="author">Author: {book.author}</p>
-              <p className="telugu-author">రచయిత: {book.teluguAuthor}</p>
-
-              <div className="book-actions">
-                <p className="price">₹ {book.price}</p>
-                <Link href={`/books/${book.slug}`}>
-                  <button className="buy-btn">View Details</button>
-                </Link>
-              </div>
-            </div>
-
-          </div>
-        ))}
+        <div className="book-actions">
+          <p className="price">Rs. {book.price}.00</p>
+        </div>
+      </div>
+    </div>
+  </Link>
+))}
       </div>
 
       <div className="allbooks12">

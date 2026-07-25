@@ -98,61 +98,64 @@ export default function BooksPage() {
         </span>
       </h2>
 
-      <div className="allbooks-grid">
-        {sortedBooks.map((book) => (
-          <div
-            className={`allbook-card ${book.inStock === false ? "out-of-stock-card" : ""
-              }`}
-            key={book.slug}
-          >
-            <div className="allbook-img">
-              <img
-                src={book.img || "/images/No_Image_Available.jpg"}
-                alt={book.title}
-              />
+<div className="allbooks-grid">
+  {sortedBooks.map((book) => (
+    <Link
+      key={book.slug}
+      href={`/books/${book.slug}`}
+      className="cardlink"
+    >
+      <div
+        className={`allbook-card ${
+          book.inStock === false ? "out-of-stock-card" : ""
+        }`}
+      >
+        <div className="allbook-img">
+          <img
+            src={book.img || "/images/No_Image_Available.jpg"}
+            alt={book.title}
+          />
 
-              {book.inStock === false && (
-                <span className="stock-badge">
-                  Out of Stock
-                </span>
-              )}
-            </div>
+          {book.inStock === false && (
+            <span className="stock-badge">
+              Out of Stock
+            </span>
+          )}
+        </div>
 
-            <h3>{book.title}</h3>
-            <p className="telugu-title">{book.teluguTitle}</p>
-            <p className="author">by {book.author}</p>
-            <p className="telugu-author">
-              రచయిత: {book.teluguAuthor}
-            </p>
+       
 
-            {(book.sold > 50) && (
-              <p style={{ color: "green", fontSize: "12px" }}>
-                ⭐ Best Seller
-              </p>
-            )}
+        {(book.sold > 50) && (
+          <p style={{ color: "green", fontSize: "12px" }}>
+            ⭐ Best Seller
+          </p>
+        )}
 
-            {(book.views > 100) && (
-              <p style={{ color: "orange", fontSize: "12px" }}>
-                🔥 Popular
-              </p>
-            )}
+        {(book.views > 100) && (
+          <p style={{ color: "orange", fontSize: "12px" }}>
+            🔥 Popular
+          </p>
+        )}
 
-            <div className="book-actions">
-              <p className="price">₹ {book.price}</p>
+ 
+        
+        {/* <p className="author">by {book.author}</p>
+        <p className="telugu-author">
+          రచయిత: {book.teluguAuthor}
+        </p> */}
+        <div className="book-actions">
+          <h3>{book.title}</h3>
+          <p className="telugu-title">{book.teluguTitle}</p>
+          <p className="price">Rs. {book.price}.00</p>
 
-              <Link href={`/books/${book.slug}`}>
-                <button className="buy-btn">
-                  View Details
-                </button>
-              </Link>
-
-              {book.inStock !== false && (
-                <AddToCart book={book} />
-              )}
-            </div>
-          </div>
-        ))}
+          {/* {book.inStock !== false && (
+            <AddToCart book={book} />
+          )} */}
+        </div>
       </div>
+    </Link>
+  ))}
+</div>
 
       {filteredBooks.length === 0 && (
         <div className="no-result">

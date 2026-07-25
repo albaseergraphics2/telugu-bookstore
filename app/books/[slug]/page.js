@@ -119,13 +119,13 @@ export default function BookDetails({ params }) {
             <p className="telugu-author">రచయిత: {book.teluguAuthor}</p>
             <p className="desc">{book.desc}</p>
             <p className="telugu-desc">{book.teluguDesc}</p>
-            <p className="price">₹ {book.price}</p>
+            <p className="price">Rs. {book.price}.00</p>
 
             <p><strong>Pages:</strong> {book.pages}</p>
             <p><strong>Binding:</strong> {book.binding}</p>
             <p><strong>Size:</strong> {book.size}</p>
             <p><strong>Language:</strong> {book.language}</p>
-            {/* <p><strong>Category:</strong> {book.category}</p> */}
+            <p><strong>Category:</strong> {book.category}</p>
 
             <div style={{ textAlign: "center" }}>
               {book.inStock !== false ? (
