@@ -143,7 +143,7 @@ export default function CheckoutPage() {
             const shippingData = await shippingRes.json();
 
             if (shippingData.success) {
-                setDefaultShipping(shippingData.defaultShipping);
+                setDefaultShipping(shippingData.setting.defaultShipping || 0);
             }
         };
 
@@ -340,6 +340,7 @@ export default function CheckoutPage() {
                             value="online"
                             checked={paymentMethod === "online"}
                             onChange={(e) => setPaymentMethod(e.target.value)}
+                            disabled
                         />
                         Online Payment
                     </label>

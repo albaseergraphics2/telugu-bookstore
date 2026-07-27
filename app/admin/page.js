@@ -36,41 +36,6 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
-  const saveShippingCharge = async () => {
-    if (!defaultShipping) {
-      toast.error("Please enter shipping charge");
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/admin/settings/shipping", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          defaultShipping: Number(defaultShipping),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        toast.success("Shipping charge saved successfully");
-      } else {
-        toast.error(data.message || "Failed to save shipping charge");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
-    }
-  };
-
-  const clearShippingCharge = () => {
-    setDefaultShipping("");
-    toast.success("Input cleared");
-  };
-
   return (
     <div className="admin-dashboard">
 
@@ -78,7 +43,7 @@ export default function AdminDashboard() {
       <p>Welcome Admin 👑</p>
 
       <div className="analytics-grid">
-        <div className="analytics-card">
+        {/* <div className="analytics-card">
           <h3>Default Shipping Charges</h3>
 
           <input
@@ -99,7 +64,7 @@ export default function AdminDashboard() {
             </button>
           </div>
 
-        </div>
+        </div> */}
         <div className="analytics-card">
           <h3>Total Users</h3>
           <p>{stats.users}</p>

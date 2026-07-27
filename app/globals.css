@@ -2251,8 +2251,8 @@ nav {
   background: #fff;
   padding: 20px 12px;
   border-bottom: 1px solid #eee;
-  box-shadow: none;
   border-radius: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .cart-product {
@@ -2355,6 +2355,7 @@ nav {
   background: #f7f7f7;
   border-radius: 12px;
   text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .checkout-btn {
@@ -2581,6 +2582,7 @@ nav {
   border-radius: 10px;
   padding: 25px;
   margin-bottom: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .checkout-card h2 {
@@ -2893,6 +2895,238 @@ nav {
   background: #fff;
 }
 
+/* payment setting page */
+/* ===========================
+   Payment Settings
+=========================== */
+
+.payment-settings {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.payment-settings h2 {
+  color: #0a5c36;
+  margin: 20px 0 12px;
+  border-bottom: 2px solid #0a5c36;
+  padding-bottom: 6px;
+}
+
+.payment-settings h3 {
+  margin: 10px 0;
+  font-size: 15px;
+  color: #333;
+}
+
+/* ===========================
+   Shipping Section
+=========================== */
+
+.shipping-section {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 18px;
+  margin-bottom: 25px;
+  width: 380px;
+}
+
+.shipping-section label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.shipping-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+}
+
+.shipping-input:focus {
+  border-color: #0a5c36;
+}
+
+.shipping-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* ===========================
+   Bank Details
+=========================== */
+
+.payment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.payment-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-item label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.payment-item input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+}
+
+.payment-item input:focus {
+  border-color: #0a5c36;
+}
+
+.payment-item input[type="file"] {
+  padding: 5px;
+}
+
+.payment-item img {
+  width: 180px;
+  height: auto;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* ===========================
+   Mobile Numbers
+=========================== */
+
+.mobile-item {
+  margin-bottom: 10px;
+}
+
+.mobile-item input {
+  width: 320px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* ===========================
+   UPI
+=========================== */
+
+.upi-item {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.upi-item input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* ===========================
+   Buttons
+=========================== */
+
+.add-btn,
+.save-btn,
+.clear-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.add-btn {
+  background: #2563eb;
+  margin: 10px 0 20px;
+}
+
+.add-btn:hover {
+  background: #1d4ed8;
+}
+
+.save-btn {
+  background: #0a5c36;
+}
+
+.save-btn:hover {
+  background: #08462a;
+}
+
+.clear-btn {
+  background: #dc3545;
+}
+
+.clear-btn:hover {
+  background: #b91c1c;
+}
+
+/* ===========================
+   Payment Methods
+=========================== */
+
+.checkbox-group {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.checkbox-group input {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width: 768px) {
+
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shipping-section {
+    width: 100%;
+  }
+
+  .mobile-item input {
+    width: 100%;
+  }
+
+  .upi-item {
+    flex-direction: column;
+  }
+
+  .checkbox-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .payment-item img {
+    width: 140px;
+  }
+}
 
 /* TABLET VIEW */
 

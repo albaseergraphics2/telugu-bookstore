@@ -13,6 +13,7 @@ export default function Sidebar() {
     { name: "Books", path: "/admin/books" },
     { name: "Users", path: "/admin/users" },
     { name: "HeroCarousel", path: "/admin/heroCarousel" },
+    { name: "Payment Settings", path: "/admin/payment-settings" },
   ];
 
   return (

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "../../../../lib/mongodb";
 import Setting from "../../../../models/Setting";
 
+// GET Settings
 export async function GET() {
   try {
     await connectDB();
@@ -11,45 +12,75 @@ export async function GET() {
     if (!setting) {
       setting = await Setting.create({
         defaultShipping: 100,
+        accountHolder: "",
+        bankName: "",
+        accountNumber: "",
+        ifscCode: "",
+        branch: "",
+        qrCode: "",
+        mobileNumbers: [""],
+        upiAccounts: [
+          {
+            upiId: "",
+            mobile: "",
+          },
+        ],
+        codEnabled: true,
+        bankTransferEnabled: true,
+        onlinePaymentEnabled: false,
       });
     }
 
     return NextResponse.json({
       success: true,
-      defaultShipping: setting.defaultShipping,
+      setting,
     });
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      message: error.message,
-    });
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message,
+      },
+      { status: 500 }
+    );
   }
 }
 
+// Save / Update Settings
 export async function POST(req) {
   try {
     await connectDB();
 
-    const { defaultShipping } = await req.json();
+    const body = await req.json();
 
-    let setting = await Setting.findOne();
-
-    if (!setting) {
-      setting = new Setting();
-    }
-
-    setting.defaultShipping = defaultShipping;
-
-    await setting.save();
+    const setting = await Setting.findOneAndUpdate(
+      {},
+      {
+        $set: body,
+      },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+      }
+    );
 
     return NextResponse.json({
       success: true,
-      message: "Shipping charge updated",
+      message: "Settings updated successfully",
+      setting,
     });
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      message: error.message,
-    });
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message,
+      },
+      { status: 500 }
+    );
   }
 }
