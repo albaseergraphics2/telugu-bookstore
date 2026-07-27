@@ -2697,7 +2697,7 @@ nav {
 .btn-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255,255,255,.4);
+  border: 2px solid rgba(255, 255, 255, .4);
   border-top: 2px solid #fff;
   border-radius: 50%;
   display: inline-block;
@@ -4050,9 +4050,13 @@ nav {
     align-items: center;
     gap: 18px;
     padding: 15px 10px;
-    height: auto !important;
-    min-height: auto !important;
-    max-height: none !important;
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  .bank-dropdown.active {
+    max-height: 500px;
+    /* or 1000px */
   }
 
   .bank-left {
