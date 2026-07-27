@@ -2,19 +2,15 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addToCart,
-  removeFromCart,
-  clearCart,
-} from "@/redux/actions/cartActions";
+import { addToCart, removeFromCart, clearCart, } from "@/redux/actions/cartActions";
 import Link from "next/link";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 export default function CartPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(true);
-  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [pincode, setPincode] = useState("");
   const [area, setArea] = useState("");
   const [district, setDistrict] = useState("");
@@ -194,7 +190,7 @@ Address: ${address}`;
 
   return (
     <section className="cart-page">
-      <Link href="/" className="back-home">← Back to Home</Link>
+      <Link href="/books" className="back-home">← View All Books</Link>
       <h1 className="cart-title">Your Cart</h1>
 
       {cartItems.length === 0 ? (
@@ -206,38 +202,72 @@ Address: ${address}`;
         </div>
       ) : (
         <div className="cart-container">
-
+          <div className="cart-header">
+            <div>PRODUCT</div>
+            <div>QUANTITY</div>
+            <div>TOTAL</div>
+          </div>
           {cartItems.map((item) => {
             const price = Number(item.price?.replace("₹", "") || 0);
             const subTotal = price * item.qty;
 
             return (
               <div className="cart-item" key={item.slug}>
-                <img
-                  src={
-                    item.img
-                      ? item.img.replace("/upload/", "/upload/f_auto,q_auto,w_150/")
-                      : "/images/No_Image_Available.jpg"
-                  }
-                  alt={item.title}
-                />
+                {/* Product */}
+                <div className="cart-product">
+                  <img
+                    src={
+                      item.img
+                        ? item.img.replace("/upload/", "/upload/f_auto,q_auto,w_150/")
+                        : "/images/No_Image_Available.jpg"
+                    }
+                    alt={item.title}
+                  />
 
-                <div className="cart-info">
-                  <h3>{item.title}</h3>
-                  <div className="price-row">
-                    <p>Price: ₹{item.price}</p>
-                    <p>Subtotal: ₹{subTotal}</p>
+                  <div className="cart-info">
+                    <h3>{item.title}</h3>
+                    <p>₹{item.price}</p>
+
+                    <div className="mobile-cart-actions">
+                      <div className="cart-quantity">
+                        <div className="qty-box">
+                          <button onClick={() => decreaseQty(item.slug)}>-</button>
+                          <span>{item.qty}</span>
+                          <button onClick={() => increaseQty(item.slug)}>+</button>
+                        </div>
+
+                        <button
+                          className="remove-icon-btn"
+                          onClick={() => removeItem(item.slug)}
+                        >
+                          <RiDeleteBin6Line />
+                        </button>
+                      </div>
+                    </div>
                   </div>
+                </div>
 
-                  <div className="qty-box">
-                    <button onClick={() => decreaseQty(item.slug)}>-</button>
-                    <span>{item.qty}</span>
-                    <button onClick={() => increaseQty(item.slug)}>+</button>
+                {/* Quantity */}
+                <div className="desktop-cart-actions">
+                  <div className="cart-quantity">
+                    <div className="qty-box">
+                      <button onClick={() => decreaseQty(item.slug)}>-</button>
+                      <span>{item.qty}</span>
+                      <button onClick={() => increaseQty(item.slug)}>+</button>
+                    </div>
+
+                    <button
+                      className="remove-icon-btn"
+                      onClick={() => removeItem(item.slug)}
+                    >
+                      <RiDeleteBin6Line />
+                    </button>
                   </div>
+                </div>
 
-                  <button className="remove-btn" onClick={() => removeItem(item.slug)}>
-                    Remove
-                  </button>
+                {/* Total */}
+                <div className="cart-total">
+                  ₹{subTotal}
                 </div>
               </div>
             );
@@ -245,6 +275,16 @@ Address: ${address}`;
 
           <div className="cart-summary">
             <h2 className="summary-title">Order Summary</h2>
+            {totalPrice < 1000 && (
+              <>
+                <hr className="summary-divider" />
+                <div className="summary-note">
+                  <p>Free shipping on orders above ₹1000.</p>
+                </div>
+
+                <hr className="summary-divider" />
+              </>
+            )}
 
             <div className="summary-box">
               <div className="summary-row">
@@ -257,89 +297,11 @@ Address: ${address}`;
                 <strong>₹{totalPrice}</strong>
               </div>
 
-              <hr className="summary-divider" />
-
-              <div className="summary-note">
-                <p>Shipping charges may apply depending on your order and delivery location.</p>
-                <p>Final payable amount will be confirmed on WhatsApp.</p>
-              </div>
             </div>
-            <hr className="summary-divider" />
-            <div className="user-details">
-              <h3>Customer Details</h3>
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
 
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-              />
-
-              <textarea
-                placeholder="Full Address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                required
-              />
-
-              <input
-                type="text"
-                value={pincode}
-                onChange={(e) => setPincode(e.target.value)}
-                placeholder="Pincode"
-              />
-
-              <button
-                type="button"
-                className="checkout-btn"
-                onClick={() => setShowConfirmPopup(true)}
-              >
-                Place Order
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showConfirmPopup && (
-        <div
-          className="order-popup-overlay"
-          onClick={() => setShowConfirmPopup(false)}
-        >
-          <div
-            className="order-popup-box"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3>Confirm Order</h3>
-            <p>Are you sure you want to place this order?</p>
-            <h4>Total: ₹{totalPrice}</h4>
-
-            <div className="order-popup-actions">
-              <button
-                className="order-popup-confirm"
-                onClick={() => {
-                  setShowConfirmPopup(false);
-                  placeOrder();
-                }}
-              >
-                Yes, Place Order
-              </button>
-
-              <button
-                className="order-popup-cancel"
-                onClick={() => setShowConfirmPopup(false)}
-              >
-                Cancel
-              </button>
-            </div>
+            <Link href="/checkout" className="checkout-btn">
+              Checkout
+            </Link>
           </div>
         </div>
       )}

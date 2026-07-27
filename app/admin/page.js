@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
 export default function AdminDashboard() {
-
+  const [defaultShipping, setDefaultShipping] = useState("");
   const [stats, setStats] = useState({
     users: 0,
     orders: 0,
@@ -16,16 +17,59 @@ export default function AdminDashboard() {
   });
 
   useEffect(() => {
-    const fetchStats = async () => {
-      const res = await fetch("/api/admin/stats");
+    const fetchData = async () => {
+      const statsRes = await fetch("/api/admin/stats");
+      const statsData = await statsRes.json();
+
+      if (statsData.success) {
+        setStats(statsData.stats);
+      }
+
+      const shippingRes = await fetch("/api/admin/settings/shipping");
+      const shippingData = await shippingRes.json();
+
+      if (shippingData.success) {
+        setDefaultShipping(shippingData.defaultShipping);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const saveShippingCharge = async () => {
+    if (!defaultShipping) {
+      toast.error("Please enter shipping charge");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/admin/settings/shipping", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          defaultShipping: Number(defaultShipping),
+        }),
+      });
+
       const data = await res.json();
 
       if (data.success) {
-        setStats(data.stats);
+        toast.success("Shipping charge saved successfully");
+      } else {
+        toast.error(data.message || "Failed to save shipping charge");
       }
-    };
-    fetchStats();
-  }, []);
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong");
+    }
+  };
+
+  const clearShippingCharge = () => {
+    setDefaultShipping("");
+    toast.success("Input cleared");
+  };
 
   return (
     <div className="admin-dashboard">
@@ -34,7 +78,28 @@ export default function AdminDashboard() {
       <p>Welcome Admin 👑</p>
 
       <div className="analytics-grid">
+        <div className="analytics-card">
+          <h3>Default Shipping Charges</h3>
 
+          <input
+            type="number"
+            className="shipping-input"
+            placeholder="Enter Charges"
+            value={defaultShipping}
+            onChange={(e) => setDefaultShipping(e.target.value)}
+          />
+
+          <div className="shipping-btns">
+            <button className="save-btn" onClick={saveShippingCharge}>
+              Save
+            </button>
+
+            <button className="clear-btn" onClick={clearShippingCharge}>
+              Clear
+            </button>
+          </div>
+
+        </div>
         <div className="analytics-card">
           <h3>Total Users</h3>
           <p>{stats.users}</p>
@@ -83,9 +148,7 @@ export default function AdminDashboard() {
           <h3>Avg Order Value</h3>
           <p>₹{stats.avgOrderValue}</p>
         </div>
-
       </div>
-
     </div>
   );
 }

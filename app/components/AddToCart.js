@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addToCart,
@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 
 export default function AddToCart({ book }) {
   const dispatch = useDispatch();
-
+  const router = useRouter();
   const { cartItems } = useSelector((state) => state.cart);
 
   const item = cartItems.find((i) => i.slug === book.slug);
@@ -42,10 +42,19 @@ export default function AddToCart({ book }) {
   }
 
   return (
-    <div className="qty-control">
-      <button onClick={decrease}>-</button>
-      <span>{qty}</span>
-      <button onClick={increase}>+</button>
+    <div className="cart-actions">
+      <div className="qty-control">
+        <button onClick={decrease}>-</button>
+        <span>{qty}</span>
+        <button onClick={increase}>+</button>
+      </div>
+
+      <button
+        className="go-cart-btn"
+        onClick={() => router.push("/cart")}
+      >
+        Go to Cart
+      </button>
     </div>
   );
 }

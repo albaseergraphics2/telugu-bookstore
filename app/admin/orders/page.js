@@ -2,12 +2,13 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+
 export default function AdminOrders() {
 
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 10;
-
+  
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -15,7 +16,6 @@ export default function AdminOrders() {
   const fetchOrders = async () => {
     const res = await fetch("/api/admin/orders");
     const data = await res.json();
-
     if (data.success) {
       setOrders(data.orders);
     }
@@ -103,7 +103,6 @@ export default function AdminOrders() {
   return (
     <div className="admin-orders">
       <h3>All Orders</h3>
-
       {orders.length === 0 ? (
         <p>No orders found</p>
       ) : (

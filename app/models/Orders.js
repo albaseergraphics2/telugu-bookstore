@@ -45,6 +45,20 @@ const OrderSchema = new mongoose.Schema({
     unique: true,
   },
 
+  paymentMethod: {
+    type: String,
+    default: "",
+  },
+
+  paymentStatus: {
+    type: String,
+    default: "Pending",
+  },
+
+  utrNumber: {
+    type: String,
+    default: "",
+  },
 }, { timestamps: true });
 
 export default mongoose.models.Order || mongoose.model("Order", OrderSchema);

@@ -65,7 +65,6 @@ export default function OrdersPage() {
           {orders.map((order) => (
             <div key={order._id} className="order-card">
 
-              {/* Header */}
               <div className="order-header">
                 <div>
                   <h3>Order #{order.invoiceId || order._id.slice(-6).toUpperCase()}</h3>
@@ -77,7 +76,6 @@ export default function OrdersPage() {
                 </span>
               </div>
 
-              {/* Books */}
               <div className="order-section">
                 <h4>Books ({order.items.length})</h4>
 
@@ -87,7 +85,7 @@ export default function OrdersPage() {
                       {item.bookId?.title || "Book"}
                     </span>
 
-                    <div className="book-info">
+                    <div className="orders-book-info">
                       <span>Qty: {item.qty}</span>
                       <strong>₹ {item.bookId?.price || "-"}</strong>
                     </div>
@@ -95,7 +93,6 @@ export default function OrdersPage() {
                 ))}
               </div>
 
-              {/* Address */}
               <div className="order-section">
                 <h4>Delivery Address</h4>
 
@@ -118,7 +115,6 @@ export default function OrdersPage() {
                 </div>
               </div>
 
-              {/* Payment */}
               <div className="payment-summary">
 
                 <div className="summary-row">
@@ -134,24 +130,27 @@ export default function OrdersPage() {
                 <div className="summary-row">
                   <span>Delivery Charges</span>
                   <span>
-                    {order.deliveryCharge > 0
-                      ? `₹ ${order.deliveryCharge}`
-                      : "To Be Confirmed"}
+                    {order.totalAmount >= 1000
+                      ? "Free"
+                      : order.deliveryCharge > 0
+                        ? `₹ ${order.deliveryCharge}`
+                        : "To Be Confirmed"}
                   </span>
                 </div>
 
                 <div className="summary-row grand-total">
                   <span>Grand Total</span>
                   <strong>
-                    ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}
+                    ₹ {order.totalAmount >= 1000
+                      ? (order.totalAmount || 0)
+                      : order.deliveryCharge > 0
+                        ? (order.totalAmount || 0) + order.deliveryCharge
+                        : (order.totalAmount || 0)}
                   </strong>
                 </div>
-
               </div>
 
-
               <div className="order-actions">
-
                 <Link
                   href={`/invoice/${order._id}`}
                   className="invoice-btn"
@@ -159,7 +158,6 @@ export default function OrdersPage() {
                   View Invoice
                 </Link>
               </div>
-
             </div>
           ))}
         </div>

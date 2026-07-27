@@ -28,6 +28,13 @@ export async function POST(req) {
       address,
       invoiceId: nextInvoiceId,
       status: "pending",
+
+      paymentStatus:
+        body.paymentMethod === "online"
+          ? "Paid"
+          : body.paymentMethod === "bank"
+            ? "Verification Pending"
+            : "Pending",
     });
 
     await sendEmail({
@@ -70,6 +77,22 @@ export async function POST(req) {
             </span>
           </td>
         </tr>
+        <tr>
+  <td><strong>Payment Method</strong></td>
+  <td>${body.paymentMethod}</td>
+</tr>
+
+<tr>
+  <td><strong>Payment Status</strong></td>
+  <td>${order.paymentStatus}</td>
+</tr>
+
+${body.paymentMethod === "bank" ? `
+<tr>
+  <td><strong>UTR Number</strong></td>
+  <td>${body.utrNumber}</td>
+</tr>
+` : ""}
       </table>
 
       <hr style="margin:25px 0;">
@@ -114,7 +137,7 @@ export async function POST(req) {
 
       </div>
 
-      <hr style="margin:25px 0;">
+            <hr style="margin:25px 0;">
 
       <table width="100%" cellpadding="10" style="
         background:#f8fafc;
@@ -122,14 +145,43 @@ export async function POST(req) {
       ">
 
         <tr>
-          <td><strong>Total Amount</strong></td>
+          <td><strong>Books Total</strong></td>
           <td align="right">
+            ₹${body.totalAmount}
+          </td>
+        </tr>
+
+        <tr>
+          <td><strong>Delivery Charge</strong></td>
+          <td align="right">
+            ${
+              body.totalAmount >= 1000
+                ? "Free"
+                : body.deliveryCharge > 0
+                  ? `₹${body.deliveryCharge}`
+                  : "To Be Confirmed"
+            }
+          </td>
+        </tr>
+
+        <tr style="border-top:1px solid #ddd;">
+          <td style="padding-top:12px;">
+            <strong>Grand Total</strong>
+          </td>
+
+          <td align="right" style="padding-top:12px;">
             <span style="
               color:#0f766e;
               font-size:22px;
               font-weight:bold;
             ">
-              ₹${body.totalAmount}
+              ₹${
+                body.totalAmount >= 1000
+                  ? body.totalAmount
+                  : body.deliveryCharge > 0
+                    ? body.totalAmount + body.deliveryCharge
+                    : body.totalAmount
+              }
             </span>
           </td>
         </tr>
