@@ -46,7 +46,7 @@ export default function PaymentSettingsPage() {
         defaultShipping: Number(defaultShipping),
       };
 
-      const res = await fetch("/api/admin/settings/shipping", {
+      const res = await fetch("/api/admin/settings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export default function PaymentSettingsPage() {
   };
   const fetchSettings = async () => {
     try {
-      const res = await fetch("/api/admin/settings/shipping");
+      const res = await fetch("/api/admin/settings");
       const data = await res.json();
 
       if (data.success) {
@@ -136,7 +136,7 @@ export default function PaymentSettingsPage() {
     }
 
     try {
-      const res = await fetch("/api/admin/settings/shipping", {
+      const res = await fetch("/api/admin/settings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -173,8 +173,7 @@ export default function PaymentSettingsPage() {
 
       <div className="shipping-section">
 
-        <label>Default Shipping Charge (₹)</label>
-        <h3>Default Shipping Charges</h3>
+        <label>Default Shipping Charge (Rs.)</label>
 
         <input
           type="number"

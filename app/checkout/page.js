@@ -139,7 +139,7 @@ export default function CheckoutPage() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const shippingRes = await fetch("/api/admin/settings/shipping");
+            const shippingRes = await fetch("/api/admin/settings");
             const shippingData = await shippingRes.json();
 
             if (shippingData.success) {

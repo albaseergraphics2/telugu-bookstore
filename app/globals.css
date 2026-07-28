@@ -1295,18 +1295,17 @@ nav {
 }
 
 /* admin page */
+/* Admin Layout */
+
 .admin-layout {
   display: flex;
-  min-height: 100vh;
-}
-
-.admin-content {
-  flex: 1;
-  padding: 30px;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .admin-sidebar {
   width: 220px;
+  height: 100vh;
   background: #ffffff;
   color: #333;
   padding: 20px;
@@ -1314,6 +1313,21 @@ nav {
   flex-direction: column;
   gap: 10px;
   border-right: 1px solid #eee;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.admin-content {
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 20px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.admin-content::-webkit-scrollbar {
+  display: none;
 }
 
 .admin-sidebar h2 {
@@ -1343,6 +1357,10 @@ nav {
 }
 
 /* admin dashboard cards */
+.admin-dashboard,
+.admin-hero{
+  padding: 20px !important;
+}
 .analytics-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -2903,6 +2921,7 @@ nav {
 .payment-settings {
   max-width: 1200px;
   margin: auto;
+  padding: 20px;
 }
 
 .payment-settings h2 {
