@@ -10,8 +10,7 @@ export default function AdminOrders() {
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 10;
 
-  useRealtime(fetchOrders);
-
+  
   const fetchOrders = async () => {
     const res = await fetch("/api/admin/orders");
     const data = await res.json();
@@ -19,7 +18,9 @@ export default function AdminOrders() {
       setOrders(data.orders);
     }
   };
-
+  
+  useRealtime(fetchOrders);
+  
   const updateStatus = async (id, status, deliveryType, deliveryCharge) => {
     const toastId = toast.loading("Updating order...");
 
