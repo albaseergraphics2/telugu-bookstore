@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "../../../lib/mongodb";
 import Order from "../../../models/Orders";
 import Book from "../../../models/Books";
+import { notifyClients } from "../../../lib/events";
 
 export async function GET() {
   try {
@@ -30,8 +31,8 @@ export async function PUT(req) {
       deliveryCharge,
     });
 
+    notifyClients({});
     return NextResponse.json({ success: true });
-
   } catch (error) {
     return NextResponse.json({ success: false });
   }

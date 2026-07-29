@@ -1,17 +1,16 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import useRealtime from "../../hooks/useRealtime";
 
 export default function AdminOrders() {
 
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 10;
-  
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+
+  useRealtime(fetchOrders);
 
   const fetchOrders = async () => {
     const res = await fetch("/api/admin/orders");
@@ -41,7 +40,6 @@ export default function AdminOrders() {
       const data = await res.json();
 
       if (data.success) {
-        await fetchOrders();
         toast.success("Order updated successfully", { id: toastId });
       } else {
         toast.error(data.message || "Failed to update order", {

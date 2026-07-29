@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { uploadToCloudinary } from "../../lib/cloudinary";
+import useRealtime from "../../hooks/useRealtime";
 
 export default function PaymentSettingsPage() {
   const [loading, setLoading] = useState(true);
@@ -10,32 +11,23 @@ export default function PaymentSettingsPage() {
   const [defaultShipping, setDefaultShipping] = useState("");
   const [form, setForm] = useState({
     defaultShipping: 100,
-
     accountHolder: "",
     bankName: "",
     accountNumber: "",
     ifscCode: "",
     branch: "",
-
     qrCode: "",
-
     mobileNumbers: [""],
-
     upiAccounts: [
       {
         upiId: "",
         mobile: "",
       },
     ],
-
     codEnabled: true,
     bankTransferEnabled: true,
     onlinePaymentEnabled: false,
   });
-
-  useEffect(() => {
-    fetchSettings();
-  }, []);
 
   const saveSettings = async () => {
     try {
@@ -68,28 +60,25 @@ export default function PaymentSettingsPage() {
       setSaving(false);
     }
   };
+
   const fetchSettings = async () => {
     try {
       const res = await fetch("/api/admin/settings");
       const data = await res.json();
 
       if (data.success) {
-
         setDefaultShipping(data.setting.defaultShipping ?? "");
-
         setForm({
           ...data.setting,
           mobileNumbers:
             data.setting.mobileNumbers?.length
               ? data.setting.mobileNumbers
               : [""],
-
           upiAccounts:
             data.setting.upiAccounts?.length
               ? data.setting.upiAccounts
               : [{ upiId: "", mobile: "" }],
         });
-
       }
     } catch {
       toast.error("Failed to load settings");
@@ -98,9 +87,10 @@ export default function PaymentSettingsPage() {
     }
   };
 
+  useRealtime(fetchSettings);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -111,30 +101,24 @@ export default function PaymentSettingsPage() {
     const file = e.target.files[0];
 
     if (!file) return;
-
     try {
       toast.loading("Uploading...", { id: "upload" });
-
       const url = await uploadToCloudinary(file);
-
       setForm((prev) => ({
         ...prev,
         qrCode: url,
       }));
-
       toast.success("QR uploaded", { id: "upload" });
     } catch {
       toast.error("Upload failed", { id: "upload" });
     }
   };
 
-
   const saveShippingCharge = async () => {
     if (!defaultShipping) {
       toast.error("Please enter shipping charge");
       return;
     }
-
     try {
       const res = await fetch("/api/admin/settings", {
         method: "POST",
@@ -158,7 +142,6 @@ export default function PaymentSettingsPage() {
       toast.error("Something went wrong");
     }
   };
-
   const clearShippingCharge = () => {
     setDefaultShipping("");
     toast.success("Input cleared");
@@ -168,11 +151,8 @@ export default function PaymentSettingsPage() {
 
   return (
     <div className="payment-settings">
-
       <h2>Shipping Charges</h2>
-
       <div className="shipping-section">
-
         <label>Default Shipping Charge (Rs.)</label>
 
         <input
@@ -187,15 +167,13 @@ export default function PaymentSettingsPage() {
           <button className="save-btn" onClick={saveShippingCharge}>
             Save
           </button>
-
           <button className="clear-btn" onClick={clearShippingCharge}>
             Clear
           </button>
-
         </div>
       </div>
-      <h2>Bank Details</h2>
 
+      <h2>Bank Details</h2>
       <div className="payment-grid">
         <div className="payment-item">
           <label>Account Holder</label>
@@ -205,7 +183,6 @@ export default function PaymentSettingsPage() {
             onChange={handleChange}
           />
         </div>
-
         <div className="payment-item">
           <label>Bank Name</label>
           <input
@@ -214,7 +191,6 @@ export default function PaymentSettingsPage() {
             onChange={handleChange}
           />
         </div>
-
         <div className="payment-item">
           <label>Account Number</label>
           <input
@@ -223,7 +199,6 @@ export default function PaymentSettingsPage() {
             onChange={handleChange}
           />
         </div>
-
         <div className="payment-item">
           <label>IFSC Code</label>
           <input
@@ -232,7 +207,6 @@ export default function PaymentSettingsPage() {
             onChange={handleChange}
           />
         </div>
-
         <div className="payment-item">
           <label>Branch</label>
           <input
@@ -241,7 +215,6 @@ export default function PaymentSettingsPage() {
             onChange={handleChange}
           />
         </div>
-
         <div className="payment-item">
           <label>QR Code</label>
           <input
@@ -250,7 +223,6 @@ export default function PaymentSettingsPage() {
             onChange={handleQrUpload}
           />
         </div>
-
         <div className="payment-item">
           <label>QR Preview</label>
 
@@ -261,7 +233,6 @@ export default function PaymentSettingsPage() {
             />
           )}
         </div>
-
       </div>
 
       <h3>Mobile Numbers</h3>
@@ -282,7 +253,6 @@ export default function PaymentSettingsPage() {
               }));
             }}
           />
-
         </div>
       ))}
 
@@ -299,9 +269,7 @@ export default function PaymentSettingsPage() {
       </button>
 
       <h3>UPI Accounts</h3>
-
       {form.upiAccounts.map((upi, i) => (
-
         <div className="upi-item" key={i}>
 
           <input
@@ -324,16 +292,13 @@ export default function PaymentSettingsPage() {
             onChange={(e) => {
               const arr = [...form.upiAccounts];
               arr[i].mobile = e.target.value;
-
               setForm(prev => ({
                 ...prev,
                 upiAccounts: arr,
               }));
             }}
           />
-
         </div>
-
       ))}
 
       <button
@@ -355,7 +320,6 @@ export default function PaymentSettingsPage() {
       </button>
 
       <h3>Payment Methods</h3>
-
       <div className="checkbox-group">
 
         <label>

@@ -3,43 +3,36 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
+import useRealtime from "@/app/hooks/useRealtime";
 
 export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
   const { user } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    let timer;
-
-    const fetchOrders = async () => {
-      try {
-        if (!user?._id) {
-          setLoading(false);
-          return;
-        }
-
-        const res = await fetch(`/api/orders?userId=${user._id}`);
-        const data = await res.json();
-
-        if (data.success) {
-          setOrders(data.orders);
-        }
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        timer = setTimeout(() => {
-          setLoading(false);
-        }, 200);
+  const fetchOrders = async () => {
+    try {
+      if (!user?._id) {
+        setLoading(false);
+        return;
       }
-    };
 
-    fetchOrders();
+      const res = await fetch(`/api/orders?userId=${user._id}`);
+      const data = await res.json();
 
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [user]);
+      if (data.success) {
+        setOrders(data.orders);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 200);
+    }
+  };
+
+  useRealtime(fetchOrders);
 
   if (loading) {
     return (

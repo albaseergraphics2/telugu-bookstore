@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearCart } from "@/redux/actions/cartActions";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import useRealtime from "../hooks/useRealtime";
 
 export default function CheckoutPage() {
     const dispatch = useDispatch();
@@ -137,18 +138,16 @@ export default function CheckoutPage() {
     }, [pincode]);
 
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const shippingRes = await fetch("/api/admin/settings");
-            const shippingData = await shippingRes.json();
+    const fetchSettings = async () => {
+        const shippingRes = await fetch("/api/admin/settings");
+        const shippingData = await shippingRes.json();
 
-            if (shippingData.success) {
-                setDefaultShipping(shippingData.setting.defaultShipping || 0);
-            }
-        };
+        if (shippingData.success) {
+            setDefaultShipping(shippingData.setting.defaultShipping || 0);
+        }
+    };
 
-        fetchData();
-    }, []);
+    useRealtime(fetchSettings);
 
     const placeOrder = async () => {
         if (!user) {

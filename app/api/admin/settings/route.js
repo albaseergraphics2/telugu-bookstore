@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "../../../lib/mongodb";
 import Setting from "../../../models/Setting";
+import { notifyClients } from "../../../lib/events";
 
-// GET Settings
 export async function GET() {
   try {
     await connectDB();
-
     let setting = await Setting.findOne();
 
     if (!setting) {
@@ -30,14 +29,12 @@ export async function GET() {
         onlinePaymentEnabled: false,
       });
     }
-
     return NextResponse.json({
       success: true,
       setting,
     });
   } catch (error) {
     console.error(error);
-
     return NextResponse.json(
       {
         success: false,
@@ -48,25 +45,22 @@ export async function GET() {
   }
 }
 
-// Save / Update Settings
 export async function POST(req) {
   try {
     await connectDB();
-
     const body = await req.json();
-
     const setting = await Setting.findOneAndUpdate(
       {},
       {
         $set: body,
       },
       {
-        new: true,
+        returnDocument: "after",
         upsert: true,
         runValidators: true,
       }
     );
-
+    notifyClients({});
     return NextResponse.json({
       success: true,
       message: "Settings updated successfully",
@@ -74,7 +68,6 @@ export async function POST(req) {
     });
   } catch (error) {
     console.error(error);
-
     return NextResponse.json(
       {
         success: false,

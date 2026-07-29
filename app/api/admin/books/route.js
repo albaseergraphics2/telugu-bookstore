@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "../../../lib/mongodb";
 import Book from "../../../models/Books";
+import { notifyClients } from "../../../lib/events";
 
 export async function GET() {
   try {
@@ -20,6 +21,7 @@ export async function POST(req) {
     await connectDB();
     const body = await req.json();
     const book = await Book.create(body);
+    notifyClients({});
     return NextResponse.json({ success: true, book });
   } catch (err) {
     console.log(err);
@@ -32,6 +34,7 @@ export async function DELETE(req) {
     await connectDB();
     const { id } = await req.json();
     await Book.findByIdAndDelete(id);
+    notifyClients({});
     return NextResponse.json({ success: true });
   } catch (err) {
     console.log(err);
@@ -63,7 +66,7 @@ export async function PUT(req) {
     else {
       await Book.findByIdAndUpdate(id, data);
     }
-
+    notifyClients({});
     return NextResponse.json({ success: true });
 
   } catch (err) {

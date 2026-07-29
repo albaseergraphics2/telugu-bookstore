@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import AddToCart from "../components/AddToCart";
 import toast from "react-hot-toast";
+import useRealtime from "@/app/hooks/useRealtime";
 
 export default function BooksPage() {
   const [search, setSearch] = useState("");
@@ -11,23 +12,23 @@ export default function BooksPage() {
   const [books, setBooks] = useState([]);
   const [sortOrder, setSortOrder] = useState("high");
 
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const res = await fetch("/api/books");
-        const data = await res.json();
-        if (data.success) {
-          setBooks(data.books);
-        }
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to load books");
-      }
-      setLoading(false);
-    };
+  const fetchBooks = async () => {
+    try {
+      const res = await fetch("/api/books");
+      const data = await res.json();
 
-    fetchBooks();
-  }, []);
+      if (data.success) {
+        setBooks(data.books);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load books");
+    }
+
+    setLoading(false);
+  };
+
+  useRealtime(fetchBooks);
 
   const filteredBooks = books.filter(
     (book) =>
@@ -98,64 +99,63 @@ export default function BooksPage() {
         </span>
       </h2>
 
-<div className="allbooks-grid">
-  {sortedBooks.map((book) => (
-    <Link
-      key={book.slug}
-      href={`/books/${book.slug}`}
-      className="cardlink"
-    >
-      <div
-        className={`allbook-card ${
-          book.inStock === false ? "out-of-stock-card" : ""
-        }`}
-      >
-        <div className="allbook-img">
-          <img
-            src={book.img || "/images/No_Image_Available.jpg"}
-            alt={book.title}
-          />
+      <div className="allbooks-grid">
+        {sortedBooks.map((book) => (
+          <Link
+            key={book.slug}
+            href={`/books/${book.slug}`}
+            className="cardlink"
+          >
+            <div
+              className={`allbook-card ${book.inStock === false ? "out-of-stock-card" : ""
+                }`}
+            >
+              <div className="allbook-img">
+                <img
+                  src={book.img || "/images/No_Image_Available.jpg"}
+                  alt={book.title}
+                />
 
-          {book.inStock === false && (
-            <span className="stock-badge">
-              Out of Stock
-            </span>
-          )}
-        </div>
+                {book.inStock === false && (
+                  <span className="stock-badge">
+                    Out of Stock
+                  </span>
+                )}
+              </div>
 
-       
 
-        {(book.sold > 50) && (
-          <p style={{ color: "green", fontSize: "12px" }}>
-            ⭐ Best Seller
-          </p>
-        )}
 
-        {(book.views > 100) && (
-          <p style={{ color: "orange", fontSize: "12px" }}>
-            🔥 Popular
-          </p>
-        )}
+              {(book.sold > 50) && (
+                <p style={{ color: "green", fontSize: "12px" }}>
+                  ⭐ Best Seller
+                </p>
+              )}
 
- 
-        
-        {/* <p className="author">by {book.author}</p>
+              {(book.views > 100) && (
+                <p style={{ color: "orange", fontSize: "12px" }}>
+                  🔥 Popular
+                </p>
+              )}
+
+
+
+              {/* <p className="author">by {book.author}</p>
         <p className="telugu-author">
           రచయిత: {book.teluguAuthor}
         </p> */}
-        <div className="book-actions">
-          <h3>{book.title}</h3>
-          <p className="telugu-title">{book.teluguTitle}</p>
-          <p className="price">Rs. {book.price}.00</p>
+              <div className="book-actions">
+                <h3>{book.title}</h3>
+                <p className="telugu-title">{book.teluguTitle}</p>
+                <p className="price">Rs. {book.price}.00</p>
 
-          {/* {book.inStock !== false && (
+                {/* {book.inStock !== false && (
             <AddToCart book={book} />
           )} */}
-        </div>
+              </div>
+            </div>
+          </Link>
+        ))}
       </div>
-    </Link>
-  ))}
-</div>
 
       {filteredBooks.length === 0 && (
         <div className="no-result">

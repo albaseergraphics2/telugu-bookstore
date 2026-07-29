@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "cross-env NODE_ENV=production node server.js",
     "lint": "eslint"
   },
   "dependencies": {
@@ -16,6 +16,8 @@
     "bcryptjs": "^3.0.3",
     "bootstrap": "^5.3.8",
     "cloudinary": "^2.9.0",
+    "cross-env": "^10.1.0",
+    "express": "^5.2.1",
     "html2canvas": "^1.4.1",
     "jose": "^6.2.2",
     "jsonwebtoken": "^9.0.3",
@@ -29,7 +31,9 @@
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
     "react-redux": "^9.3.0",
-    "redux-thunk": "^3.1.0"
+    "redux-thunk": "^3.1.0",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
