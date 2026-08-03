@@ -11,6 +11,24 @@ export default function LoadUser() {
   useEffect(() => {
     dispatch(loadUser());
     dispatch(loadCart());
+
+    const handleFocus = () => {
+      dispatch(loadUser());
+    };
+
+    const handleVisibility = () => {
+      if (!document.hidden) {
+        dispatch(loadUser());
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [dispatch]);
 
   return null;

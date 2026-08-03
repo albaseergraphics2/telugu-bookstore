@@ -95,6 +95,12 @@ export const loadUser = () => async (dispatch) => {
     });
 
   } catch (error) {
+    if (error.response?.status === 401) {
+      dispatch({
+        type: LOGOUT_SUCCESS,
+      });
+    }
+
     dispatch({
       type: LOAD_USER_FAIL,
       payload: error.response?.data?.message || "Unauthorized",
