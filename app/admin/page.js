@@ -14,22 +14,36 @@ export default function AdminDashboard() {
     todayOrders: 0,
     todayRevenue: 0,
     avgOrderValue: 0,
+    deliveryTotal: 0,
   });
 
   useEffect(() => {
     const fetchData = async () => {
-      const statsRes = await fetch("/api/admin/stats");
-      const statsData = await statsRes.json();
+      try {
+        const statsRes = await fetch("/api/admin/stats");
 
-      if (statsData.success) {
-        setStats(statsData.stats);
-      }
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
 
-      const shippingRes = await fetch("/api/admin/settings/shipping");
-      const shippingData = await shippingRes.json();
+          if (statsData.success) {
+            setStats(statsData.stats);
+          }
+        }
 
-      if (shippingData.success) {
-        setDefaultShipping(shippingData.defaultShipping);
+        const shippingRes = await fetch("/api/admin/settings");
+
+        if (shippingRes.ok) {
+          const shippingData = await shippingRes.json();
+
+          if (shippingData.success) {
+            setDefaultShipping(
+              shippingData.setting?.defaultShipping || ""
+            );
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to load dashboard");
       }
     };
 
@@ -38,33 +52,10 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
-
       <h2>Dashboard</h2>
       <p>Welcome Admin 👑</p>
 
       <div className="analytics-grid">
-        {/* <div className="analytics-card">
-          <h3>Default Shipping Charges</h3>
-
-          <input
-            type="number"
-            className="shipping-input"
-            placeholder="Enter Charges"
-            value={defaultShipping}
-            onChange={(e) => setDefaultShipping(e.target.value)}
-          />
-
-          <div className="shipping-btns">
-            <button className="save-btn" onClick={saveShippingCharge}>
-              Save
-            </button>
-
-            <button className="clear-btn" onClick={clearShippingCharge}>
-              Clear
-            </button>
-          </div>
-
-        </div> */}
         <div className="analytics-card">
           <h3>Total Users</h3>
           <p>{stats.users}</p>
@@ -82,12 +73,12 @@ export default function AdminDashboard() {
 
         <div className="analytics-card">
           <h3>Total Delivery Charges</h3>
-          <p>₹{stats.deliveryTotal || 0}</p>
+          <p>₹{stats.deliveryTotal}</p>
         </div>
 
         <div className="analytics-card">
           <h3>Total Amount (With Delivery)</h3>
-          <p>₹{(stats.revenue || 0) + (stats.deliveryTotal || 0)}</p>
+          <p>₹{stats.revenue + stats.deliveryTotal}</p>
         </div>
         <div className="analytics-card">
           <h3>Pending Orders</h3>
