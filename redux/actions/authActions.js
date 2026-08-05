@@ -29,26 +29,37 @@ export const login = (loginData) => async (dispatch) => {
   try {
     dispatch({ type: LOGIN_REQUEST });
 
-    await axios.post("/api/auth", {
+    const { data: loginDataRes } = await axios.post("/api/auth", {
       type: "login",
       loginId: loginData.loginId,
       password: loginData.password,
     });
 
-    const { data } = await axios.get("/api/auth/me");
+    if (!loginDataRes.success) {
+      throw new Error(loginDataRes.message);
+    }
 
     dispatch({
       type: LOGIN_SUCCESS,
-      payload: data.user,
+      payload: loginDataRes.user,
     });
 
-    toast.success(`Welcome ${data.user.name || data.user.username}!`);
+    toast.success(`Welcome ${loginDataRes.user.name}!`);
 
   } catch (error) {
     dispatch({
       type: LOGIN_FAIL,
-      payload: error.response?.data?.message || "Login Failed",
+      payload:
+        error.response?.data?.message ||
+        error.message ||
+        "Login Failed",
     });
+
+    toast.error(
+      error.response?.data?.message ||
+      error.message ||
+      "Login Failed"
+    );
   }
 };
 
