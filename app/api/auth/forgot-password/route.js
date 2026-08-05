@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
+// import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { connectDB } from "../../../lib/mongodb";
 import User from "../../../models/User";
@@ -19,15 +19,22 @@ export async function POST(req) {
       });
     }
 
-    // 🔐 create token
-    const token = crypto.randomBytes(32).toString("hex");
+    // // 🔐 create token
+    // const token = crypto.randomBytes(32).toString("hex");
 
-    user.resetToken = token;
-    user.resetTokenExpiry = Date.now() + 10 * 60 * 1000;
+    // user.resetToken = token;
+    // user.resetTokenExpiry = Date.now() + 10 * 60 * 1000;
+
+    // await user.save();
+
+    // const resetLink = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password/${token}`;
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    user.resetOtp = otp;
+    user.resetOtpExpire = new Date(Date.now() + 5 * 60 * 1000);
 
     await user.save();
-
-    const resetLink = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password/${token}`;
 
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -44,49 +51,112 @@ export async function POST(req) {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Reset Password",
-      html: `
-  <div style="font-family: Arial, sans-serif; background:#f5f5f5; padding:20px;">
-    
-    <div style="max-width:500px; margin:auto; background:#ffffff; padding:25px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-      
-      <h2 style="text-align:center; color:#333;">🔐 Reset Your Password</h2>
-      
-      <p style="color:#555; font-size:15px;">
-        We received a request to reset your password. Click the button below to continue.
-      </p>
+html: `
+<div style="margin:0;padding:15px;background:#f5f7f9;font-family:Arial,sans-serif;">
 
-      <div style="text-align:center; margin:25px 0;">
-        <a href="${resetLink}" 
-          style="
-            background:#0070f3;
-            color:#fff;
-            padding:12px 20px;
-            text-decoration:none;
-            border-radius:6px;
-            font-weight:bold;
-            display:inline-block;
-          ">
-          Reset Password
-        </a>
-      </div>
+  <table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center">
 
-      <p style="font-size:14px; color:#777;">
-        This link will expire in <b>10 minutes</b>.
-      </p>
+        <table width="100%" cellpadding="0" cellspacing="0"
+          style="max-width:500px;background:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #e5e5e5;">
 
-      <hr style="margin:20px 0; border:none; border-top:1px solid #eee;" />
+          <!-- Header -->
+          <tr>
+            <td
+              style="background:#0a5c36;padding:22px;text-align:center;color:#fff;">
+              <h2 style="margin:0;font-size:26px;">
+                Telugu Bookstore
+              </h2>
 
-      <p style="font-size:12px; color:#999;">
-        If you did not request this, you can safely ignore this email.
-      </p>
+              <p style="margin:8px 0 0;font-size:14px;color:#d8efe4;">
+                Password Reset Verification
+              </p>
+            </td>
+          </tr>
 
-      <p style="font-size:12px; color:#aaa; text-align:center;">
-        © 2026 Telugu Bookstore
-      </p>
+          <!-- Body -->
+          <tr>
+            <td style="padding:30px;">
 
-    </div>
+              <p style="font-size:15px;color:#555;line-height:24px;">
+                Use the OTP below to reset your password.
+              </p>
 
-  </div>
+              <!-- OTP -->
+              <div
+                style="
+                margin:30px 0;
+                text-align:center;
+              ">
+
+                <span
+                  style="
+                  display:inline-block;
+                  background:#f3f8f5;
+                  color:#0a5c36;
+                  border:2px dashed #0a5c36;
+                  border-radius:8px;
+                  padding:16px 32px;
+                  font-size:34px;
+                  font-weight:bold;
+                  letter-spacing:8px;
+                ">
+                  ${otp}
+                </span>
+
+              </div>
+
+              <p
+                style="
+                text-align:center;
+                color:#777;
+                font-size:14px;
+              ">
+                OTP valid for <b>5 minutes</b>.
+              </p>
+
+              <hr
+                style="
+                margin:25px 0;
+                border:none;
+                border-top:1px solid #eee;
+              ">
+
+              <p
+                style="
+                color:#666;
+                font-size:14px;
+                line-height:22px;
+              ">
+                If you didn't request a password reset, simply ignore this email.
+                Your account remains secure.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td
+              style="
+              background:#fafafa;
+              padding:18px;
+              text-align:center;
+              color:#999;
+              font-size:12px;
+            ">
+              © 2026 Telugu Bookstore. All rights reserved.
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</div>
 `
     });
 

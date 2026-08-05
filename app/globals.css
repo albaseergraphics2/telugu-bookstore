@@ -957,8 +957,6 @@ nav {
 }
 
 
-
-
 /* Login page */
 .login-overlay {
   position: fixed;
@@ -979,6 +977,74 @@ nav {
   position: relative;
   z-index: 1000000 !important;
 }
+
+.resend-otp {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.resend-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0a5c36;
+  cursor: pointer;
+  transition: all .25s ease;
+  user-select: none;
+}
+
+.resend-text:hover {
+  color: #08452a;
+  text-decoration: underline;
+}
+
+.resend-text.disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.resend-text.disabled:hover {
+  color: #9ca3af;
+  text-decoration: none;
+}
+
+.otp-container {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.otp-input {
+  width: 42px !important;
+  height: 48px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  outline: none;
+  transition: 0.3s;
+}
+
+.otp-input:focus {
+  border-color: #0a5c36;
+  box-shadow: 0 0 0 2px rgba(10, 92, 54, 0.2);
+}
+
+@media (max-width: 480px) {
+  .otp-container {
+    gap: 6px;
+  }
+
+  .otp-input {
+    width: 38px !important;
+    height: 44px;
+    font-size: 18px;
+  }
+}
+
 
 .navbar1 {
   position: relative !important;
@@ -1052,6 +1118,32 @@ nav {
   justify-content: center;
   align-items: center;
 
+}
+
+.password-box {
+  position: relative;
+  width: 100%;
+}
+
+.password-box input {
+  width: 100%;
+  padding-right: 45px;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 14px;
+  top: 42%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.eye-icon:hover {
+  color: #0a5c36;
 }
 
 /* Invoice Page */
@@ -1358,9 +1450,10 @@ nav {
 
 /* admin dashboard cards */
 .admin-dashboard,
-.admin-hero{
+.admin-hero {
   padding: 20px !important;
 }
+
 .analytics-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -2373,7 +2466,7 @@ nav {
   background: #f7f7f7;
   border-radius: 12px;
   text-align: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .checkout-btn {

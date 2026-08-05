@@ -41,6 +41,7 @@ export default function RootLayout({ children }) {
               containerStyle={{
                 top: "75px",
                 right: "20px",
+                zIndex: 999999,
               }}
               toastOptions={{
                 duration: 2500,
@@ -50,7 +51,8 @@ export default function RootLayout({ children }) {
                   borderRadius: "8px",
                   padding: "12px 16px",
                   fontSize: "14px",
-                }
+                  zIndex: 999999,
+                },
               }}
             />
             <Analytics />

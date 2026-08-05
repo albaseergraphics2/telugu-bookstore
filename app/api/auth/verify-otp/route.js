@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 import { connectDB } from "../../../lib/mongodb";
 import User from "../../../models/User";
 
@@ -7,7 +6,7 @@ export async function POST(req) {
   try {
     await connectDB();
 
-    const { email, otp, password } = await req.json();
+    const { email, otp } = await req.json();
 
     const user = await User.findOne({ email });
 
@@ -32,17 +31,9 @@ export async function POST(req) {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    user.password = hashedPassword;
-    user.resetOtp = "";
-    user.resetOtpExpire = null;
-
-    await user.save();
-
     return NextResponse.json({
       success: true,
-      message: "Password reset successful",
+      message: "OTP verified",
     });
 
   } catch (err) {
