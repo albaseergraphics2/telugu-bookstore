@@ -3843,6 +3843,7 @@ nav {
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
+    height: 10vh;
   }
 
   /* invoice page  */

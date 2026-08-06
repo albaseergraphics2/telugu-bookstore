@@ -26,6 +26,15 @@ export default function CheckoutPage() {
     const [showShippingInfo, setShowShippingInfo] = useState(false);
     const [defaultShipping, setDefaultShipping] = useState(0);
     const [placingOrder, setPlacingOrder] = useState(false);
+    const [paymentSettings, setPaymentSettings] = useState({
+        bankName: "",
+        accountHolder: "",
+        accountNumber: "",
+        ifscCode: "",
+        branch: "",
+        qrCode: "",
+        upiAccounts: [],
+    });
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -139,11 +148,12 @@ export default function CheckoutPage() {
 
 
     const fetchSettings = async () => {
-        const shippingRes = await fetch("/api/admin/settings");
-        const shippingData = await shippingRes.json();
+        const res = await fetch("/api/admin/settings");
+        const data = await res.json();
 
-        if (shippingData.success) {
-            setDefaultShipping(shippingData.setting.defaultShipping || 0);
+        if (data.success) {
+            setDefaultShipping(data.setting.defaultShipping || 0);
+            setPaymentSettings(data.setting);
         }
     };
 
@@ -365,12 +375,23 @@ export default function CheckoutPage() {
 
                     <div className={`bank-dropdown ${paymentMethod === "bank" ? "active" : ""}`}>
                         <div className="bank-left">
-                            <p><strong>Bank:</strong> State Bank of India</p>
-                            <p><strong>A/C Name:</strong> Al-Baseer Islamic Bookstore</p>
-                            <p><strong>A/C No:</strong> 123456789012</p>
-                            <p><strong>IFSC:</strong> SBIN0001234</p>
-                            <p><strong>UPI ID:</strong> albaseer@oksbi</p>
+                            <p><strong>Bank:</strong> {paymentSettings.bankName}</p>
+                            <p><strong>A/C Name:</strong> {paymentSettings.accountHolder}</p>
+                            <p><strong>A/C No:</strong> {paymentSettings.accountNumber}</p>
+                            <p><strong>IFSC:</strong> {paymentSettings.ifscCode}</p>
+                            <p><strong>Branch:</strong> {paymentSettings.branch}</p>
 
+                            {paymentSettings.upiAccounts?.length > 0 && (
+                                <>
+                                    <p>
+                                        <strong>UPI ID:</strong> {paymentSettings.upiAccounts[0].upiId}
+                                    </p>
+
+                                    <p>
+                                        <strong>UPI Number:</strong> {paymentSettings.upiAccounts[0].mobile}
+                                    </p>
+                                </>
+                            )}
                             <input
                                 type="text"
                                 className="utr-input"
@@ -382,7 +403,10 @@ export default function CheckoutPage() {
 
                         <div className="bank-right">
                             <img
-                                src="/images/No_Image_Available.jpg"
+                                src={
+                                    paymentSettings.qrCode ||
+                                    "/images/No_Image_Available.jpg"
+                                }
                                 alt="QR Code"
                             />
                         </div>
