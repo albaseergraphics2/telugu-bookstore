@@ -477,7 +477,7 @@ nav {
 
 .price {
   font-size: 18px;
-  color: #10b981;
+  color: #166534 !important;
   font-weight: 700;
   margin-bottom: 12px;
 }
@@ -716,10 +716,6 @@ nav {
   text-decoration: none;
 }
 
-.allbook-card h3 {
-  color: #000;
-}
-
 .allbook-card a:visited,
 .allbook-card a:hover,
 .allbook-card a:active {
@@ -742,8 +738,10 @@ nav {
 }
 
 .allbook-card h3 {
-  font-size: 20px;
+  font-size: 18px;
   margin-top: 20px;
+  color: #000;
+
 }
 
 .author {
@@ -3438,10 +3436,15 @@ nav {
     padding: 8px 8px;
   }
 
+  .cart12{
+    width: 100%;
+  }
+  
   .cart-btn {
     padding: 8px;
     font-size: 12px;
-    width: 100%;
+    width: 90%;
+    margin: 15px 0 0;
   }
 
   /* PRINTING SERVICE */
@@ -3557,13 +3560,11 @@ nav {
     line-height: 1.4;
     text-align: center;
     margin: 8px 0;
-
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-
-    min-height: 40px;
+    min-height: 50px;
   }
 
   .price {
@@ -3677,7 +3678,7 @@ nav {
 
   /* .cart-btn {
     width: 100%;
-    max-width: 280px;
+    max-width: 480px;
     margin: 15px 0 0;
     display: block;
   } */

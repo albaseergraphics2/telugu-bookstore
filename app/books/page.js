@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import AddToCart from "../components/AddToCart";
+import AddToCart from "../components/Addtocartnonav";
 import toast from "react-hot-toast";
 import useRealtime from "@/app/hooks/useRealtime";
 
@@ -137,8 +137,6 @@ export default function BooksPage() {
                 </p>
               )}
 
-
-
               {/* <p className="author">by {book.author}</p>
         <p className="telugu-author">
           రచయిత: {book.teluguAuthor}
@@ -148,9 +146,21 @@ export default function BooksPage() {
                 <p className="telugu-title">{book.teluguTitle}</p>
                 <p className="price">Rs. {book.price}.00</p>
 
-                {/* {book.inStock !== false && (
-            <AddToCart book={book} />
-          )} */}
+                {book.inStock !== false && (
+                  <div
+                  className="cart12"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
+                    <AddToCart book={book} />
+                  </div>
+                )}
               </div>
             </div>
           </Link>
