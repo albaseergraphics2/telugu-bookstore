@@ -203,7 +203,7 @@ Address: ${address}`;
       ) : (
         <div className="cart-container">
           <div className="cart-header">
-            <div>PRODUCT</div>
+            <div>BOOKS</div>
             <div>QUANTITY</div>
             <div>TOTAL</div>
           </div>
