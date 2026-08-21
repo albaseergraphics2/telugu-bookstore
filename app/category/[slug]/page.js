@@ -39,6 +39,7 @@ export default function CategoryPage() {
     const timer = setTimeout(() => {
       const categoryBooks = allBooks.filter(
         (book) =>
+          book.isActive !== false &&
           book.category &&
           book.category.toLowerCase() === slug.toLowerCase()
       );
@@ -71,13 +72,19 @@ export default function CategoryPage() {
 
   return (
     <section className="allbooks">
-      <Link href="/" className="back-home">← Back to Home</Link>
+
+      <Link href="/" className="back-home">
+        ← Back to Home
+      </Link>
 
       <h2 style={{ marginBottom: "20px" }}>
         {slug.toUpperCase()} BOOKS
       </h2>
 
-      <div className="search-box" style={{ marginBottom: "25px" }}>
+      <div
+        className="search-box"
+        style={{ marginBottom: "25px" }}
+      >
         <input
           type="text"
           placeholder="Search book..."
@@ -89,35 +96,82 @@ export default function CategoryPage() {
       {filteredBooks.length > 0 ? (
         <div className="allbooks-grid">
           {filteredBooks.map((book) => (
-            <div className="allbook-card" key={book.slug}>
-              <div className="allbook-img">
-                <img
-                  src={
-                    book.img
-                      ? book.img.replace(
+
+            <Link
+              key={book._id}
+              href={`/books/${book.slug}`}
+              className="cardlink"
+            >
+
+              <div
+                className={`allbook-card ${book.inStock === false
+                    ? "out-of-stock-card"
+                    : ""
+                  }`}
+              >
+
+                <div className="allbook-img">
+
+                  <img
+                    src={
+                      book.img
+                        ? book.img.replace(
                           "/upload/",
                           "/upload/f_auto,q_auto,w_300/"
                         )
-                      : "/images/No_Image_Available.jpg"
-                  }
-                  alt={book.title}
-                />
-              </div>
+                        : "/images/No_Image_Available.jpg"
+                    }
+                    alt={book.title}
+                  />
 
-              <h3>{book.title}</h3>
-              <p className="telugu-title">{book.teluguTitle}</p>
-              <p className="author">by {book.author}</p>
-              <p className="telugu-author">రచయిత: {book.teluguAuthor}</p>
-              <p className="price">₹ {book.price}</p>
+                  {book.inStock === false && (
+                    <span className="stock-badge">
+                      Out of Stock
+                    </span>
+                  )}
 
-              <div className="book-actions">
-                <Link href={`/books/${book.slug}`}>
-                  <button className="buy-btn">View Details</button>
-                </Link>
-                <AddToCart book={book} />
+                </div>
+                <div className="book-actions">
+                <h3>{book.title}</h3>
+
+                <p className="telugu-title">
+                  {book.teluguTitle}
+                </p>
+
+                <p className="author">
+                  by {book.author}
+                </p>
+
+                <p className="telugu-author">
+                  రచయిత: {book.teluguAuthor}
+                </p>
+
+                <p className="price">
+                  Rs. {book.price}.00
+                </p>
+
+                {book.inStock !== false && (
+                  <div
+                    className="cart12"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
+                    <AddToCart book={book} />
+                  </div>
+                )}
+
               </div>
-            </div>
+                </div>
+            </Link>
+
           ))}
+
         </div>
       ) : (
         <div className="no-result">
@@ -125,6 +179,7 @@ export default function CategoryPage() {
           <p>Try another search</p>
         </div>
       )}
+
     </section>
   );
 }

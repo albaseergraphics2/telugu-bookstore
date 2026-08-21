@@ -102,7 +102,7 @@ export default function BooksPage() {
       <div className="allbooks-grid">
         {sortedBooks.map((book) => (
           <Link
-            key={book.slug}
+            key={book._id}
             href={`/books/${book.slug}`}
             className="cardlink"
           >
@@ -122,8 +122,6 @@ export default function BooksPage() {
                   </span>
                 )}
               </div>
-
-
 
               {(book.sold > 50) && (
                 <p style={{ color: "green", fontSize: "12px" }}>
@@ -148,7 +146,7 @@ export default function BooksPage() {
 
                 {book.inStock !== false && (
                   <div
-                  className="cart12"
+                    className="cart12"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
