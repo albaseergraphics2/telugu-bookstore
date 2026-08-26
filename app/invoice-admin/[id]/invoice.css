@@ -1,32 +1,25 @@
-@media print {
-
-  html, body {
-    height: auto;
-    overflow: hidden;
-  }
+/* @media print {
 
   body * {
     visibility: hidden;
   }
 
-  .invoice-card,
-  .invoice-card * {
+  .invoice-card-admin,
+  .invoice-card-admin * {
     visibility: visible;
   }
 
-  .invoice-card {
+  .invoice-card-admin {
     position: absolute;
     top: 0;
     left: 0;
-
-    width: 180mm;   /* 👈 FIX WIDTH */
-    max-height: 260mm; /* 👈 FIT IN ONE PAGE */
-
-    overflow: hidden;  /* 👈 REMOVE EXTRA SPACE */
+    width: 180mm;
+    margin: 0;
+    overflow: visible;
   }
 
   @page {
     size: A4;
     margin: 10mm;
   }
-}
+} */

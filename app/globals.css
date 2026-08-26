@@ -113,6 +113,7 @@ nav {
 .whatsapp-float {
   display: none;
 }
+
 /* MOBILE BOTTOM BAR */
 .mobile-bar {
   position: fixed;
@@ -1181,10 +1182,13 @@ nav {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
+.invoice {
+  font-size: 18px;
+}
+
 .invoice-card h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #0a5c36;
 }
 
 .invoice-card h3 {
@@ -1207,14 +1211,72 @@ nav {
   gap: 15px;
 }
 
-.invoice-item span:first-child {
+.invoice-items-header {
+  display: grid;
+  grid-template-columns: 1fr 60px 80px;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.invoice-item {
+  display: grid;
+  grid-template-columns: 1fr 60px 80px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.invoice-items-header span:nth-child(2),
+.invoice-items-header span:nth-child(3),
+.invoice-item span:nth-child(2),
+.invoice-item span:nth-child(3) {
+  text-align: right;
+}
+
+.invoice-summary {
+  margin-top: 15px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 8px;
+  font-size: 17px;
+  color: #0a5c36;
+}
+
+.invoice-payment {
+  margin-top: 15px;
+}
+
+.invoice-payment p {
+  margin: 5px 0;
+}
+
+.invoice-thankyou {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 20px !important;
+}
+
+/* .invoice-item span:first-child {
   flex: 1;
 }
 
 .invoice-item span:last-child {
   font-weight: 600;
   white-space: nowrap;
-}
+} */
 
 .invoice-buttons {
   margin-top: 20px;
@@ -1462,8 +1524,12 @@ nav {
   font-weight: 600;
 }
 
+/* Hidden on desktop */
+.admin-mobile-header {
+  display: none;
+}
+
 /* admin dashboard cards */
-.admin-dashboard,
 .admin-hero {
   padding: 20px !important;
 }
@@ -1760,10 +1826,14 @@ nav {
   color: #0a5c36;
 }
 
+.statusadmin {
+  margin-bottom: 4px;
+}
+
 .order-actions {
   display: flex;
   justify-content: flex-end;
-  padding: 10px 24px;
+  padding: 6px 24px;
 }
 
 .invoice-btn {
@@ -1789,11 +1859,31 @@ nav {
 }
 
 /* admin order page  */
+.clear-order-filter {
+  padding: 9px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #dc3545;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.clear-order-filter:hover {
+  background: #b02a37;
+}
+
+.clear-order-filter:active {
+  transform: scale(0.97);
+}
+
 .admin-orders {
   padding: 20px;
 }
 
-/* Invoice buttons */
 .invoice-buttons {
   margin-top: 20px;
   display: flex;
@@ -1814,9 +1904,9 @@ nav {
 }
 
 .delivery-input {
-  width: 80%;
+  width: 100%;
   padding: 5px 7px;
-  margin-top: 10px;
+  margin-top: 6px;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 12px;
@@ -1849,14 +1939,238 @@ nav {
   transform: scale(0.97);
 }
 
-/* Admin buttons */
-.admin-invoice-btns {
+
+.orders-header {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.orders-header h3 {
+  margin: 0;
+}
+
+.orders-filter-area {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
   gap: 8px;
 }
+
+.orders-filter,
+.orders-date-filter {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.orders-filter {
+  min-width: 180px;
+}
+
+.orders-date-filter {
+  width: 150px;
+  box-sizing: border-box;
+}
+
+/* Admin invoice page */
+
+.logo-invoice {
+  text-align: center !important;
+}
+
+.invoice-card-admin {
+  width: 500px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+
+.invoice-heading h2 {
+  text-align: center;
+  font-size: 20px;
+  margin: 12px;
+}
+
+.inovice-date-admin {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+}
+
+.inovice-date-admin p {
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+.invoice-info-box {
+  border-bottom: 1px solid #ddd;
+}
+
+.invoice-info-box h3 {
+  margin: 10px 0px 10px 0px;
+  font-size: 24px;
+}
+
+.invoice-info-box p {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.invoice-books-admin {
+  margin-top: 10px;
+}
+
+.invoice-items-header-admin {
+  display: grid;
+  grid-template-columns: 1fr 70px 60px 60px;
+
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.invoice-item-admin {
+  border-bottom: 1px solid #eee;
+  grid-template-columns: 1fr 80px 70px 45px;
+  padding: 2px 0;
+  font-size: 14px;
+  display: grid;
+}
+
+.summary-row-admin {
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 15px;
+  display: flex;
+}
+
+.summary-total-admin {
+  border-top: 1px solid #eee;
+}
+
+.admin-invoice-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+/* admin users order list*/
+.admin-user-orders {
+  width: 100%;
+  padding: 20px;
+
+}
+
+.user-orders-table {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  background: #fff;
+}
+
+.user-order-table-row {
+  display: grid;
+  grid-template-columns:
+    1.2fr 1fr 1fr 1.2fr 1fr 1.2fr 1.2fr;
+
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 12px;
+
+  border-bottom: 1px solid #ddd;
+}
+
+.user-order-table-header {
+  font-weight: 700;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
+
+.user-order-table-row>div {
+  min-width: 0;
+  word-break: break-word;
+}
+
+.mobile-label {
+  display: none;
+}
+
+.user-order-status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.user-order-status.completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.user-order-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.user-order-status.shipped {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.user-order-status.cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.user-order-invoice-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.user-order-invoice-btn:hover {
+  background: #1d4ed8;
+}
+
+.user-orders-desktop {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  background: #fff;
+}
+
+.user-orders-mobile {
+  display: none;
+}
+
+.user-order-mobile-card {
+  display: none;
+}
+
+
+/* ======= */
+
 
 .admin-invoice-btns button {
   padding: 6px 10px;
@@ -1864,6 +2178,7 @@ nav {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .invoice-container-admin {
@@ -1896,8 +2211,8 @@ nav {
 }
 
 .order-row {
+  margin-bottom: 15px;
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr 1fr;
   gap: 8px;
   background: #fff;
   padding: 10px;
@@ -1907,8 +2222,9 @@ nav {
 
 .order-actions {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 3px;
+  width: 50%;
 }
 
 .order-actions button {
@@ -1944,6 +2260,89 @@ nav {
 .order-actions button:last-child {
   margin-bottom: 0;
 }
+
+.adminorders-card {
+  display: flex;
+  justify-content: space-between;
+}
+
+.adminorders-card p {
+  margin-bottom: 0px !important;
+}
+
+.desktop-orders-table {
+  display: block;
+}
+
+.mobile-orders-table {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  .desktop-orders-table {
+    display: none;
+  }
+
+  .mobile-orders-table {
+    display: block;
+  }
+
+}
+
+.adminorders-cardname p {
+  margin-bottom: 4px !important;
+}
+
+.admin-box {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.admin-invoice1 {
+  width: 70%;
+}
+
+.admin-invoice-items-header {
+  display: grid;
+  grid-template-columns: 1fr 60px 50px;
+  padding: 4px 0;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.admin-invoice-item {
+  display: grid;
+  grid-template-columns: 1fr 50px 50px;
+  padding: 4px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.admin-invoice-item-total {
+  display: grid;
+  grid-template-columns: 1fr 50px;
+  padding: 6px 0;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.invoice-items-header span:nth-child(2),
+.invoice-items-header span:nth-child(3),
+.invoice-item span:nth-child(2),
+.invoice-item span:nth-child(3) {
+  text-align: right;
+}
+
+
+
+
+
+
+
 
 /* admin books */
 .admin-books {
@@ -2238,6 +2637,11 @@ nav {
   border-radius: 20px;
   font-size: 16px;
 }
+
+.users-mobile {
+  display: none;
+}
+
 
 /* menu page */
 .menu-page {
@@ -3021,9 +3425,6 @@ nav {
 }
 
 /* payment setting page */
-/* ===========================
-   Payment Settings
-=========================== */
 
 .payment-settings {
   max-width: 1200px;
@@ -3323,30 +3724,31 @@ nav {
   .login-btn {
     margin-left: 10px;
   }
-  .phone-number{
+
+  .phone-number {
     display: none;
   }
 
   .whatsapp-float {
-  position: fixed;
-  right: 18px;
-  bottom: 78px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #25d366;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
-  text-decoration: none;
-}
+    position: fixed;
+    right: 18px;
+    bottom: 78px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+    text-decoration: none;
+  }
 
-.whatsapp-float .phone-icon {
-  font-size: 27px;
-}
+  .whatsapp-float .phone-icon {
+    font-size: 27px;
+  }
 
 
 
@@ -3436,10 +3838,10 @@ nav {
     padding: 8px 8px;
   }
 
-  .cart12{
+  .cart12 {
     width: 100%;
   }
-  
+
   .cart-btn {
     padding: 8px;
     font-size: 12px;
@@ -3852,11 +4254,142 @@ nav {
     grid-template-columns: 1fr;
   }
 
-  .adminhead {
-    padding-top: 6px;
+  /*admin order page */
+  .admin-dashboard h2{
+    font-size: 24px;
+  }
+  .orders-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 15px;
   }
 
-  /* order page */
+  .orders-header h3 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .orders-filter-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .orders-filter,
+  .orders-date-filter,
+  .clear-order-filter {
+    width: 100%;
+    min-height: 42px;
+    box-sizing: border-box;
+    font-size: 14px;
+    border-radius: 6px;
+  }
+
+  .orders-filter {
+    padding: 10px 12px;
+    background: #fff;
+    border: 1px solid #ccc;
+  }
+
+  .orders-date-filter {
+    padding: 10px 12px;
+    background: #fff;
+    border: 1px solid #ccc;
+  }
+
+  .clear-order-filter {
+    padding: 10px 12px;
+    border: none;
+    background: #dc3545;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .clear-order-filter:active {
+    transform: scale(0.98);
+  }
+
+  .users-table {
+    display: none;
+  }
+
+  .users-mobile {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .user-mobile-card {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+  }
+
+  .user-mobile-row {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 3px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .user-mobile-row>span {
+    flex: 0 0 90px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #777;
+  }
+
+  .user-mobile-row>strong {
+    flex: 1;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .user-mobile-action {
+    width: 100%;
+    padding-top: 14px;
+  }
+
+  .user-mobile-action .adminuserorderlist {
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .admin-users .users-header {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .admin-users .search-box {
+    width: 100%;
+  }
+
+  .admin-users .search-box input {
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   .order-card {
     padding: 10px;
   }
@@ -3884,11 +4417,130 @@ nav {
   }
 
   .admin-sidebar {
+    position: relative;
+    z-index: 99999;
     width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
-    height: 10vh;
+    height: auto;
+    overflow: visible;
+    padding: 10px 15px 15px 15px;
   }
+
+  .admin-mobile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+    position: relative;
+    z-index: 99999;
+    overflow: visible;
+  }
+
+  .admin-mobile-dropdown {
+    position: relative;
+    width: 100%;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition:
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .admin-mobile-dropdown:hover {
+    border-color: #999;
+  }
+
+  .admin-mobile-dropdown-btn {
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  .admin-mobile-dropdown-btn {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+    color: #333;
+    font-size: 14px;
+  }
+
+  .admin-mobile-dropdown-options {
+    position: fixed;
+    top: 145px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    z-index: 999999;
+    overflow: hidden;
+    animation: mobileDropdownOpen 0.25s ease;
+  }
+
+
+  @keyframes mobileDropdownOpen {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+
+  .admin-mobile-dropdown-options button {
+    display: block;
+    width: 100%;
+    padding: 13px 15px;
+    margin: 0;
+    border: none;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+    color: #333;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      padding-left 0.2s ease;
+  }
+
+  .admin-mobile-dropdown-options button:hover {
+    background: #f5f5f5;
+    padding-left: 20px;
+  }
+
+  .admin-mobile-dropdown-options button:last-child {
+    border-bottom: none;
+  }
+
+
+  .admin-mobile-dropdown-options button.selected {
+    background: #e9ecef;
+    font-weight: 600;
+  }
+
+
+  .admin-sidebar>button {
+    display: none;
+  }
+
+
+
 
   /* invoice page  */
   .invoice-page {
@@ -3909,6 +4561,10 @@ nav {
     box-sizing: border-box;
   }
 
+  .invoice {
+    font-size: 20px !important;
+  }
+
   .invoice-card h2 {
     font-size: 24px;
     margin-bottom: 15px;
@@ -3924,10 +4580,10 @@ nav {
   }
 
   .invoice-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr 50px 80px;
+    align-items: start;
+    gap: 8px;
     margin: 10px 0;
   }
 
@@ -4345,6 +5001,7 @@ nav {
   }
 
   .order-actions {
+    width: 100%;
     display: flex;
     gap: 8px;
     padding: 10px 12px 12px;
@@ -4482,6 +5139,75 @@ nav {
     font-size: 14px;
     box-sizing: border-box;
   }
+
+  /* admin user order list */
+  .user-orders-desktop {
+    display: none;
+  }
+
+  .admin-user-orders {
+    padding: 10px;
+  }
+
+  .user-orders-mobile {
+    display: block;
+    width: 100%;
+  }
+
+  .user-order-mobile-card {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+  }
+
+  .mobile-order-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .mobile-order-field>span:first-child {
+    color: #777;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .mobile-order-field>strong {
+    text-align: right;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+
+  .mobile-order-invoice {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+  }
+
+  .mobile-order-invoice>span {
+    color: #777;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .mobile-order-invoice a {
+    width: 100%;
+  }
+
+  .mobile-order-invoice .user-order-invoice-btn {
+    width: 100%;
+    padding: 8px;
+  }
+
 }
 
 @media (min-width:769px) {

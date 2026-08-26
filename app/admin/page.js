@@ -53,7 +53,6 @@ export default function AdminDashboard() {
   return (
     <div className="admin-dashboard">
       <h2>Dashboard</h2>
-      <p>Welcome Admin 👑</p>
 
       <div className="analytics-grid">
         <div className="analytics-card">
