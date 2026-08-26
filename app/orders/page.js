@@ -8,33 +8,51 @@ import useRealtime from "@/app/hooks/useRealtime";
 export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
-  const { user } = useSelector((state) => state.auth);
+
+  const { user, loading: authLoading } = useSelector(
+    (state) => state.auth
+  );
 
   const fetchOrders = async () => {
-    try {
-      if (!user?._id) {
-        setLoading(false);
-        return;
-      }
+    if (authLoading) return;
 
-      const res = await fetch(`/api/orders?userId=${user._id}`);
+    if (!user?._id) {
+      setOrders([]);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await fetch(`/api/orders?userId=${user._id}`, {
+        cache: "no-store",
+      });
+
       const data = await res.json();
 
       if (data.success) {
-        setOrders(data.orders);
+        setOrders(data.orders || []);
+      } else {
+        setOrders([]);
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
+      setOrders([]);
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 200);
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (!authLoading && user?._id) {
+      fetchOrders();
+    }
+  }, [user?._id, authLoading]);
+
   useRealtime(fetchOrders);
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div style={{ textAlign: "center", marginTop: "100px" }}>
         <div className="loader"></div>
@@ -45,10 +63,15 @@ export default function OrdersPage() {
 
   return (
     <section className="orders-page">
-      <Link href="/" className="back-home">← Back to Home</Link>
+      <Link href="/" className="back-home">
+        ← Back to Home
+      </Link>
 
       <h1 className="orders-title">
-        My Orders <span className="order-count">({orders.length})</span>
+        My Orders{" "}
+        <span className="order-count">
+          ({orders.length})
+        </span>
       </h1>
 
       {orders.length === 0 ? (
@@ -60,11 +83,20 @@ export default function OrdersPage() {
 
               <div className="order-header">
                 <div>
-                  <h3>Order #{order.invoiceId || order._id.slice(-6).toUpperCase()}</h3>
-                  <p>{new Date(order.createdAt).toLocaleString()}</p>
+                  <h3>
+                    Order #
+                    {order.invoiceId ||
+                      order._id.slice(-6).toUpperCase()}
+                  </h3>
+
+                  <p>
+                    {new Date(order.createdAt).toLocaleString()}
+                  </p>
                 </div>
 
-                <span className={`order-status ${order.status?.toLowerCase()}`}>
+                <span
+                  className={`order-status ${order.status?.toLowerCase()}`}
+                >
                   {order.status}
                 </span>
               </div>
@@ -73,14 +105,20 @@ export default function OrdersPage() {
                 <h4>Books ({order.items.length})</h4>
 
                 {order.items.map((item, index) => (
-                  <div key={index} className="book-row">
+                  <div
+                    key={index}
+                    className="book-row"
+                  >
                     <span className="book-name">
                       {item.bookId?.title || "Book"}
                     </span>
 
                     <div className="orders-book-info">
                       <span>Qty: {item.qty}</span>
-                      <strong>₹ {item.bookId?.price || "-"}</strong>
+
+                      <strong>
+                        ₹ {item.bookId?.price || "-"}
+                      </strong>
                     </div>
                   </div>
                 ))}
@@ -90,16 +128,20 @@ export default function OrdersPage() {
                 <h4>Delivery Address</h4>
 
                 <div className="address-card">
-                  <p className="customer-name">{order.name}</p>
+                  <p className="customer-name">
+                    {order.name}
+                  </p>
 
                   <p>{order.address?.full}</p>
 
                   <p>
-                    {order.address?.area}, {order.address?.district}
+                    {order.address?.area},{" "}
+                    {order.address?.district}
                   </p>
 
                   <p>
-                    {order.address?.state} - {order.address?.pincode}
+                    {order.address?.state} -{" "}
+                    {order.address?.pincode}
                   </p>
 
                   <p className="phone">
@@ -112,12 +154,17 @@ export default function OrdersPage() {
 
                 <div className="summary-row">
                   <span>Books Total</span>
-                  <span>₹ {order.totalAmount || 0}</span>
+                  <span>
+                    ₹ {order.totalAmount || 0}
+                  </span>
                 </div>
 
                 <div className="summary-row">
                   <span>Delivery Type</span>
-                  <span>{order.deliveryType || "To Be Confirmed"}</span>
+                  <span>
+                    {order.deliveryType ||
+                      "To Be Confirmed"}
+                  </span>
                 </div>
 
                 <div className="summary-row">
@@ -134,11 +181,13 @@ export default function OrdersPage() {
                 <div className="summary-row grand-total">
                   <span>Grand Total</span>
                   <strong>
-                    ₹ {order.totalAmount >= 1000
-                      ? (order.totalAmount || 0)
+                    ₹{" "}
+                    {order.totalAmount >= 1000
+                      ? order.totalAmount || 0
                       : order.deliveryCharge > 0
-                        ? (order.totalAmount || 0) + order.deliveryCharge
-                        : (order.totalAmount || 0)}
+                        ? (order.totalAmount || 0) +
+                          order.deliveryCharge
+                        : order.totalAmount || 0}
                   </strong>
                 </div>
               </div>
