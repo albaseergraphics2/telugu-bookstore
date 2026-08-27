@@ -87,11 +87,6 @@ export default function InvoicePage() {
 
           <div className="invoice-summary">
             <div className="summary-row">
-              <span>Subtotal</span>
-              <span>₹ {order.totalAmount || 0}</span>
-            </div>
-
-            <div className="summary-row">
               <span>Shipping</span>
               <span>₹ {order.deliveryCharge || 0}</span>
             </div>

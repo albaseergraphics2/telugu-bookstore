@@ -222,74 +222,77 @@ export default function AdminOrders() {
           All Orders
         </h3>
         <div className="orders-filter-area">
+          <div className="orders-filter-area-box">
+            {/* SORT / FILTER */}
+            <div>
+              <select
+                className="orders-filter"
+                value={orderFilter}
+                onChange={(e) => {
+                  setOrderFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="all">
+                  All Orders
+                </option>
 
-          {/* SORT / FILTER */}
-          <select
-            className="orders-filter"
-            value={orderFilter}
-            onChange={(e) => {
-              setOrderFilter(e.target.value);
-              setCurrentPage(1);
-            }}
-          >
-            <option value="all">
-              All Orders
-            </option>
+                <option value="newest">
+                  Newest Orders
+                </option>
 
-            <option value="newest">
-              Newest Orders
-            </option>
+                <option value="oldest">
+                  Oldest Orders
+                </option>
 
-            <option value="oldest">
-              Oldest Orders
-            </option>
+                <option value="high-amount">
+                  Highest Amount
+                </option>
 
-            <option value="high-amount">
-              Highest Amount
-            </option>
+                <option value="low-amount">
+                  Lowest Amount
+                </option>
 
-            <option value="low-amount">
-              Lowest Amount
-            </option>
+                <option value="most-books">
+                  Most Books
+                </option>
 
-            <option value="most-books">
-              Most Books
-            </option>
+                <option value="least-books">
+                  Least Books
+                </option>
 
-            <option value="least-books">
-              Least Books
-            </option>
+                <option value="pending">
+                  Pending Orders
+                </option>
 
-            <option value="pending">
-              Pending Orders
-            </option>
+                <option value="shipped">
+                  Shipped Orders
+                </option>
 
-            <option value="shipped">
-              Shipped Orders
-            </option>
+                <option value="completed">
+                  Completed Orders
+                </option>
 
-            <option value="completed">
-              Completed Orders
-            </option>
+                <option value="cancelled">
+                  Cancelled Orders
+                </option>
 
-            <option value="cancelled">
-              Cancelled Orders
-            </option>
+              </select>
+            </div>
 
-          </select>
-
-          {/* DATE */}
-
-          <input
-            type="date"
-            className="orders-date-filter"
-            value={selectedDate || today}
-            onChange={(e) => {
-              setSelectedDate(e.target.value);
-              setCurrentPage(1);
-            }}
-          />
-
+            {/* DATE */}
+            <div>
+              <input
+                type="date"
+                className="orders-date-filter"
+                value={selectedDate || today}
+                onChange={(e) => {
+                  setSelectedDate(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
+          </div>
           {/* CLEAR FILTER */}
 
           {(orderFilter !== "all" ||
@@ -310,233 +313,85 @@ export default function AdminOrders() {
         </div>
       </div>
 
-      {
-        orders.length === 0 ? (
-          <p>No orders found</p>
-        ) : (
-          <>
-          <hr/>
-            {/* DESKTOP ORDERS TABLE */}
-            <div className="orders-table desktop-orders-table">
+      {filteredOrders.length === 0 ? (
+        <div
+          style={{
+            width: "100%",
+            padding: "40px 20px",
+            textAlign: "center",
+            boxSizing: "border-box",
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              fontSize: "16px",
+              color: "#777",
+            }}
+          >
+            No orders found
+          </p>
+        </div>
+      ) : (
+        <>
+          <hr />
+          {/* DESKTOP ORDERS TABLE */}
+          <div className="orders-table desktop-orders-table">
 
-              {currentOrders.map((order) => (
-                <div key={order._id} className="order-row">
+            {currentOrders.map((order) => (
+              <div key={order._id} className="order-row">
 
-                  <div className="adminorders-card">
-                    <p><b>Order ID:</b> {order.invoiceId || order._id.slice(-6).toUpperCase()}</p>
-                    <p><b>Date: </b>{new Date(order.createdAt).toLocaleString()}</p>
-                  </div>
+                <div className="adminorders-card">
+                  <p><b>Order ID:</b> {order.invoiceId || order._id.slice(-6).toUpperCase()}</p>
+                  <p><b>Date: </b>{new Date(order.createdAt).toLocaleString()}</p>
+                </div>
 
-                  <div className="adminorders-cardname">
-                    <p><b>Name:</b> {order.name}</p>
-                    <p><b>Phone No:</b> {order.phone}</p>
-                    <p><b>Address: </b>{order.address?.full || "-"}, {order.address?.pincode || "-"}</p>
-                  </div>
+                <div className="adminorders-cardname">
+                  <p><b>Name:</b> {order.name}</p>
+                  <p><b>Phone No:</b> {order.phone}</p>
+                  <p><b>Address: </b>{order.address?.full || "-"}, {order.address?.pincode || "-"}</p>
+                </div>
 
-                  <div className="admin-box">
-                    <div className="admin-invoice1">
-                      <div className="admin-invoice-items-header">
-                        <span>Book</span>
-                        <span>Qty</span>
-                        <span>Price</span>
+                <div className="admin-box">
+                  <div className="admin-invoice1">
+                    <div className="admin-invoice-items-header">
+                      <span>Book</span>
+                      <span>Qty</span>
+                      <span>Price</span>
+                    </div>
+
+                    {order.items.map((item, i) => (
+                      <div key={i} className="admin-invoice-item">
+                        <span>{item.bookId?.title || "Book"}</span>
+                        <span>{item.qty}</span>
+                        <span>₹ {item.bookId?.price || 0}</span>
                       </div>
+                    ))}
 
-                      {order.items.map((item, i) => (
-                        <div key={i} className="admin-invoice-item">
-                          <span>{item.bookId?.title || "Book"}</span>
-                          <span>{item.qty}</span>
-                          <span>₹ {item.bookId?.price || 0}</span>
-                        </div>
-                      ))}
-
-                      <div className="admin-order-summary">
-                        {/* <div className="admin-invoice-item-total">
+                    <div className="admin-order-summary">
+                      {/* <div className="admin-invoice-item-total">
                         <span>Total</span>
                         <span>₹ {order.totalAmount || 0}</span>
                       </div> */}
 
-                        <div className="admin-invoice-item-total">
-                          <span>Delivery Charges</span>
-                          <span>₹ {order.deliveryCharge || 0}</span>
-                        </div>
-
-                        <div className="admin-invoice-item-total">
-                          <strong>Total</strong>
-                          <strong>
-                            ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}
-                          </strong>
-                        </div>
+                      <div className="admin-invoice-item-total">
+                        <span>Delivery Charges</span>
+                        <span>₹ {order.deliveryCharge || 0}</span>
                       </div>
 
-                    </div>
-
-                    <div>
-                      <b>Delivery</b>
-
-                      <input
-                        className="delivery-input"
-                        type="text"
-                        placeholder="Delivery Type"
-                        value={order.deliveryType || ""}
-                        onChange={(e) => {
-                          setOrders(prev =>
-                            prev.map(o =>
-                              o._id === order._id
-                                ? { ...o, deliveryType: e.target.value }
-                                : o
-                            )
-                          );
-                        }}
-                      />
-
-                      <input
-                        className="delivery-input"
-                        type="number"
-                        placeholder="Delivery Charges"
-                        value={order.deliveryCharge || ""}
-                        onChange={(e) => {
-                          setOrders(prev =>
-                            prev.map(o =>
-                              o._id === order._id
-                                ? {
-                                  ...o,
-                                  deliveryCharge: Number(e.target.value)
-                                }
-                                : o
-                            )
-                          );
-                        }}
-                      />
-
-                      <button
-                        className="save-delivery-btn"
-                        onClick={() =>
-                          updateStatus(
-                            order._id,
-                            order.status,
-                            order.deliveryType,
-                            order.deliveryCharge
-                          )
-                        }
-                      >
-                        Save Delivery
-                      </button>
-                    </div>
-
-                  </div>
-
-
-
-
-                  <div>
-                    <p className="statusadmin"><b>Status: </b>{order.status}</p>
-                    <div className="admin-box">
-                      <div className="order-actions">
-                        <button
-                          onClick={() =>
-                            updateStatus(
-                              order._id,
-                              "Completed",
-                              order.deliveryType,
-                              order.deliveryCharge
-                            )
-                          }
-                        >
-                          Complete
-                        </button>
-
-                        <button
-                          onClick={() =>
-                            updateStatus(
-                              order._id,
-                              "Pending",
-                              order.deliveryType,
-                              order.deliveryCharge
-                            )
-                          }
-                        >
-                          Pending
-                        </button>
-
-                        <button
-                          onClick={() =>
-                            updateStatus(
-                              order._id,
-                              "Shipped",
-                              order.deliveryType,
-                              order.deliveryCharge
-                            )
-                          }
-                        >
-                          Shipped
-                        </button>
-
-                        <button
-                          onClick={() =>
-                            updateStatus(
-                              order._id,
-                              "Cancelled",
-                              order.deliveryType,
-                              order.deliveryCharge
-                            )
-                          }
-                        >
-                          Cancel
-                        </button>
+                      <div className="admin-invoice-item-total">
+                        <strong>Total</strong>
+                        <strong>
+                          ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}
+                        </strong>
                       </div>
-                      <div className="admin-invoice-btns">
-                        <Link href={`/invoice-admin/${order._id}`}>
-                          <button>View Invoice</button>
-                        </Link>
-
-                        <button onClick={() => handlePrint(order)}>
-                          Print address slip
-                        </button>
-                      </div>
-
                     </div>
+
                   </div>
-
-
-                </div>
-              ))}
-            </div>
-
-
-
-            {/* MOBILE ORDERS TABLE */}
-            <div className="orders-table mobile-orders-table">
-
-              {currentOrders.map((order) => (
-                <div key={order._id} className="order-row">
-
-                  <div className="adminorders-card">
-                    <p><b>Order ID:</b> {order.invoiceId || order._id.slice(-6).toUpperCase()}</p>
-                    <p><b>Date: </b>{new Date(order.createdAt).toLocaleString()}</p>
-                  </div>
-
-                  <div className="adminorders-cardname">
-                    <p><b>Name:</b> {order.name}</p>
-                    <p><b>Phone No:</b> {order.phone}</p>
-                    <p><b>Address: </b>{order.address?.full || "-"}, {order.address?.pincode || "-"}</p>
-                  </div>
-
-                  <div className="admin-invoice-items-header">
-                    <span>Book</span>
-                    <span>Qty</span>
-                    <span>Price</span>
-                  </div>
-
-                  {order.items.map((item, i) => (
-                    <div key={i} className="admin-invoice-item">
-                      <span>{item.bookId?.title || "Book"}</span>
-                      <span>{item.qty}</span>
-                      <span>₹ {item.bookId?.price || 0}</span>
-                    </div>
-                  ))}
 
                   <div>
                     <b>Delivery</b>
+
                     <input
                       className="delivery-input"
                       type="text"
@@ -562,7 +417,10 @@ export default function AdminOrders() {
                         setOrders(prev =>
                           prev.map(o =>
                             o._id === order._id
-                              ? { ...o, deliveryCharge: Number(e.target.value) }
+                              ? {
+                                ...o,
+                                deliveryCharge: Number(e.target.value)
+                              }
                               : o
                           )
                         );
@@ -584,28 +442,14 @@ export default function AdminOrders() {
                     </button>
                   </div>
 
-                  <div className="admin-order-summary">
-                    <div className="admin-invoice-item-total">
-                      <span>Total</span>
-                      <span>₹ {order.totalAmount || 0}</span>
-                    </div>
-
-                    <div className="admin-invoice-item-total">
-                      <span>Delivery Charges</span>
-                      <span>₹ {order.deliveryCharge || 0}</span>
-                    </div>
-
-                    <div className="admin-invoice-item-total">
-                      <strong>total</strong>
-                      <strong>
-                        ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}
-                      </strong>
-                    </div>
-                  </div>
+                </div>
 
 
-                  <div className="admin-Status-mobile">
-                    <p><b>Status: </b>{order.status}</p>
+
+
+                <div>
+                  <p className="statusadmin"><b>Status: </b>{order.status}</p>
+                  <div className="admin-box">
                     <div className="order-actions">
                       <button
                         onClick={() =>
@@ -659,43 +503,218 @@ export default function AdminOrders() {
                         Cancel
                       </button>
                     </div>
-                  </div>
-                  <div className="admin-invoice-btns">
-                    <Link href={`/invoice-admin/${order._id}`}>
-                      <button>View Invoice</button>
-                    </Link>
+                    <div className="admin-invoice-btns">
+                      <Link href={`/invoice-admin/${order._id}`}>
+                        <button>View Invoice</button>
+                      </Link>
 
-                    <button onClick={() => handlePrint(order)}>
-                      Print address slip
+                      <button onClick={() => handlePrint(order)}>
+                        Print address slip
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+
+
+              </div>
+            ))}
+          </div>
+
+
+
+          {/* MOBILE ORDERS TABLE */}
+          <div className="orders-table mobile-orders-table">
+
+            {currentOrders.map((order) => (
+              <div key={order._id} className="order-row">
+
+                <div className="adminorders-card">
+                  <p><b>Order ID:</b> {order.invoiceId || order._id.slice(-6).toUpperCase()}</p>
+                  <p><b>Date: </b>{new Date(order.createdAt).toLocaleString()}</p>
+                </div>
+
+                <div className="adminorders-cardname">
+                  <p><b>Name:</b> {order.name}</p>
+                  <p><b>Phone No:</b> {order.phone}</p>
+                  <p><b>Address: </b>{order.address?.full || "-"}, {order.address?.pincode || "-"}</p>
+                </div>
+
+                <div className="admin-invoice-items-header">
+                  <span>Book</span>
+                  <span>Qty</span>
+                  <span>Price</span>
+                </div>
+
+                {order.items.map((item, i) => (
+                  <div key={i} className="admin-invoice-item">
+                    <span>{item.bookId?.title || "Book"}</span>
+                    <span>{item.qty}</span>
+                    <span>₹ {item.bookId?.price || 0}</span>
+                  </div>
+                ))}
+
+                <div>
+                  <b>Delivery</b>
+                  <input
+                    className="delivery-input"
+                    type="text"
+                    placeholder="Delivery Type"
+                    value={order.deliveryType || ""}
+                    onChange={(e) => {
+                      setOrders(prev =>
+                        prev.map(o =>
+                          o._id === order._id
+                            ? { ...o, deliveryType: e.target.value }
+                            : o
+                        )
+                      );
+                    }}
+                  />
+
+                  <input
+                    className="delivery-input"
+                    type="number"
+                    placeholder="Delivery Charges"
+                    value={order.deliveryCharge || ""}
+                    onChange={(e) => {
+                      setOrders(prev =>
+                        prev.map(o =>
+                          o._id === order._id
+                            ? { ...o, deliveryCharge: Number(e.target.value) }
+                            : o
+                        )
+                      );
+                    }}
+                  />
+
+                  <button
+                    className="save-delivery-btn"
+                    onClick={() =>
+                      updateStatus(
+                        order._id,
+                        order.status,
+                        order.deliveryType,
+                        order.deliveryCharge
+                      )
+                    }
+                  >
+                    Save Delivery
+                  </button>
+                </div>
+
+                <div className="admin-order-summary">
+                  <div className="admin-invoice-item-total">
+                    <span>Total</span>
+                    <span>₹ {order.totalAmount || 0}</span>
+                  </div>
+
+                  <div className="admin-invoice-item-total">
+                    <span>Delivery Charges</span>
+                    <span>₹ {order.deliveryCharge || 0}</span>
+                  </div>
+
+                  <div className="admin-invoice-item-total">
+                    <strong>total</strong>
+                    <strong>
+                      ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}
+                    </strong>
+                  </div>
+                </div>
+
+
+                <div className="admin-Status-mobile">
+                  <p><b>Status: </b>{order.status}</p>
+                  <div className="order-actions">
+                    <button
+                      onClick={() =>
+                        updateStatus(
+                          order._id,
+                          "Completed",
+                          order.deliveryType,
+                          order.deliveryCharge
+                        )
+                      }
+                    >
+                      Complete
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        updateStatus(
+                          order._id,
+                          "Pending",
+                          order.deliveryType,
+                          order.deliveryCharge
+                        )
+                      }
+                    >
+                      Pending
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        updateStatus(
+                          order._id,
+                          "Shipped",
+                          order.deliveryType,
+                          order.deliveryCharge
+                        )
+                      }
+                    >
+                      Shipped
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        updateStatus(
+                          order._id,
+                          "Cancelled",
+                          order.deliveryType,
+                          order.deliveryCharge
+                        )
+                      }
+                    >
+                      Cancel
                     </button>
                   </div>
-
                 </div>
-              ))}
-            </div>
+                <div className="admin-invoice-btns">
+                  <Link href={`/invoice-admin/${order._id}`}>
+                    <button>View Invoice</button>
+                  </Link>
 
-            <div className="pagination">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-              >
-                Prev
-              </button>
+                  <button onClick={() => handlePrint(order)}>
+                    Print address slip
+                  </button>
+                </div>
 
-              <span>
-                Page {currentPage} of {totalPages || 1}
-              </span>
+              </div>
+            ))}
+          </div>
 
-              <button
-                disabled={currentPage === totalPages || totalPages === 0}
-                onClick={() => setCurrentPage(currentPage + 1)}
-              >
-                Next
-              </button>
-            </div>
-          </>
+          <div className="pagination">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              Prev
+            </button>
 
-        )
+            <span>
+              Page {currentPage} of {totalPages || 1}
+            </span>
+
+            <button
+              disabled={currentPage === totalPages || totalPages === 0}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              Next
+            </button>
+          </div>
+        </>
+
+      )
       }
     </div >
 

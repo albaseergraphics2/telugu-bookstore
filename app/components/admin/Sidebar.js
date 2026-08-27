@@ -1,12 +1,15 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+
 export default function Sidebar() {
 
   const router = useRouter();
   const pathname = usePathname();
+  const mobileDropdownRef = useRef(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const menu = [
     { name: "Dashboard", path: "/admin" },
     { name: "Orders", path: "/admin/orders" },
@@ -16,57 +19,78 @@ export default function Sidebar() {
     { name: "Payment Settings", path: "/admin/payment-settings" },
   ];
 
+  const currentMenu =
+    menu.find((item) => item.path === pathname)?.name || "Dashboard";
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        mobileDropdownRef.current &&
+        !mobileDropdownRef.current.contains(event.target)
+      ) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("touchstart", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, []);
+
   return (
     <div className="admin-sidebar">
 
       {/* MOBILE HEADER */}
       <div className="admin-mobile-header">
 
-        <h3 className="adminhead">
-          Admin
-        </h3>
+        <div className="admintext">
+          <h3 className="adminhead">
+            Admin
+          </h3>
+        </div>
 
-        <div className="admin-mobile-dropdown">
+        <div
+          className="dropdown admin-mobile-dropdown"
+          ref={mobileDropdownRef}
+        >
 
           <button
-            className="admin-mobile-dropdown-btn"
+            type="button"
+            className="btn btn-light dropdown-toggle admin-mobile-dropdown-btn"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            <span>
-              {menu.find((item) => item.path === pathname)?.name || "Dashboard"}
-            </span>
-
-            <span className="admin-dropdown-arrow">
-              ▼
-            </span>
+            {currentMenu}
           </button>
 
           {mobileMenuOpen && (
-            <div className="admin-mobile-dropdown-options">
+            <ul className="dropdown-menu show admin-mobile-dropdown-options">
 
               {menu.map((item) => (
-                <button
-                  key={item.path}
-                  className={
-                    pathname === item.path
-                      ? "selected"
-                      : ""
-                  }
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    router.push(item.path);
-                  }}
-                >
-                  {item.name}
-                </button>
+                <li key={item.path}>
+                  <button
+                    type="button"
+                    className={`dropdown-item ${pathname === item.path ? "active" : ""
+                      }`}
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      router.push(item.path);
+                    }}
+                  >
+                    {item.name}
+                  </button>
+                </li>
               ))}
 
-            </div>
+            </ul>
           )}
 
         </div>
 
       </div>
+
 
 
       {/* DESKTOP MENU */}

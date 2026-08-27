@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link'
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FaWhatsapp, FaBook, FaShoppingCart } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import AuthPopup from "./AuthPopup";
@@ -19,7 +19,7 @@ export default function Navbar() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const dispatch = useDispatch();
-
+  const userDropdownRef = useRef(null);
   const { user, isAuthenticated } = useSelector(
     (state) => state.auth
   );
@@ -36,6 +36,25 @@ export default function Navbar() {
     dispatch(logout());
     router.push("/");
   };
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target)
+      ) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("touchstart", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, []);
 
   return (
     <>
@@ -71,39 +90,61 @@ export default function Navbar() {
             </Link>
 
             {isAuthenticated ? (
-              <div className="user-dropdown">
+              <div
+                className="user-dropdown"
+                ref={userDropdownRef}
+              >
+
                 <span
                   className="user-name"
                   onClick={() => setShowUserMenu(!showUserMenu)}
                 >
                   {user.name || user.username}
-                  <span className={`arrow ${showUserMenu ? "open" : ""}`}>▼</span>
+
+                  <span className={`arrow ${showUserMenu ? "open" : ""}`}>
+                    ▼
+                  </span>
                 </span>
 
                 {showUserMenu && (
                   <div className="user-menu">
+
                     {user?.role === "admin" && (
-                      <button onClick={() => router.push("/admin")} className="admin-btn">
+                      <button
+                        onClick={() => router.push("/admin")}
+                        className="admin-btn"
+                      >
                         Admin
                       </button>
                     )}
 
-                    <button onClick={() => router.push("/orders")} className="admin-btn">
+                    <button
+                      onClick={() => router.push("/orders")}
+                      className="admin-btn"
+                    >
                       My Orders
                     </button>
 
-                    <button onClick={() => router.push("/profile")} className="admin-btn">
+                    <button
+                      onClick={() => router.push("/profile")}
+                      className="admin-btn"
+                    >
                       My Profile
                     </button>
 
                     <button onClick={handleLogout}>
                       Logout
                     </button>
+
                   </div>
                 )}
+
               </div>
             ) : (
-              <button onClick={() => setShowLogin(true)} className="login-btn">
+              <button
+                onClick={() => setShowLogin(true)}
+                className="login-btn"
+              >
                 Login
               </button>
             )}
@@ -111,7 +152,7 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
-      
+
       <a
         href={whatsappURL}
         target="_blank"
