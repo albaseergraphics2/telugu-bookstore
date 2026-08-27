@@ -264,7 +264,7 @@ export default function InvoicePage() {
           {/* BOOKS */}
           <div className="invoice-books invoice-books-admin">
 
-            <h3>Order</h3>
+            <h3>Order List</h3>
 
             <div className="invoice-items-header-admin">
               <span>Book</span>
@@ -320,7 +320,7 @@ export default function InvoicePage() {
             <div className="summary-total summary-total-admin">
 
               <strong>
-                Grand Total
+                Total
               </strong>
 
               <strong>

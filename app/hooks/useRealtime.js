@@ -1,17 +1,23 @@
+// app/hooks/useRealtime.js
+
 import { useEffect, useRef } from "react";
 
 export default function useRealtime(callback, deps = []) {
   const callbackRef = useRef(callback);
 
-  callbackRef.current = callback;
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
 
   useEffect(() => {
-    callbackRef.current();
-
     const eventSource = new EventSource("/api/events");
 
     eventSource.onmessage = () => {
       callbackRef.current();
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
     };
 
     return () => {

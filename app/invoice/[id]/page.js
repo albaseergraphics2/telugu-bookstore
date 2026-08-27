@@ -83,18 +83,14 @@ export default function InvoicePage() {
             </div>
           ))}
 
-
-
           <div className="invoice-summary">
             <div className="summary-row">
               <span>Shipping</span>
               <span>₹ {order.deliveryCharge || 0}</span>
             </div>
 
-            <hr />
-
             <div className="summary-total">
-              <strong>Grand Total</strong>
+              <strong>Total</strong>
               <strong>
                 ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}
               </strong>
@@ -105,14 +101,13 @@ export default function InvoicePage() {
             <p>
               <b>Payment:</b> {order.paymentMethod || "COD"}
             </p>
-
             <p className="invoice-thankyou">
               Thank you
             </p>
           </div>
 
         </div>
-
+        
         <div className="invoice-buttons">
           <button onClick={handlePDF}>Download PDF</button>
         </div>

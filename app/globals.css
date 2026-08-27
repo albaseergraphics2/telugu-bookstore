@@ -1756,6 +1756,21 @@ nav {
   background: #fff3cd;
 }
 
+.order-status.shipped {
+  color: #6d28d9;
+  background: #ede9fe;
+}
+
+.order-status.completed {
+  color: #155724;
+  background: #d4edda;
+}
+
+.order-status.cancelled {
+  color: #721c24;
+  background: #f8d7da;
+}
+
 .order-section {
   padding: 10px 24px;
   border-bottom: 1px solid #ececec;
@@ -1766,8 +1781,9 @@ nav {
 }
 
 .order-section h4 {
-  font-size: 17px;
+  font-size: 16px;
   color: #222;
+  font-weight: 600;
 }
 
 .book-row {
@@ -1857,6 +1873,26 @@ nav {
 }
 
 /* admin order page  */
+
+.orders-search-box {
+  width: 300px;
+}
+
+.orders-search {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.orders-search:focus {
+  border-color: #888;
+}
+
 .clear-order-filter {
   padding: 9px 18px;
   border: none;
@@ -1880,6 +1916,11 @@ nav {
 
 .admin-orders {
   padding: 20px;
+}
+
+.orders-filter-area-box {
+  display: flex;
+  gap: 6px;
 }
 
 .invoice-buttons {
@@ -4511,6 +4552,15 @@ nav {
     min-width: 100%;
   }
 
+  .orders-search-box {
+    width: 100%;
+  }
+
+  .orders-search {
+    height: 40px;
+    font-size: 14px;
+  }
+
   @keyframes mobileDropdownOpen {
     from {
       opacity: 0;
@@ -4560,6 +4610,10 @@ nav {
 
 
   /* invoice page  */
+  .invoice-items-header {
+    padding: 8px 0;
+  }
+
   .invoice-page {
     padding: 15px 10px;
     min-height: auto;
@@ -4601,7 +4655,11 @@ nav {
     grid-template-columns: 1fr 50px 80px;
     align-items: start;
     gap: 8px;
-    margin: 10px 0;
+    margin: 0px;
+  }
+
+  .invoice-summary {
+    margin-top: 6px;
   }
 
   .invoice-item span:first-child {
@@ -5002,7 +5060,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 0;
+    padding: 6px 0;
     font-size: 14px;
   }
 
@@ -5056,7 +5114,6 @@ nav {
     font-weight: bold;
   }
 
-
   /* checkout page  */
   .checkout-page {
     padding: 15px;
@@ -5079,12 +5136,12 @@ nav {
     font-size: 20px;
   }
 
-  .summary-row {
-    font-size: 16px;
-  }
-
   .summary-row strong {
     font-size: 18px;
+  }
+
+  .summary-total {
+    border-top: 1px solid #ddd;
   }
 
   .order-popup-actions {
@@ -5160,6 +5217,15 @@ nav {
 
   .admin-user-orders {
     padding: 10px;
+  }
+
+  .invoice-card-admin {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .inovice-date-admin p {
+    font-size: 14px;
   }
 
   .user-orders-mobile {

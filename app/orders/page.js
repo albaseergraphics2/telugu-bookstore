@@ -23,8 +23,6 @@ export default function OrdersPage() {
     }
 
     try {
-      setLoading(true);
-
       const res = await fetch(`/api/orders?userId=${user._id}`, {
         cache: "no-store",
       });
@@ -52,7 +50,7 @@ export default function OrdersPage() {
 
   useRealtime(fetchOrders);
 
-  if (authLoading || loading) {
+  if (loading) {
     return (
       <div style={{ textAlign: "center", marginTop: "100px" }}>
         <div className="loader"></div>
@@ -102,29 +100,6 @@ export default function OrdersPage() {
               </div>
 
               <div className="order-section">
-                <h4>Books ({order.items.length})</h4>
-
-                {order.items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="book-row"
-                  >
-                    <span className="book-name">
-                      {item.bookId?.title || "Book"}
-                    </span>
-
-                    <div className="orders-book-info">
-                      <span>Qty: {item.qty}</span>
-
-                      <strong>
-                        ₹ {item.bookId?.price || "-"}
-                      </strong>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="order-section">
                 <h4>Delivery Address</h4>
 
                 <div className="address-card">
@@ -150,15 +125,32 @@ export default function OrdersPage() {
                 </div>
               </div>
 
+              <div className="order-section">
+                <h4>Books ({order.items.length})</h4>
+
+                {order.items.map((item, index) => (
+                  <div
+                    key={index}
+                    className="book-row"
+                  >
+                    <span className="book-name">
+                      {item.bookId?.title || "Book"}
+                    </span>
+
+                    <div className="orders-book-info">
+                      <span>Qty: {item.qty}</span>
+
+                      <strong>
+                        ₹ {item.bookId?.price || "-"}
+                      </strong>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+
+
               <div className="payment-summary">
-
-                <div className="summary-row">
-                  <span>Books Total</span>
-                  <span>
-                    ₹ {order.totalAmount || 0}
-                  </span>
-                </div>
-
                 <div className="summary-row">
                   <span>Delivery Type</span>
                   <span>
@@ -179,14 +171,14 @@ export default function OrdersPage() {
                 </div>
 
                 <div className="summary-row grand-total">
-                  <span>Grand Total</span>
+                  <span>Total</span>
                   <strong>
                     ₹{" "}
                     {order.totalAmount >= 1000
                       ? order.totalAmount || 0
                       : order.deliveryCharge > 0
                         ? (order.totalAmount || 0) +
-                          order.deliveryCharge
+                        order.deliveryCharge
                         : order.totalAmount || 0}
                   </strong>
                 </div>

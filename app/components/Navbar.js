@@ -1,13 +1,12 @@
 "use client";
 
 import Link from 'next/link'
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { FaWhatsapp, FaBook, FaShoppingCart } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import AuthPopup from "./AuthPopup";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, loadUser } from "@/redux/actions/authActions";
-
 
 export default function Navbar() {
   const router = useRouter();
@@ -19,14 +18,9 @@ export default function Navbar() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const dispatch = useDispatch();
-  const userDropdownRef = useRef(null);
-  const { user, isAuthenticated } = useSelector(
-    (state) => state.auth
-  );
 
-  const { cartItems } = useSelector(
-    (state) => state.cart
-  );
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
 
   useEffect(() => {
     dispatch(loadUser());
@@ -36,25 +30,6 @@ export default function Navbar() {
     dispatch(logout());
     router.push("/");
   };
-
-  useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (
-        userDropdownRef.current &&
-        !userDropdownRef.current.contains(event.target)
-      ) {
-        setShowUserMenu(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-    document.addEventListener("touchstart", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-      document.removeEventListener("touchstart", handleOutsideClick);
-    };
-  }, []);
 
   return (
     <>
@@ -70,7 +45,11 @@ export default function Navbar() {
 
           <div className="nav-links">
 
-            <a href={whatsappURL} target="_blank" className="phone-number">
+            <a
+              href={whatsappURL}
+              target="_blank"
+              className="phone-number"
+            >
               <FaWhatsapp className="phone-icon" />
             </a>
 
@@ -90,10 +69,8 @@ export default function Navbar() {
             </Link>
 
             {isAuthenticated ? (
-              <div
-                className="user-dropdown"
-                ref={userDropdownRef}
-              >
+
+              <div className="user-dropdown">
 
                 <span
                   className="user-name"
@@ -101,7 +78,9 @@ export default function Navbar() {
                 >
                   {user.name || user.username}
 
-                  <span className={`arrow ${showUserMenu ? "open" : ""}`}>
+                  <span
+                    className={`arrow ${showUserMenu ? "open" : ""}`}
+                  >
                     ▼
                   </span>
                 </span>
@@ -148,7 +127,6 @@ export default function Navbar() {
                 Login
               </button>
             )}
-
           </div>
         </div>
       </nav>
