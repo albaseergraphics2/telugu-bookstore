@@ -121,6 +121,7 @@ export default function BookDetails({ params }) {
             <p className="telugu-desc">{book.teluguDesc}</p>
             <p className="price">Rs. {book.price}.00</p>
 
+            <p><strong>Publisher:</strong> {book.publisher}</p>
             <p><strong>Pages:</strong> {book.pages}</p>
             <p><strong>Binding:</strong> {book.binding}</p>
             <p><strong>Size:</strong> {book.size}</p>

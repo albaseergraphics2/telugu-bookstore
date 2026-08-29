@@ -2319,7 +2319,8 @@ nav {
 
 @media (max-width: 768px) {
 
-  .desktop-orders-table {
+  .desktop-orders-table,
+  .admin-menu-group {
     display: none;
   }
 
@@ -2614,6 +2615,58 @@ nav {
 }
 
 /* admin users  */
+
+/* USERS MENU */
+.admin-menu-group {
+  width: 100%;
+}
+
+.admin-menu-group>button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* SUB MENU */
+.admin-submenu {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-left: 20px;
+
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(-5px);
+
+  transition:
+    max-height 0.3s ease,
+    opacity 0.25s ease,
+    transform 0.3s ease;
+}
+
+/* OPEN */
+.admin-submenu.open {
+  max-height: 150px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.admin-submenu button {
+  width: 100%;
+  text-align: left;
+  padding: 10px 15px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* ACTIVE */
+.admin-submenu button.active {
+  font-weight: 600;
+}
+
 .admin-users {
   padding: 20px;
 }
@@ -2680,6 +2733,1654 @@ nav {
 .users-mobile {
   display: none;
 }
+
+/* admin Supplier page */
+.admin-supplier-view {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.admin-users-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.admin-users-header span {
+  background: #0a5c36;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 16px;
+}
+
+.admin-users-header h2 {
+  font-size: 24px !important;
+}
+
+.supplier-table-row {
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  grid-template-columns: 1.2fr 1.5fr 120px 130px 100px 100px 100px;
+  align-items: center;
+  padding: 8px 0;
+  display: grid;
+  font-size: 16px;
+}
+
+.users-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.create-supplier-btn {
+  margin-left: auto;
+  padding: 8px 16px;
+  background: #2563eb;
+  color: white;
+  border: 1px solid #2563eb;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.create-supplier-btn:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+
+/* CREATE SUPPLIER PAGE */
+
+.admin-create-supplier {
+  width: 100%;
+  padding: 20px;
+}
+
+
+/* HEADER */
+
+.create-supplier-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.create-supplier-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.create-supplier-back-btn {
+  margin-left: auto;
+  padding: 7px 14px;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.create-supplier-back-btn:hover {
+  background: #f5f5f5;
+}
+
+
+/* FORM */
+
+.create-supplier-form {
+  width: 100%;
+  max-width: 800px;
+  background: white;
+  padding: 25px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+}
+
+
+/* SECTION HEADING */
+
+.create-supplier-form h3 {
+  margin: 5px 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 17px;
+}
+
+
+/* FIELD */
+
+.create-supplier-field {
+  margin-bottom: 18px;
+}
+
+.create-supplier-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.create-supplier-field input,
+.create-supplier-field select,
+.create-supplier-field textarea {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.create-supplier-field input:focus,
+.create-supplier-field select:focus,
+.create-supplier-field textarea:focus {
+  border-color: #2563eb;
+}
+
+.create-supplier-field textarea {
+  resize: vertical;
+}
+
+
+/* ERROR */
+
+.create-supplier-error {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #f5b5b5;
+  border-radius: 5px;
+  background: #fff5f5;
+  color: #d00000;
+  font-size: 14px;
+}
+
+
+/* ACTIONS */
+
+.create-supplier-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.create-supplier-cancel-btn,
+.create-supplier-save-btn {
+  padding: 9px 18px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.create-supplier-cancel-btn {
+  background: white;
+  border: 1px solid #ccc;
+}
+
+.create-supplier-cancel-btn:hover {
+  background: #f5f5f5;
+}
+
+.create-supplier-save-btn {
+  background: #2563eb;
+  color: white;
+  border: 1px solid #2563eb;
+}
+
+.create-supplier-save-btn:hover {
+  background: #1d4ed8;
+}
+
+.create-supplier-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+  .admin-users-header {}
+
+  .admin-users-header span {
+    font-size: 14px;
+    width: 80px;
+  }
+
+  .create-supplier-btn {
+    font-size: 14px;
+    padding: 4px !important;
+  }
+
+  .admin-create-supplier {
+    padding: 15px;
+  }
+
+  .create-supplier-form {
+    padding: 18px;
+  }
+
+  .create-supplier-header h2 {
+    font-size: 19px;
+  }
+
+  .create-supplier-actions {
+    flex-direction: column;
+  }
+
+  .create-supplier-cancel-btn,
+  .create-supplier-save-btn {
+    width: 100%;
+  }
+
+  .supplier-user-mobile-row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    padding: 2px 0px !important;
+  }
+
+  .supplier-user-mobile-row span {
+    width: 55%;
+    font-size: 14px;
+    color: #777;
+    font-weight: 600;
+  }
+
+  .supplier-user-mobile-row strong {
+    text-align: right;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .adminuserorderlist {
+    border: none;
+    border-radius: 5px;
+    flex: 1;
+    padding: 8px;
+    font-size: 12px;
+  }
+
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.supplier-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.supplier-view-header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.supplier-view-header p {
+  margin: 5px 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.supplier-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* =========================================
+   SECTIONS
+========================================= */
+
+.supplier-view-section {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.Supplier-Information {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 8px;
+}
+
+.Supplier-Information button {
+  height: 40px;
+}
+
+.supplier-view-section h3 {
+  font-size: 18px;
+}
+
+
+/* =========================================
+   SUPPLIER INFORMATION GRID
+========================================= */
+
+.supplier-view-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.supplier-view-grid>div {
+  min-width: 0;
+}
+
+.supplier-view-grid span,
+.supplier-payment-grid span {
+  display: block;
+  height: 30px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #777;
+}
+
+.supplier-view-grid strong,
+.supplier-payment-grid strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+
+/* =========================================
+   PAYMENT / PURCHASE SUMMARY
+========================================= */
+
+.supplier-payment-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.supplier-payment-grid>div {
+  padding: 15px;
+  background: #f8f8f8;
+  border-radius: 6px;
+}
+
+
+/* =========================================
+   SECTION HEADER
+========================================= */
+
+.supplier-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.supplier-section-header h3 {
+  margin-bottom: 20px;
+}
+
+.supplier-add-purchase-btn {
+  padding: 8px 14px;
+  border: 1px solid #2563eb;
+  border-radius: 5px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.supplier-add-purchase-btn:hover {
+  background: #1d4ed8;
+}
+
+
+/* =========================================
+   PURCHASE TABLE
+========================================= */
+
+.supplier-purchase-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.supplier-purchase-row {
+  display: grid;
+  grid-template-columns:
+    1.2fr 1fr 1fr 1.2fr 1fr 1fr 80px;
+
+  align-items: center;
+  min-width: 850px;
+  border-bottom: 1px solid #eee;
+}
+
+.supplier-purchase-row>div {
+  padding: 12px 8px;
+  font-size: 14px;
+}
+
+.supplier-purchase-header {
+  background: #f7f7f7;
+  font-weight: 600;
+}
+
+.supplier-purchase-header>div {
+  font-size: 13px;
+}
+
+
+/* =========================================
+   VIEW BUTTON
+========================================= */
+
+.supplier-view-btn {
+  padding: 6px 12px;
+  border: 1px solid #2563eb;
+  border-radius: 4px;
+  background: white;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.supplier-view-btn:hover {
+  background: #2563eb;
+  color: white;
+}
+
+
+/* =========================================
+   MOBILE PURCHASE
+========================================= */
+
+.supplier-purchase-mobile {
+  display: none;
+}
+
+.supplier-purchase-card {
+  padding: 15px;
+  margin-bottom: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 7px;
+  background: white;
+}
+
+.supplier-purchase-card>div {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.supplier-purchase-card span {
+  color: #777;
+  font-size: 13px;
+}
+
+.supplier-purchase-card strong {
+  font-size: 14px;
+  text-align: right;
+  word-break: break-word;
+}
+
+.supplier-purchase-card .supplier-view-btn {
+  margin-top: 15px;
+  width: 100%;
+}
+
+
+/* =========================================
+   NO PURCHASES
+========================================= */
+
+.supplier-no-purchases {
+  padding: 30px 15px;
+  text-align: center;
+  color: #777;
+  font-size: 14px;
+}
+
+
+/* =========================================
+   PURCHASE DETAILS PLACEHOLDER
+========================================= */
+
+.supplier-purchase-empty {
+  padding: 20px;
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+  background: #fafafa;
+  color: #666;
+}
+
+.supplier-purchase-empty p {
+  margin-top: 0;
+}
+
+.supplier-purchase-empty ul {
+  margin-bottom: 0;
+  padding-left: 20px;
+}
+
+.supplier-purchase-empty li {
+  margin-bottom: 5px;
+}
+
+
+/* =========================================
+   NOTES
+========================================= */
+
+.supplier-view-notes {
+  margin: 0;
+  line-height: 1.6;
+  color: #555;
+}
+
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.supplier-view-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.supplier-edit-btn,
+.supplier-purchases-btn {
+  padding: 9px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.supplier-edit-btn {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: white;
+}
+
+.supplier-edit-btn:hover {
+  background: #1d4ed8;
+}
+
+.supplier-purchases-btn {
+  border: 1px solid #555;
+  background: white;
+  color: #333;
+}
+
+.supplier-purchases-btn:hover {
+  background: #f5f5f5;
+}
+
+
+/* =========================================
+   BACK BUTTON
+========================================= */
+
+.create-supplier-back-btn {
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: white;
+  color: #333;
+  cursor: pointer;
+}
+
+.create-supplier-back-btn:hover {
+  background: #f5f5f5;
+}
+
+
+/* =========================================
+   ERROR
+========================================= */
+
+.create-supplier-error {
+  margin-bottom: 15px;
+  padding: 12px;
+  border: 1px solid #f1b5b5;
+  border-radius: 5px;
+  background: #fff5f5;
+  color: #c00;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .supplier-view-header {
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .supplier-view-header h2 {
+    font-size: 20px;
+  }
+
+  .supplier-header-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .supplier-view-section {
+    padding: 15px;
+  }
+
+  .supplier-view-grid {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 2px !important;
+  }
+
+  .supplier-view-section h3 {
+    margin-bottom: 10px;
+  }
+
+  .supplier-view-grid-box {
+    height: 25px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee !important;
+  }
+
+  .supplier-payment-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .supplier-payment-grid span {
+    height: 35px;
+  }
+
+  .admin-supplier-view {
+    padding: 0px;
+  }
+
+  /* Hide desktop purchase table */
+  .supplier-purchase-table {
+    display: none;
+  }
+
+  /* Show mobile purchase cards */
+  .supplier-purchase-mobile {
+    display: block;
+  }
+
+  .supplier-section-header {
+    align-items: center;
+    gap: 10px;
+  }
+
+  .supplier-section-header h3 {
+    margin-bottom: 0;
+  }
+
+  .supplier-add-purchase-btn {
+    white-space: nowrap;
+  }
+
+  .supplier-view-actions {
+    flex-direction: column;
+  }
+
+  .supplier-edit-btn,
+  .supplier-purchases-btn {
+    width: 100%;
+  }
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 450px) {
+
+  .supplier-view-header {
+    flex-direction: column;
+  }
+
+  .supplier-header-actions {
+    width: 100%;
+    flex-direction: row;
+  }
+
+  .supplier-section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .supplier-add-purchase-btn {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   CREATE PURCHASE
+========================================= */
+
+.admin-create-purchase {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.create-purchase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.create-purchase-header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.create-purchase-header p {
+  margin: 5px 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.create-purchase-form {
+  width: 100%;
+}
+
+
+/* =========================================
+   SECTION
+========================================= */
+
+.create-purchase-section {
+  width: 100%;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+}
+
+.create-purchase-section h3 {
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+
+  border-bottom: 1px solid #eee;
+
+  font-size: 18px;
+}
+
+
+/* =========================================
+   FORM GRID
+========================================= */
+
+.create-purchase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+
+/* =========================================
+   FIELD
+========================================= */
+
+.create-purchase-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.create-purchase-field label {
+  font-size: 13px;
+  color: #555;
+  font-weight: 500;
+}
+
+.create-purchase-field input,
+.create-purchase-field select,
+.create-purchase-field textarea {
+  width: 100%;
+  min-height: 40px;
+
+  padding: 8px 10px;
+  box-sizing: border-box;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  background: #fff;
+  outline: none;
+
+  font-size: 14px;
+}
+
+.create-purchase-field input:focus,
+.create-purchase-field select:focus,
+.create-purchase-field textarea:focus {
+  border-color: #2563eb;
+}
+
+
+/* =========================================
+   BOOKS HEADER
+========================================= */
+
+.create-purchase-books-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.create-purchase-books-header h3 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+
+/* =========================================
+   ADD BOOK BUTTON
+========================================= */
+
+.supplier-add-purchase-btn {
+  padding: 8px 14px;
+
+  border: 1px solid #2563eb;
+  border-radius: 5px;
+
+  background: #2563eb;
+  color: #fff;
+
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.supplier-add-purchase-btn:hover {
+  background: #1d4ed8;
+}
+
+
+/* =========================================
+   BOOK CARD
+========================================= */
+
+.purchase-book-card {
+  margin-bottom: 18px;
+  padding: 16px;
+
+  border: 1px solid #ddd;
+  border-radius: 7px;
+
+  background: #fafafa;
+}
+
+.purchase-book-card:last-child {
+  margin-bottom: 0;
+}
+
+
+/* =========================================
+   BOOK TITLE
+========================================= */
+
+.purchase-book-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 18px;
+}
+
+.purchase-book-title h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+
+/* =========================================
+   REMOVE BOOK
+========================================= */
+
+.purchase-remove-book-btn {
+  padding: 6px 10px;
+
+  border: 1px solid #dc2626;
+  border-radius: 4px;
+
+  background: #fff;
+  color: #dc2626;
+
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.purchase-remove-book-btn:hover {
+  background: #dc2626;
+  color: #fff;
+}
+
+
+/* =========================================
+   BOOK CALCULATION
+========================================= */
+
+.purchase-book-calculation {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 12px;
+
+  margin-top: 18px;
+  padding-top: 15px;
+
+  border-top: 1px solid #ddd;
+}
+
+.purchase-book-calculation>div {
+  padding: 12px;
+
+  border-radius: 5px;
+
+  background: #fff;
+}
+
+.purchase-book-calculation span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  font-size: 12px;
+  color: #777;
+}
+
+.purchase-book-calculation strong {
+  font-size: 15px;
+}
+
+
+/* =========================================
+   PURCHASE TOTAL
+========================================= */
+
+.purchase-total-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.purchase-total-grid>div {
+  padding: 15px;
+
+  border-radius: 6px;
+
+  background: #f7f7f7;
+}
+
+.purchase-total-grid span {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #777;
+  font-size: 13px;
+}
+
+.purchase-total-grid strong {
+  font-size: 18px;
+}
+
+
+/* =========================================
+   PAYMENT BALANCE
+========================================= */
+
+.purchase-balance {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-height: 40px;
+  padding: 8px 10px;
+
+  border-radius: 5px;
+
+  background: #f7f7f7;
+}
+
+.purchase-balance span {
+  margin-bottom: 5px;
+
+  font-size: 13px;
+  color: #777;
+}
+
+.purchase-balance strong {
+  font-size: 17px;
+}
+
+
+/* =========================================
+   ACTIONS
+========================================= */
+
+.create-purchase-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+
+/* CANCEL */
+
+.create-supplier-cancel-btn {
+  padding: 9px 18px;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  background: #fff;
+  color: #333;
+
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.create-supplier-cancel-btn:hover {
+  background: #f5f5f5;
+}
+
+
+/* SAVE */
+
+.create-supplier-save-btn {
+  padding: 9px 20px;
+
+  border: 1px solid #2563eb;
+  border-radius: 5px;
+
+  background: #2563eb;
+  color: #fff;
+
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.create-supplier-save-btn:hover {
+  background: #1d4ed8;
+}
+
+.create-supplier-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   ERROR
+========================================= */
+
+.create-supplier-error {
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+  padding: 12px;
+
+  border: 1px solid #f1b5b5;
+  border-radius: 5px;
+
+  background: #fff5f5;
+  color: #c00;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   BACK BUTTON
+========================================= */
+
+.create-supplier-back-btn {
+  padding: 8px 14px;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  background: #fff;
+  color: #333;
+
+  cursor: pointer;
+}
+
+.create-supplier-back-btn:hover {
+  background: #f5f5f5;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1000px) {
+
+  .create-purchase-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .purchase-total-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .purchase-book-calculation {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .admin-create-purchase {
+    padding: 0px;
+  }
+
+  .create-purchase-section h3 {
+    margin-bottom: 4px;
+  }
+
+  .supplier-purchase-card {
+    margin-top: 8px;
+    padding: 0px;
+    border: none;
+  }
+
+  .supplier-purchase-card>div {
+    padding: 6px 0;
+  }
+
+  .supplier-view-header-box {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between !important;
+  }
+
+  .create-purchase-header {
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .create-purchase-header h2 {
+    font-size: 20px;
+  }
+
+  .create-purchase-section {
+    padding: 15px;
+  }
+
+  .create-purchase-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .purchase-book-card {
+    padding: 14px;
+  }
+
+  .purchase-book-calculation {
+    grid-template-columns: 1fr;
+  }
+
+  .purchase-total-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .create-purchase-actions {
+    flex-direction: column;
+  }
+
+  .create-supplier-cancel-btn,
+  .create-supplier-save-btn {
+    width: 100%;
+  }
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 450px) {
+
+  .create-purchase-header {
+    flex-direction: column;
+  }
+
+  .create-supplier-back-btn {
+    width: 100%;
+  }
+
+  .create-purchase-books-header {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .supplier-add-purchase-btn {
+    width: 100%;
+  }
+
+  .purchase-book-title {
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+.supplier-desktop {
+  display: block;
+}
+
+.supplier-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  .supplier-desktop {
+    display: none;
+  }
+
+  .supplier-mobile {
+    display: block;
+  }
+
+}
+
+.purchase-desktop {
+  display: block;
+}
+
+.purchase-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  .purchase-desktop {
+    display: none;
+  }
+
+  .purchase-mobile {
+    display: block;
+  }
+
+}
+
+/* =========================================
+   PAYMENT HISTORY
+========================================= */
+
+.supplier-payment-history {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.supplier-payment-history h4 {
+  margin: 0 0 16px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.supplier-payment-history>p {
+  margin: 0;
+  padding: 18px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+
+/* =========================================
+   PAYMENT TABLE
+========================================= */
+
+.supplier-payment-history .supplier-purchase-table {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.supplier-payment-history .supplier-purchase-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1.2fr 1.5fr 1.5fr;
+  min-width: 750px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.supplier-payment-history .supplier-purchase-row:last-child {
+  border-bottom: none;
+}
+
+.supplier-payment-history .supplier-purchase-row>div {
+  padding: 13px 14px;
+  font-size: 14px;
+  color: #374151;
+  border-right: 1px solid #e5e7eb;
+}
+
+.supplier-payment-history .supplier-purchase-row>div:last-child {
+  border-right: none;
+}
+
+
+/* =========================================
+   PAYMENT TABLE HEADER
+========================================= */
+
+.supplier-payment-history .supplier-purchase-row.supplier-purchase-header {
+  background: #f8fafc;
+}
+
+.supplier-payment-history .supplier-purchase-row.supplier-purchase-header>div {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* =========================================
+   MAKE PAYMENT FORM
+========================================= */
+
+.supplier-payment-form {
+  margin-top: 24px;
+  padding: 22px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.supplier-payment-form h4 {
+  margin: 0 0 20px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+
+/* =========================================
+   FORM GRID
+========================================= */
+
+.supplier-payment-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.supplier-payment-form-grid>div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+
+/* =========================================
+   LABEL
+========================================= */
+
+.supplier-payment-form-grid label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+
+/* =========================================
+   INPUT / SELECT / TEXTAREA
+========================================= */
+
+.supplier-payment-form-grid input,
+.supplier-payment-form-grid select,
+.supplier-payment-form-grid textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1f2937;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  outline: none;
+  transition: border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.supplier-payment-form-grid input:focus,
+.supplier-payment-form-grid select:focus,
+.supplier-payment-form-grid textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+
+/* =========================================
+   TEXTAREA
+========================================= */
+
+.supplier-payment-form-grid textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+
+/* =========================================
+   NOTES
+========================================= */
+
+.supplier-payment-notes {
+  grid-column: 1 / -1;
+}
+
+
+/* =========================================
+   ERROR / SUCCESS
+========================================= */
+
+.supplier-payment-form .create-supplier-error {
+  margin-bottom: 16px;
+}
+
+.supplier-payment-success {
+  margin-bottom: 16px;
+  padding: 11px 13px;
+  font-size: 14px;
+  color: #166534;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 7px;
+}
+
+.supplier-delete-btn {
+    background: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.supplier-delete-btn:hover {
+    background: #b91c1c;
+}
+
+/* =========================================
+   FORM ACTIONS
+========================================= */
+
+.supplier-payment-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+}
+
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.supplier-payment-form-actions button {
+  min-width: 120px;
+}
+
+.supplier-payment-form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .supplier-payment-form {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .supplier-payment-form h4 {
+    margin-bottom: 16px;
+    font-size: 16px;
+  }
+
+  .supplier-payment-form-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .supplier-payment-notes {
+    grid-column: auto;
+  }
+
+  .supplier-payment-form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .supplier-payment-form-actions button {
+    width: 100%;
+    min-width: 0;
+  }
+
+}
+
+
+/* =========================================
+   PAYMENT AMOUNT
+========================================= */
+
+.supplier-payment-history .supplier-purchase-row:not(.supplier-purchase-header)>div:nth-child(2) {
+  font-weight: 600;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .supplier-payment-history {
+    margin-top: 22px;
+    padding-top: 20px;
+  }
+
+  .supplier-payment-history h4 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .supplier-payment-history .supplier-purchase-table {
+    overflow-x: auto;
+    border-radius: 7px;
+  }
+
+  .supplier-payment-history .supplier-purchase-row {
+    min-width: 700px;
+  }
+
+  .supplier-payment-history .supplier-purchase-row>div {
+    padding: 11px 12px;
+    font-size: 13px;
+  }
+
+}
+
 
 
 /* menu page */
@@ -4568,6 +6269,10 @@ nav {
     justify-content: space-between;
   }
 
+  .dropdown-item-mobile {
+    padding-left: 30px !important;
+  }
+
   .admin-mobile-dropdown-options {
     width: 100%;
     min-width: 100%;
@@ -4597,10 +6302,9 @@ nav {
   .admin-mobile-dropdown-options button {
     display: block;
     width: 100%;
-    padding: 13px 15px;
+    padding: 10px 14px;
     margin: 0;
     border: none;
-    border-bottom: 1px solid #eee;
     background: #fff;
     color: #333;
     text-align: left;
@@ -4613,7 +6317,7 @@ nav {
 
   .admin-mobile-dropdown-options button:hover {
     background: #f5f5f5;
-    padding-left: 20px;
+
   }
 
   .admin-mobile-dropdown-options button:last-child {
@@ -4629,6 +6333,34 @@ nav {
     display: none;
   }
 
+  .mobile-users-submenu {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: max-height 0.3s ease, opacity 0.2s ease, visibility 0.3s ease;
+  }
+
+  .mobile-users-submenu.open {
+    max-height: 150px;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Prevent Users text blinking */
+  .admin-mobile-dropdown-options>li {
+    animation: none !important;
+  }
+
+  .admin-mobile-dropdown-options .dropdown-item {
+    animation: none !important;
+  }
+
+  /* Submenu items */
+  .admin-mobile-dropdown-options .dropdown-item-mobile {
+    animation: none !important;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
 
   /* invoice page  */
   .invoice-items-header {
