@@ -24,8 +24,9 @@ export default function CheckoutPage() {
     const [utrNumber, setUtrNumber] = useState("");
     const [loading, setLoading] = useState(true);
     const [showShippingInfo, setShowShippingInfo] = useState(false);
-    const [defaultShipping, setDefaultShipping] = useState(0);
     const [placingOrder, setPlacingOrder] = useState(false);
+    const [defaultShipping, setDefaultShipping] = useState(0);
+    const [freeShippingAmount, setFreeShippingAmount] = useState(1000);
     const [paymentSettings, setPaymentSettings] = useState({
         bankName: "",
         accountHolder: "",
@@ -108,7 +109,7 @@ export default function CheckoutPage() {
     }, [cartItems]);
 
     const shippingCharge =
-        totalPrice >= 1000
+        freeShippingAmount > 0 && totalPrice >= freeShippingAmount
             ? 0
             : defaultShipping > 0
                 ? defaultShipping
@@ -148,12 +149,22 @@ export default function CheckoutPage() {
 
 
     const fetchSettings = async () => {
-        const res = await fetch("/api/admin/settings");
-        const data = await res.json();
+        try {
+            const res = await fetch("/api/admin/settings", {
+                cache: "no-store",
+            });
 
-        if (data.success) {
-            setDefaultShipping(data.setting.defaultShipping || 0);
-            setPaymentSettings(data.setting);
+            const data = await res.json();
+
+            if (data.success) {
+                setDefaultShipping(Number(data.setting.defaultShipping || 0));
+                setFreeShippingAmount(
+                    Number(data.setting.freeShippingAmount || 0)
+                );
+                setPaymentSettings(data.setting);
+            }
+        } catch (error) {
+            console.error("Failed to load settings:", error);
         }
     };
 
@@ -242,7 +253,7 @@ export default function CheckoutPage() {
                 <hr />
                 <div className="summary-single-row">
                     <span><strong>Books</strong> {totalBooks}</span>
-                    <span>Rs.{totalPrice}</span>
+                    <span>Rs. {totalPrice}</span>
                 </div>
                 <div className="summary-single-row">
                     <span className="shipping-label">
@@ -258,16 +269,16 @@ export default function CheckoutPage() {
 
                         {showShippingInfo && (
                             <div className="shipping-tooltip">
-                                Free shipping on orders above ₹1000.
+                                Free shipping on orders above Rs. {freeShippingAmount}
                             </div>
                         )}
                     </span>
 
                     <span>
-                        {totalPrice >= 1000
+                        {shippingCharge === 0
                             ? "Free"
                             : defaultShipping > 0
-                                ? `₹${defaultShipping}`
+                                ? `Rs. ${defaultShipping}`
                                 : "To Be Confirmed"}
                     </span>
                 </div>
@@ -276,7 +287,7 @@ export default function CheckoutPage() {
 
                 <div className="summary-single-row">
                     <span><strong>Total</strong></span>
-                    <span><strong>Rs.{grandTotal}</strong></span>
+                    <span><strong>Rs. {grandTotal}</strong></span>
                 </div>
             </div>
 

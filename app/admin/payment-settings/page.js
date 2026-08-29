@@ -6,11 +6,13 @@ import { uploadToCloudinary } from "../../lib/cloudinary";
 import useRealtime from "../../hooks/useRealtime";
 
 export default function PaymentSettingsPage() {
+  const [defaultShipping, setDefaultShipping] = useState("");
+  const [freeShippingAmount, setFreeShippingAmount] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [defaultShipping, setDefaultShipping] = useState("");
   const [form, setForm] = useState({
     defaultShipping: 100,
+    freeShippingAmount: 1000,
     accountHolder: "",
     bankName: "",
     accountNumber: "",
@@ -36,6 +38,7 @@ export default function PaymentSettingsPage() {
       const payload = {
         ...form,
         defaultShipping: Number(defaultShipping),
+        freeShippingAmount: Number(freeShippingAmount),
       };
 
       const res = await fetch("/api/admin/settings", {
@@ -68,6 +71,8 @@ export default function PaymentSettingsPage() {
 
       if (data.success) {
         setDefaultShipping(data.setting.defaultShipping ?? "");
+        setFreeShippingAmount(data.setting.freeShippingAmount ?? "");
+
         setForm({
           ...data.setting,
           mobileNumbers:
@@ -127,12 +132,16 @@ export default function PaymentSettingsPage() {
         },
         body: JSON.stringify({
           defaultShipping: Number(defaultShipping),
+          freeShippingAmount: Number(freeShippingAmount),
         }),
       });
 
       const data = await res.json();
 
       if (data.success) {
+        setDefaultShipping(data.setting.defaultShipping ?? "");
+        setFreeShippingAmount(data.setting.freeShippingAmount ?? "");
+
         toast.success("Shipping charge saved successfully");
       } else {
         toast.error(data.message || "Failed to save shipping charge");
@@ -142,8 +151,10 @@ export default function PaymentSettingsPage() {
       toast.error("Something went wrong");
     }
   };
+
   const clearShippingCharge = () => {
     setDefaultShipping("");
+    setFreeShippingAmount("");
     toast.success("Input cleared");
   };
 
@@ -163,10 +174,23 @@ export default function PaymentSettingsPage() {
           onChange={(e) => setDefaultShipping(e.target.value)}
         />
 
+        <label style={{ marginTop: "10px" }}>
+          Free Shipping Above (Rs.)
+        </label>
+
+        <input
+          type="number"
+          className="shipping-input"
+          placeholder="Enter Order Amount"
+          value={freeShippingAmount}
+          onChange={(e) => setFreeShippingAmount(e.target.value)}
+        />
+
         <div className="shipping-btns">
           <button className="save-btn" onClick={saveShippingCharge}>
             Save
           </button>
+
           <button className="clear-btn" onClick={clearShippingCharge}>
             Clear
           </button>

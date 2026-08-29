@@ -15,6 +15,8 @@ export default function CartPage() {
   const [area, setArea] = useState("");
   const [district, setDistrict] = useState("");
   const [stateName, setStateName] = useState("");
+  const [defaultShipping, setDefaultShipping] = useState(0);
+  const [freeShippingAmount, setFreeShippingAmount] = useState(1000);
   const dispatch = useDispatch();
 
   const { cartItems } = useSelector((state) => state.cart);
@@ -43,6 +45,29 @@ export default function CartPage() {
       }
     }
   }, [user]);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch("/api/admin/settings", {
+          cache: "no-store",
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          setDefaultShipping(Number(data.setting.defaultShipping || 0));
+          setFreeShippingAmount(
+            Number(data.setting.freeShippingAmount || 0)
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load shipping settings:", error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
 
   const removeItem = (slug) => {
     dispatch(removeFromCart(slug));
@@ -74,6 +99,13 @@ export default function CartPage() {
   const totalBooks = useMemo(() => {
     return cartItems.reduce((total, item) => total + item.qty, 0);
   }, [cartItems]);
+
+  const shippingCharge =
+    freeShippingAmount > 0 && totalPrice >= freeShippingAmount
+      ? 0
+      : defaultShipping;
+
+  const grandTotal = totalPrice + shippingCharge;
 
   const getAddressFromPincode = async (pin) => {
     try {
@@ -226,7 +258,7 @@ Address: ${address}`;
 
                   <div className="cart-info">
                     <h3>{item.title}</h3>
-                    <p>₹{item.price}</p>
+                    <p>Rs. {item.price}</p>
 
                     <div className="mobile-cart-actions">
                       <div className="cart-quantity">
@@ -267,7 +299,7 @@ Address: ${address}`;
 
                 {/* Total */}
                 <div className="cart-total">
-                  ₹{subTotal}
+                  Rs. {subTotal}
                 </div>
               </div>
             );
@@ -275,11 +307,15 @@ Address: ${address}`;
 
           <div className="cart-summary">
             <h2 className="summary-title">Order Summary</h2>
-            {totalPrice < 1000 && (
+
+            {shippingCharge > 0 && (
               <>
                 <hr className="summary-divider" />
+
                 <div className="summary-note">
-                  <p>Free shipping on orders above ₹1000.</p>
+                  <p>
+                    Free shipping on orders above Rs. {freeShippingAmount}
+                  </p>
                 </div>
 
                 <hr className="summary-divider" />
@@ -287,6 +323,7 @@ Address: ${address}`;
             )}
 
             <div className="summary-box">
+
               <div className="summary-row">
                 <span>Total Books</span>
                 <strong>{totalBooks}</strong>
@@ -294,7 +331,21 @@ Address: ${address}`;
 
               <div className="summary-row">
                 <span>Total Amount</span>
-                <strong>₹{totalPrice}</strong>
+                <strong>Rs. {totalPrice}</strong>
+              </div>
+
+              <div className="summary-row">
+                <span>Delivery Charges</span>
+                <strong>
+                  {shippingCharge === 0
+                    ? "Free"
+                    : `Rs. ${shippingCharge}`}
+                </strong>
+              </div>
+
+              <div className="summary-row grand-total">
+                <span>Total</span>
+                <strong>Rs. {grandTotal}</strong>
               </div>
 
             </div>

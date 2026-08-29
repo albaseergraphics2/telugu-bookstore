@@ -11,6 +11,7 @@ export async function GET() {
     if (!setting) {
       setting = await Setting.create({
         defaultShipping: 100,
+        freeShippingAmount: 1000,
         accountHolder: "",
         bankName: "",
         accountNumber: "",

@@ -8,6 +8,11 @@ const SettingSchema = new mongoose.Schema(
       default: 100,
     },
 
+    freeShippingAmount: {
+      type: Number,
+      default: 1000,
+    },
+
     // Bank Details
     accountHolder: {
       type: String,

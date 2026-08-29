@@ -561,53 +561,58 @@ export default function AdminOrders() {
                   <p><b>Address: </b>{order.address?.full || "-"}, {order.address?.pincode || "-"}</p>
                 </div>
 
-                                <div>
+                <div>
                   <b>Delivery Type & Charges</b>
-                  <input
-                    className="delivery-input"
-                    type="text"
-                    placeholder="Delivery Type"
-                    value={order.deliveryType || ""}
-                    onChange={(e) => {
-                      setOrders(prev =>
-                        prev.map(o =>
-                          o._id === order._id
-                            ? { ...o, deliveryType: e.target.value }
-                            : o
-                        )
-                      );
-                    }}
-                  />
+                  <div className="deliveryinputbox">
+                    <div className="deliveryinputbox1">
+                      <input
+                        className="delivery-input"
+                        type="text"
+                        placeholder="Delivery Type"
+                        value={order.deliveryType || ""}
+                        onChange={(e) => {
+                          setOrders(prev =>
+                            prev.map(o =>
+                              o._id === order._id
+                                ? { ...o, deliveryType: e.target.value }
+                                : o
+                            )
+                          );
+                        }}
+                      />
 
-                  <input
-                    className="delivery-input"
-                    type="number"
-                    placeholder="Delivery Charges"
-                    value={order.deliveryCharge || ""}
-                    onChange={(e) => {
-                      setOrders(prev =>
-                        prev.map(o =>
-                          o._id === order._id
-                            ? { ...o, deliveryCharge: Number(e.target.value) }
-                            : o
-                        )
-                      );
-                    }}
-                  />
-
-                  <button
-                    className="save-delivery-btn"
-                    onClick={() =>
-                      updateStatus(
-                        order._id,
-                        order.status,
-                        order.deliveryType,
-                        order.deliveryCharge
-                      )
-                    }
-                  >
-                    Save Delivery
-                  </button>
+                      <input
+                        className="delivery-input"
+                        type="number"
+                        placeholder="Delivery Charges"
+                        value={order.deliveryCharge || ""}
+                        onChange={(e) => {
+                          setOrders(prev =>
+                            prev.map(o =>
+                              o._id === order._id
+                                ? { ...o, deliveryCharge: Number(e.target.value) }
+                                : o
+                            )
+                          );
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <button
+                        className="save-delivery-btn"
+                        onClick={() =>
+                          updateStatus(
+                            order._id,
+                            order.status,
+                            order.deliveryType,
+                            order.deliveryCharge
+                          )
+                        }
+                      >
+                        Save Delivery
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="admin-invoice-items-header">
