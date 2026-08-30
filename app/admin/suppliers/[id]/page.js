@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useRealtime } from "@/app/hooks/useRealtime";
+import { useRealtime } from "../../../hooks/useRealtime";
 
 export default function SupplierDetails() {
     const params = useParams();
