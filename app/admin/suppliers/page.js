@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useRealtime } from "../../hooks/useRealtime";
+import  useRealtime  from "../../hooks/useRealtime";
 
 export default function AdminSuppliers() {
     const router = useRouter();
