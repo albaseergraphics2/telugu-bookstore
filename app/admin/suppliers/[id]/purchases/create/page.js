@@ -404,17 +404,20 @@ export default function CreatePurchase() {
 
         </div>
 
-        <button
-          type="button"
-          onClick={() =>
-            router.push(
-              `/admin/suppliers/${params.id}`
-            )
-          }
-          className="create-supplier-back-btn"
-        >
-          ← Back
-        </button>
+        <div>
+
+          <button
+            type="button"
+            onClick={() =>
+              router.push(
+                `/admin/suppliers/${params.id}`
+              )
+            }
+            className="create-supplier-back-btn"
+          >
+            ← Back
+          </button>
+        </div>
 
       </div>
 

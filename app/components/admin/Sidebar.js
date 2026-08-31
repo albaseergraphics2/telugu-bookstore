@@ -23,6 +23,7 @@ export default function Sidebar() {
         { name: "Suppliers", path: "/admin/suppliers" },
       ],
     },
+    { name: "Accounts", path: "/admin/accounts" },
     { name: "HeroCarousel", path: "/admin/heroCarousel" },
     { name: "Payment Settings", path: "/admin/payment-settings" },
   ];
