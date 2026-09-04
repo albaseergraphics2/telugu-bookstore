@@ -1,15 +1,13 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import  useRealtime  from "../../hooks/useRealtime";
+import useRealtime from "../../hooks/useRealtime";
 
 export default function AdminSuppliers() {
     const router = useRouter();
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [suppliers, setSuppliers] = useState([]);
-
     const suppliersPerPage = 10;
 
     const fetchSuppliers = async () => {
@@ -32,30 +30,19 @@ export default function AdminSuppliers() {
         supplier.phone?.includes(search)
     );
 
-    const indexOfLastSupplier =
-        currentPage * suppliersPerPage;
-
-    const indexOfFirstSupplier =
-        indexOfLastSupplier - suppliersPerPage;
-
+    const indexOfLastSupplier = currentPage * suppliersPerPage;
+    const indexOfFirstSupplier = indexOfLastSupplier - suppliersPerPage;
     const currentSuppliers = filteredSuppliers.slice(
         indexOfFirstSupplier,
         indexOfLastSupplier
     );
-
-    const totalPages = Math.ceil(
-        filteredSuppliers.length / suppliersPerPage
-    );
+    const totalPages = Math.ceil(filteredSuppliers.length / suppliersPerPage);
 
     return (
         <div className="admin-users">
             <div className="admin-users-header">
                 <h2>Suppliers</h2>
-
-                <span>
-                    Total: {filteredSuppliers.length}
-                </span>
-
+                <span>Total: {filteredSuppliers.length}</span>
                 <button
                     onClick={() => router.push("/admin/suppliers/create")}
                     className="create-supplier-btn"
@@ -99,30 +86,16 @@ export default function AdminSuppliers() {
                         key={supplier._id}
                         className="supplier-table-row"
                     >
-                        <div>
-                            {supplier.name || "-"}
-                        </div>
-                        <div>
-                            {supplier.companyName || "-"}
-                        </div>
-                        <div>
-                            {supplier.phone || "-"}
-                        </div>
-                        <div>
-                            Rs. {supplier.totalPurchases || 0}
-                        </div>
-                        <div>
-                            Rs. {supplier.totalPaid || 0}
-                        </div>
-                        <div>
-                            Rs. {supplier.totalDue || 0}
-                        </div>
+                        <div>{supplier.name || "-"}</div>
+                        <div>{supplier.companyName || "-"}</div>
+                        <div>{supplier.phone || "-"}</div>
+                        <div>Rs. {supplier.totalPurchases || 0}</div>
+                        <div>Rs. {supplier.totalPaid || 0}</div>
+                        <div>Rs. {supplier.totalDue || 0}</div>
                         <div>
                             <button
                                 onClick={() =>
-                                    router.push(
-                                        `/admin/suppliers/${supplier._id}`
-                                    )
+                                    router.push(`/admin/suppliers/${supplier._id}`)
                                 }
                                 className="adminuserorderlist"
                             >
@@ -142,65 +115,34 @@ export default function AdminSuppliers() {
                         className="user-mobile-card"
                     >
                         <div className="supplier-user-mobile-row">
-                            <span>
-                                Supplier Name
-                            </span>
-                            <strong>
-                                {supplier.name || "-"}
-                            </strong>
+                            <span>Supplier Name</span>
+                            <strong>{supplier.name || "-"}</strong>
                         </div>
-
                         <div className="supplier-user-mobile-row">
-                            <span>
-                                Company / Publisher Name
-                            </span>
-                            <strong>
-                                {supplier.companyName || "-"}
-                            </strong>
+                            <span>Company / Publisher Name</span>
+                            <strong>{supplier.companyName || "-"}</strong>
                         </div>
-
                         <div className="supplier-user-mobile-row">
-                            <span>
-                                Phone
-                            </span>
-                            <strong>
-                                {supplier.phone || "-"}
-                            </strong>
+                            <span>Phone</span>
+                            <strong>{supplier.phone || "-"}</strong>
                         </div>
-
                         <div className="supplier-user-mobile-row">
-                            <span>
-                                Total Purchases
-                            </span>
-                            <strong>
-                                Rs. {supplier.totalPurchases || 0}
-                            </strong>
+                            <span>Total Purchases</span>
+                            <strong>Rs. {supplier.totalPurchases || 0}</strong>
                         </div>
-
                         <div className="supplier-user-mobile-row">
-                            <span>
-                                Paid
-                            </span>
-                            <strong>
-                                Rs. {supplier.totalPaid || 0}
-                            </strong>
+                            <span>Paid</span>
+                            <strong>Rs. {supplier.totalPaid || 0}</strong>
                         </div>
-
                         <div className="supplier-user-mobile-row">
-                            <span>
-                                Balance
-                            </span>
-                            <strong>
-                                Rs. {supplier.totalDue || 0}
-                            </strong>
+                            <span>Balance</span>
+                            <strong>Rs. {supplier.totalDue || 0}</strong>
                         </div>
 
                         <div className="supplier-user-mobile-row">
                             <button
                                 onClick={() =>
-                                    router.push(
-                                        `/admin/suppliers/${supplier._id}`
-                                    )
+                                    router.push(`/admin/suppliers/${supplier._id}`)
                                 }
                                 className="adminuserorderlist"
                             >
@@ -221,20 +163,12 @@ export default function AdminSuppliers() {
                     Prev
                 </button>
 
-                <span
-                    style={{
-                        margin: "0 10px",
-                    }}
-                >
-                    Page {currentPage} of{" "}
-                    {totalPages || 1}
+                <span style={{ margin: "0 10px", }}>
+                    Page {currentPage} of{" "}{totalPages || 1}
                 </span>
 
                 <button
-                    disabled={
-                        currentPage === totalPages ||
-                        totalPages === 0
-                    }
+                    disabled={currentPage === totalPages || totalPages === 0}
                     onClick={() =>
                         setCurrentPage(currentPage + 1)
                     }

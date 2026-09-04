@@ -1,20 +1,17 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 export default function CreatePurchase() {
   const params = useParams();
   const router = useRouter();
-
   const [supplier, setSupplier] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-
   const [purchaseDate, setPurchaseDate] = useState("");
   const [invoiceNumber, setInvoiceNumber] = useState("");
-
+  const [paidAmount, setPaidAmount] = useState("");
   const [books, setBooks] = useState([
     {
       bookName: "",
@@ -28,8 +25,6 @@ export default function CreatePurchase() {
     },
   ]);
 
-  const [paidAmount, setPaidAmount] = useState("");
-
   useEffect(() => {
     if (params?.id) {
       fetchSupplier();
@@ -39,27 +34,14 @@ export default function CreatePurchase() {
   const fetchSupplier = async () => {
     try {
       setLoading(true);
-
-      const res = await fetch(
-        `/api/admin/suppliers/${params.id}`
-      );
-
+      const res = await fetch(`/api/admin/suppliers/${params.id}`);
       const data = await res.json();
-
       if (!res.ok || !data.success) {
-        setError(
-          data.message || "Failed to load supplier."
-        );
+        setError(data.message || "Failed to load supplier.");
         return;
       }
-
       setSupplier(data.supplier);
-
-      // Today's date
-      const today = new Date()
-        .toISOString()
-        .split("T")[0];
-
+      const today = new Date().toISOString().split("T")[0];
       setPurchaseDate(today);
     } catch (error) {
       console.error(error);
@@ -68,11 +50,6 @@ export default function CreatePurchase() {
       setLoading(false);
     }
   };
-
-
-  /* =========================
-     BOOK FUNCTIONS
-  ========================= */
 
   const addBook = () => {
     setBooks([
@@ -90,17 +67,14 @@ export default function CreatePurchase() {
     ]);
   };
 
-
   const removeBook = (index) => {
     if (books.length === 1) {
       return;
     }
-
     setBooks(
       books.filter((_, bookIndex) => bookIndex !== index)
     );
   };
-
 
   const updateBook = (index, field, value) => {
     setBooks((currentBooks) =>
@@ -108,86 +82,51 @@ export default function CreatePurchase() {
         if (bookIndex !== index) {
           return book;
         }
-
         const updatedBook = {
           ...book,
           [field]: value,
         };
-
-        /*
-          Supplier Rate + Discount
-          automatically calculate Purchase Rate.
-        */
-
         if (
-          field === "supplierRate" ||
-          field === "discount"
+          field === "supplierRate" || field === "discount"
         ) {
-          const supplierRate =
-            Number(
-              field === "supplierRate"
-                ? value
-                : book.supplierRate
-            ) || 0;
+          const supplierRate = Number(
+            field === "supplierRate" ? value : book.supplierRate
+          ) || 0;
 
-          const discount =
-            Number(
-              field === "discount"
-                ? value
-                : book.discount
-            ) || 0;
+          const discount = Number(
+            field === "discount" ? value : book.discount
+          ) || 0;
 
           updatedBook.purchaseRate = (
-            supplierRate -
-            (supplierRate * discount) / 100
+            supplierRate - (supplierRate * discount) / 100
           ).toFixed(2);
         }
-
         return updatedBook;
       })
     );
   };
 
-
-  /* =========================
-     CALCULATIONS
-  ========================= */
-
   const getBookTotal = (book) => {
-    const quantity =
-      Number(book.quantity) || 0;
-
-    const purchaseRate =
-      Number(book.purchaseRate) || 0;
-
+    const quantity = Number(book.quantity) || 0;
+    const purchaseRate = Number(book.purchaseRate) || 0;
     return quantity * purchaseRate;
   };
 
-
   const getBookProfit = (book) => {
-    const sellingPrice =
-      Number(book.sellingPrice) || 0;
-
-    const purchaseRate =
-      Number(book.purchaseRate) || 0;
-
+    const sellingPrice = Number(book.sellingPrice) || 0;
+    const purchaseRate = Number(book.purchaseRate) || 0;
     return sellingPrice - purchaseRate;
   };
 
-
   const totalBooks = books.reduce(
     (total, book) =>
-      total + (Number(book.quantity) || 0),
-    0
+      total + (Number(book.quantity) || 0), 0
   );
-
 
   const totalPurchaseAmount = books.reduce(
     (total, book) =>
-      total + getBookTotal(book),
-    0
+      total + getBookTotal(book), 0
   );
-
 
   const totalSellingValue = books.reduce(
     (total, book) =>
@@ -197,31 +136,17 @@ export default function CreatePurchase() {
     0
   );
 
-
-  const expectedProfit =
-    totalSellingValue - totalPurchaseAmount;
-
-
+  const expectedProfit = totalSellingValue - totalPurchaseAmount;
   const paid = Number(paidAmount) || 0;
-
-  const balance =
-    totalPurchaseAmount - paid;
-
-
-  /* =========================
-     SAVE PURCHASE
-  ========================= */
+  const balance = totalPurchaseAmount - paid;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setError("");
-
     if (!purchaseDate) {
       setError("Purchase date is required.");
       return;
     }
-
     if (books.length === 0) {
       setError("Add at least one book.");
       return;
@@ -234,29 +159,17 @@ export default function CreatePurchase() {
       }
 
       if (!book.quantity || Number(book.quantity) <= 0) {
-        setError(
-          "Book quantity must be greater than 0."
-        );
+        setError("Book quantity must be greater than 0.");
         return;
       }
 
-      if (
-        book.purchaseRate === "" ||
-        Number(book.purchaseRate) < 0
-      ) {
-        setError(
-          "Purchase rate is required."
-        );
+      if (book.purchaseRate === "" || Number(book.purchaseRate) < 0) {
+        setError("Purchase rate is required.");
         return;
       }
 
-      if (
-        book.sellingPrice === "" ||
-        Number(book.sellingPrice) < 0
-      ) {
-        setError(
-          "Selling price is required."
-        );
+      if (book.sellingPrice === "" || Number(book.sellingPrice) < 0) {
+        setError("Selling price is required.");
         return;
       }
     }
@@ -267,64 +180,47 @@ export default function CreatePurchase() {
     }
 
     if (paid > totalPurchaseAmount) {
-      setError(
-        "Paid amount cannot be greater than purchase amount."
-      );
+      setError("Paid amount cannot be greater than purchase amount.");
       return;
     }
 
     try {
       setSaving(true);
-
-      const res = await fetch(
-        `/api/admin/suppliers/${params.id}/purchases`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            supplierId: params.id,
-            purchaseDate,
-            invoiceNumber,
-            books: books.map((book) => ({
-              bookName: book.bookName.trim(),
-              isbn: book.isbn.trim(),
-              quantity: Number(book.quantity),
-              mrp: Number(book.mrp) || 0,
-              supplierRate:
-                Number(book.supplierRate) || 0,
-              discount:
-                Number(book.discount) || 0,
-              purchaseRate:
-                Number(book.purchaseRate) || 0,
-              sellingPrice:
-                Number(book.sellingPrice) || 0,
-            })),
-            totalBooks,
-            totalAmount: totalPurchaseAmount,
-            totalSellingValue,
-            expectedProfit,
-            paidAmount: paid,
-            balanceAmount: balance,
-          }),
-        }
-      );
+      const res = await fetch(`/api/admin/suppliers/${params.id}/purchases`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          supplierId: params.id,
+          purchaseDate,
+          invoiceNumber,
+          books: books.map((book) => ({
+            bookName: book.bookName.trim(),
+            isbn: book.isbn.trim(),
+            quantity: Number(book.quantity),
+            mrp: Number(book.mrp) || 0,
+            supplierRate: Number(book.supplierRate) || 0,
+            discount: Number(book.discount) || 0,
+            purchaseRate: Number(book.purchaseRate) || 0,
+            sellingPrice: Number(book.sellingPrice) || 0,
+          })),
+          totalBooks,
+          totalAmount: totalPurchaseAmount,
+          totalSellingValue,
+          expectedProfit,
+          paidAmount: paid,
+          balanceAmount: balance,
+        }),
+      });
 
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setError(
-          data.message || "Failed to create purchase."
-        );
+        setError(data.message || "Failed to create purchase.");
         return;
       }
-
-      // Purchase created successfully
-      router.push(
-        `/admin/suppliers/${params.id}`
-      );
-
+      router.push(`/admin/suppliers/${params.id}`);
     } catch (error) {
       console.error(error);
       setError("Something went wrong.");
@@ -333,28 +229,15 @@ export default function CreatePurchase() {
     }
   };
 
-
-  /* =========================
-     LOADING
-  ========================= */
-
   if (loading) {
     return (
-      <div className="admin-create-purchase">
-        Loading supplier...
-      </div>
+      <div className="admin-create-purchase">Loading supplier...</div>
     );
   }
-
-
-  /* =========================
-     ERROR
-  ========================= */
 
   if (!supplier) {
     return (
       <div className="admin-create-purchase">
-
         <div className="create-supplier-error">
           {error || "Supplier not found."}
         </div>
@@ -368,132 +251,72 @@ export default function CreatePurchase() {
         >
           ← Back to Suppliers
         </button>
-
       </div>
     );
   }
 
-
   return (
     <div className="admin-create-purchase">
-
-      {/* =========================
-          HEADER
-      ========================= */}
-
       <div className="create-purchase-header">
-
         <div>
-
-          <h2>
-            Add Purchase
-          </h2>
-
+          <h2>Add Purchase</h2>
           <p>
             Supplier:{" "}
-            <strong>
-              {supplier.name}
-            </strong>
+            <strong>{supplier.name}</strong>
           </p>
-
           {supplier.companyName && (
-            <p>
-              {supplier.companyName}
-            </p>
+            <p>{supplier.companyName}</p>
           )}
-
         </div>
 
         <div>
-
           <button
             type="button"
             onClick={() =>
-              router.push(
-                `/admin/suppliers/${params.id}`
-              )
+              router.push(`/admin/suppliers/${params.id}`)
             }
             className="create-supplier-back-btn"
           >
             ← Back
           </button>
         </div>
-
       </div>
-
-
-      {/* =========================
-          FORM
-      ========================= */}
 
       <form
         onSubmit={handleSubmit}
         className="create-purchase-form"
       >
-
-        {/* PURCHASE INFORMATION */}
-
         <div className="create-purchase-section">
-
-          <h3>
-            Purchase Information
-          </h3>
-
+          <h3>Purchase Information</h3>
           <div className="create-purchase-grid">
-
             <div className="create-purchase-field">
-
-              <label>
-                Purchase Date *
-              </label>
-
+              <label>Purchase Date</label>
               <input
                 type="date"
                 value={purchaseDate}
                 onChange={(e) =>
-                  setPurchaseDate(
-                    e.target.value
-                  )
+                  setPurchaseDate(e.target.value)
                 }
               />
-
             </div>
 
-
             <div className="create-purchase-field">
-
-              <label>
-                Invoice / Bill Number
-              </label>
-
+              <label>Invoice / Bill Number</label>
               <input
                 type="text"
                 value={invoiceNumber}
                 onChange={(e) =>
-                  setInvoiceNumber(
-                    e.target.value
-                  )
+                  setInvoiceNumber(e.target.value)
                 }
                 placeholder="Example: INV-001"
               />
-
             </div>
-
           </div>
-
         </div>
 
-
-        {/* BOOKS */}
-
         <div className="create-purchase-section">
-
           <div className="create-purchase-books-header">
-
-            <h3>
-              Books
-            </h3>
-
+            <h3>Books</h3>
             <button
               type="button"
               onClick={addBook}
@@ -501,23 +324,15 @@ export default function CreatePurchase() {
             >
               + Add Book
             </button>
-
           </div>
 
-
           {books.map((book, index) => (
-
             <div
               key={index}
               className="purchase-book-card"
             >
-
               <div className="purchase-book-title">
-
-                <h4>
-                  Book {index + 1}
-                </h4>
-
+                <h4>Book {index + 1}</h4>
                 {books.length > 1 && (
                   <button
                     type="button"
@@ -529,20 +344,10 @@ export default function CreatePurchase() {
                     Remove
                   </button>
                 )}
-
               </div>
-
-
               <div className="create-purchase-grid">
-
-                {/* BOOK NAME */}
-
                 <div className="create-purchase-field">
-
-                  <label>
-                    Book Name *
-                  </label>
-
+                  <label>Book Name</label>
                   <input
                     type="text"
                     value={book.bookName}
@@ -551,22 +356,13 @@ export default function CreatePurchase() {
                         index,
                         "bookName",
                         e.target.value
-                      )
-                    }
+                      )}
                     placeholder="Book name"
                   />
-
                 </div>
 
-
-                {/* ISBN */}
-
                 <div className="create-purchase-field">
-
-                  <label>
-                    ISBN
-                  </label>
-
+                  <label>ISBN</label>
                   <input
                     type="text"
                     value={book.isbn}
@@ -575,22 +371,13 @@ export default function CreatePurchase() {
                         index,
                         "isbn",
                         e.target.value
-                      )
-                    }
+                      )}
                     placeholder="ISBN"
                   />
-
                 </div>
 
-
-                {/* QUANTITY */}
-
                 <div className="create-purchase-field">
-
-                  <label>
-                    Quantity *
-                  </label>
-
+                  <label>Quantity</label>
                   <input
                     type="number"
                     min="1"
@@ -600,21 +387,12 @@ export default function CreatePurchase() {
                         index,
                         "quantity",
                         e.target.value
-                      )
-                    }
+                      )}
                   />
-
                 </div>
 
-
-                {/* MRP */}
-
                 <div className="create-purchase-field">
-
-                  <label>
-                    MRP
-                  </label>
-
+                  <label>MRP</label>
                   <input
                     type="number"
                     min="0"
@@ -625,22 +403,13 @@ export default function CreatePurchase() {
                         index,
                         "mrp",
                         e.target.value
-                      )
-                    }
+                      )}
                     placeholder="₹"
                   />
-
                 </div>
 
-
-                {/* SUPPLIER RATE */}
-
                 <div className="create-purchase-field">
-
-                  <label>
-                    Supplier Rate
-                  </label>
-
+                  <label>Supplier Rate</label>
                   <input
                     type="number"
                     min="0"
@@ -651,22 +420,13 @@ export default function CreatePurchase() {
                         index,
                         "supplierRate",
                         e.target.value
-                      )
-                    }
+                      )}
                     placeholder="₹"
                   />
-
                 </div>
 
-
-                {/* DISCOUNT */}
-
                 <div className="create-purchase-field">
-
-                  <label>
-                    Discount %
-                  </label>
-
+                  <label>Discount %</label>
                   <input
                     type="number"
                     min="0"
@@ -678,22 +438,13 @@ export default function CreatePurchase() {
                         index,
                         "discount",
                         e.target.value
-                      )
-                    }
+                      )}
                     placeholder="%"
                   />
-
                 </div>
 
-
-                {/* PURCHASE RATE */}
-
                 <div className="create-purchase-field">
-
-                  <label>
-                    Purchase Rate
-                  </label>
-
+                  <label>Purchase Rate</label>
                   <input
                     type="number"
                     value={book.purchaseRate}
@@ -702,22 +453,13 @@ export default function CreatePurchase() {
                         index,
                         "purchaseRate",
                         e.target.value
-                      )
-                    }
+                      )}
                     placeholder="₹"
                   />
-
                 </div>
 
-
-                {/* SELLING PRICE */}
-
                 <div className="create-purchase-field">
-
-                  <label>
-                    Selling Price
-                  </label>
-
+                  <label>Selling Price</label>
                   <input
                     type="number"
                     min="0"
@@ -728,187 +470,95 @@ export default function CreatePurchase() {
                         index,
                         "sellingPrice",
                         e.target.value
-                      )
-                    }
+                      )}
                     placeholder="₹"
                   />
-
                 </div>
-
               </div>
-
-
-              {/* BOOK CALCULATION */}
 
               <div className="purchase-book-calculation">
-
                 <div>
-                  <span>
-                    Total Cost
-                  </span>
-
-                  <strong>
-                    ₹
-                    {getBookTotal(book).toFixed(2)}
-                  </strong>
+                  <span>Total Cost</span>
+                  <strong>Rs. {getBookTotal(book).toFixed(2)}</strong>
                 </div>
 
                 <div>
-                  <span>
-                    Profit / Book
-                  </span>
-
-                  <strong>
-                    ₹
-                    {getBookProfit(book).toFixed(2)}
-                  </strong>
+                  <span>Profit / Book</span>
+                  <strong>Rs. {getBookProfit(book).toFixed(2)}</strong>
                 </div>
 
                 <div>
-                  <span>
-                    Total Profit
-                  </span>
-
-                  <strong>
-                    ₹
-                    {(
-                      getBookProfit(book) *
-                      (Number(book.quantity) || 0)
-                    ).toFixed(2)}
+                  <span>Total Profit</span>
+                  <strong>Rs. {(
+                    getBookProfit(book) *
+                    (Number(book.quantity) || 0)
+                  ).toFixed(2)}
                   </strong>
                 </div>
-
               </div>
-
             </div>
-
           ))}
-
         </div>
 
-
-        {/* PURCHASE TOTAL */}
-
         <div className="create-purchase-section">
-
-          <h3>
-            Purchase Total
-          </h3>
-
+          <h3>Purchase Total</h3>
           <div className="purchase-total-grid">
+            <div>
+              <span>Total Books</span>
+              <strong>{totalBooks}</strong>
+            </div>
 
             <div>
-              <span>
-                Total Books
-              </span>
-
-              <strong>
-                {totalBooks}
+              <span>Total Purchase Cost</span>
+              <strong>Rs. {totalPurchaseAmount.toFixed(2)}
               </strong>
             </div>
 
             <div>
-              <span>
-                Total Purchase Cost
-              </span>
-
-              <strong>
-                ₹{totalPurchaseAmount.toFixed(2)}
-              </strong>
+              <span>Total Selling Value</span>
+              <strong>Rs. {totalSellingValue.toFixed(2)}</strong>
             </div>
 
             <div>
-              <span>
-                Total Selling Value
-              </span>
-
-              <strong>
-                ₹{totalSellingValue.toFixed(2)}
-              </strong>
+              <span>Expected Profit</span>
+              <strong>Rs. {expectedProfit.toFixed(2)}</strong>
             </div>
-
-            <div>
-              <span>
-                Expected Profit
-              </span>
-
-              <strong>
-                ₹{expectedProfit.toFixed(2)}
-              </strong>
-            </div>
-
           </div>
-
         </div>
 
-
-        {/* PAYMENT */}
-
         <div className="create-purchase-section">
-
-          <h3>
-            Payment
-          </h3>
-
+          <h3>Payment</h3>
           <div className="create-purchase-grid">
-
             <div className="create-purchase-field">
-
-              <label>
-                Paid Amount
-              </label>
-
+              <label>Paid Amount</label>
               <input
                 type="number"
                 min="0"
                 step="0.01"
                 value={paidAmount}
                 onChange={(e) =>
-                  setPaidAmount(
-                    e.target.value
-                  )
+                  setPaidAmount(e.target.value)
                 }
                 placeholder="₹"
               />
-
             </div>
 
             <div className="purchase-balance">
-
-              <span>
-                Balance Due
-              </span>
-
-              <strong>
-                ₹{balance.toFixed(2)}
-              </strong>
-
+              <span>Balance Due</span>
+              <strong>Rs {balance.toFixed(2)}</strong>
             </div>
-
           </div>
-
         </div>
 
-
-        {/* ERROR */}
-
         {error && (
-          <div className="create-supplier-error">
-            {error}
-          </div>
+          <div className="create-supplier-error">{error}</div>
         )}
 
-
-        {/* ACTIONS */}
-
         <div className="create-purchase-actions">
-
           <button
             type="button"
             onClick={() =>
-              router.push(
-                `/admin/suppliers/${params.id}`
-              )
+              router.push(`/admin/suppliers/${params.id}`)
             }
             className="create-supplier-cancel-btn"
           >
@@ -920,15 +570,10 @@ export default function CreatePurchase() {
             disabled={saving}
             className="create-supplier-save-btn"
           >
-            {saving
-              ? "Saving..."
-              : "Save Purchase"}
+            {saving ? "Saving..." : "Save Purchase"}
           </button>
-
         </div>
-
       </form>
-
     </div>
   );
 }   

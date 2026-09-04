@@ -5,14 +5,13 @@ import toast from "react-hot-toast";
 import useRealtime from "../../hooks/useRealtime";
 
 export default function AdminOrders() {
-
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const ordersPerPage = 10;
   const [orderFilter, setOrderFilter] = useState("all");
   const [selectedDate, setSelectedDate] = useState("");
-  const today = new Date().toISOString().split("T")[0];
   const [orderSearch, setOrderSearch] = useState("");
+  const today = new Date().toISOString().split("T")[0];
+  const ordersPerPage = 10;
   const fetchOrders = async () => {
     const res = await fetch("/api/admin/orders");
     const data = await res.json();
@@ -45,20 +44,15 @@ export default function AdminOrders() {
       if (data.success) {
         toast.success("Order updated successfully", { id: toastId });
       } else {
-        toast.error(data.message || "Failed to update order", {
-          id: toastId,
-        });
+        toast.error(data.message || "Failed to update order", { id: toastId, });
       }
     } catch (error) {
-      toast.error("Something went wrong", {
-        id: toastId,
-      });
+      toast.error("Something went wrong", { id: toastId, });
     }
   };
 
   const handlePrint = (order) => {
     const printWindow = window.open("", "", "width=600,height=400");
-
     printWindow.document.write(`
     <html>
       <head>
@@ -91,34 +85,17 @@ export default function AdminOrders() {
       </body>
     </html>
   `);
-
     printWindow.document.close();
     printWindow.print();
   };
 
   const search = orderSearch.toLowerCase().trim();
-
   const filteredOrders = [...orders]
     .filter((order) => {
-
-      // SEARCH
       if (search) {
-        const orderId = (
-          order.invoiceId ||
-          order._id ||
-          ""
-        ).toString().toLowerCase();
-
-        const name = (
-          order.name ||
-          ""
-        ).toLowerCase();
-
-        const phone = (
-          order.phone ||
-          ""
-        ).toString().toLowerCase();
-
+        const orderId = (order.invoiceId || order._id || "").toString().toLowerCase();
+        const name = (order.name || "").toLowerCase();
+        const phone = (order.phone || "").toString().toLowerCase();
         const address = [
           order.address?.full,
           order.address?.area,
@@ -129,7 +106,6 @@ export default function AdminOrders() {
           .filter(Boolean)
           .join(" ")
           .toLowerCase();
-
         if (
           !orderId.includes(search) &&
           !name.includes(search) &&
@@ -140,126 +116,78 @@ export default function AdminOrders() {
         }
       }
 
-      // DATE FILTER
       if (selectedDate) {
         const orderDate = new Date(order.createdAt);
-
         const year = orderDate.getFullYear();
         const month = String(orderDate.getMonth() + 1).padStart(2, "0");
         const day = String(orderDate.getDate()).padStart(2, "0");
-
         const orderDateString = `${year}-${month}-${day}`;
-
         if (orderDateString !== selectedDate) {
           return false;
         }
       }
 
-      // STATUS FILTER
       if (orderFilter === "pending") {
         return order.status === "Pending";
       }
-
       if (orderFilter === "shipped") {
         return order.status === "Shipped";
       }
-
       if (orderFilter === "completed") {
         return order.status === "Completed";
       }
-
       if (orderFilter === "cancelled") {
         return order.status === "Cancelled";
       }
-
       return true;
     })
     .sort((a, b) => {
-
       if (orderFilter === "newest") {
         return new Date(b.createdAt) - new Date(a.createdAt);
       }
-
       if (orderFilter === "oldest") {
         return new Date(a.createdAt) - new Date(b.createdAt);
       }
-
       if (orderFilter === "high-amount") {
-        const amountA =
-          (a.totalAmount || 0) + (a.deliveryCharge || 0);
-
-        const amountB =
-          (b.totalAmount || 0) + (b.deliveryCharge || 0);
-
+        const amountA = (a.totalAmount || 0) + (a.deliveryCharge || 0);
+        const amountB = (b.totalAmount || 0) + (b.deliveryCharge || 0);
         return amountB - amountA;
       }
-
       if (orderFilter === "low-amount") {
-        const amountA =
-          (a.totalAmount || 0) + (a.deliveryCharge || 0);
-
-        const amountB =
-          (b.totalAmount || 0) + (b.deliveryCharge || 0);
-
+        const amountA = (a.totalAmount || 0) + (a.deliveryCharge || 0);
+        const amountB = (b.totalAmount || 0) + (b.deliveryCharge || 0);
         return amountA - amountB;
       }
-
       if (orderFilter === "most-books") {
         const booksA =
-          a.items?.reduce(
-            (total, item) => total + (item.qty || 0),
-            0
-          ) || 0;
-
+          a.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
         const booksB =
-          b.items?.reduce(
-            (total, item) => total + (item.qty || 0),
-            0
-          ) || 0;
-
+          b.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
         return booksB - booksA;
       }
-
       if (orderFilter === "least-books") {
         const booksA =
-          a.items?.reduce(
-            (total, item) => total + (item.qty || 0),
-            0
-          ) || 0;
-
+          a.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
         const booksB =
-          b.items?.reduce(
-            (total, item) => total + (item.qty || 0),
-            0
-          ) || 0;
-
+          b.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
         return booksA - booksB;
       }
-
       return 0;
     });
 
   const indexOfLast = currentPage * ordersPerPage;
   const indexOfFirst = indexOfLast - ordersPerPage;
-
   const currentOrders = filteredOrders.slice(
     indexOfFirst,
     indexOfLast
   );
-
-  const totalPages = Math.ceil(
-    filteredOrders.length / ordersPerPage
-  );
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
 
   return (
     <div className="admin-orders">
       <div className="orders-header">
-        <h3>
-          All Orders
-        </h3>
+        <h3>All Orders</h3>
         <div className="orders-filter-area">
-
-          {/* SEARCH */}
           <div className="orders-search-box">
             <input
               type="text"
@@ -274,8 +202,6 @@ export default function AdminOrders() {
           </div>
 
           <div className="orders-filter-area-box">
-
-            {/* SORT / FILTER */}
             <div>
               <select
                 className="orders-filter"
@@ -299,7 +225,6 @@ export default function AdminOrders() {
               </select>
             </div>
 
-            {/* DATE */}
             <div>
               <input
                 type="date"
@@ -311,26 +236,21 @@ export default function AdminOrders() {
                 }}
               />
             </div>
-
           </div>
 
-          {/* CLEAR FILTER */}
-          {(orderFilter !== "all" ||
-            selectedDate ||
-            orderSearch) && (
-              <button
-                className="clear-order-filter"
-                onClick={() => {
-                  setOrderFilter("all");
-                  setSelectedDate("");
-                  setOrderSearch("");
-                  setCurrentPage(1);
-                }}
-              >
-                Clear
-              </button>
-            )}
-
+          {(orderFilter !== "all" || selectedDate || orderSearch) && (
+            <button
+              className="clear-order-filter"
+              onClick={() => {
+                setOrderFilter("all");
+                setSelectedDate("");
+                setOrderSearch("");
+                setCurrentPage(1);
+              }}
+            >
+              Clear
+            </button>
+          )}
         </div>
       </div>
 
@@ -356,12 +276,9 @@ export default function AdminOrders() {
       ) : (
         <>
           <hr />
-          {/* DESKTOP ORDERS TABLE */}
           <div className="orders-table desktop-orders-table">
-
             {currentOrders.map((order) => (
               <div key={order._id} className="order-row">
-
                 <div className="adminorders-card">
                   <p><b>Order ID:</b> {order.invoiceId || order._id.slice(-6).toUpperCase()}</p>
                   <p><b>Date: </b>{new Date(order.createdAt).toLocaleString()}</p>
@@ -385,34 +302,25 @@ export default function AdminOrders() {
                       <div key={i} className="admin-invoice-item">
                         <span>{item.bookId?.title || "Book"}</span>
                         <span>{item.qty}</span>
-                        <span>₹ {item.bookId?.price || 0}</span>
+                        <span>Rs. {item.bookId?.price || 0}</span>
                       </div>
                     ))}
 
                     <div className="admin-order-summary">
-                      {/* <div className="admin-invoice-item-total">
-                        <span>Total</span>
-                        <span>₹ {order.totalAmount || 0}</span>
-                      </div> */}
-
                       <div className="admin-invoice-item-total">
                         <span>Delivery Charges</span>
-                        <span>₹ {order.deliveryCharge || 0}</span>
+                        <span>Rs. {order.deliveryCharge || 0}</span>
                       </div>
 
                       <div className="admin-invoice-item-total">
                         <strong>Total</strong>
-                        <strong>
-                          ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}
-                        </strong>
+                        <strong>Rs. {(order.totalAmount || 0) + (order.deliveryCharge || 0)}</strong>
                       </div>
                     </div>
-
                   </div>
 
                   <div>
                     <b>Delivery</b>
-
                     <input
                       className="delivery-input"
                       type="text"
@@ -462,11 +370,7 @@ export default function AdminOrders() {
                       Save Delivery
                     </button>
                   </div>
-
                 </div>
-
-
-
 
                 <div>
                   <p className="statusadmin"><b>Status: </b>{order.status}</p>
@@ -528,28 +432,21 @@ export default function AdminOrders() {
                       <Link href={`/invoice-admin/${order._id}`}>
                         <button>View Invoice</button>
                       </Link>
-
                       <button onClick={() => handlePrint(order)}>
                         Print address slip
                       </button>
                     </div>
-
                   </div>
                 </div>
-
-
               </div>
             ))}
           </div>
 
 
-
           {/* MOBILE ORDERS TABLE */}
           <div className="orders-table mobile-orders-table">
-
             {currentOrders.map((order) => (
               <div key={order._id} className="order-row">
-
                 <div className="adminorders-card">
                   <p><b>Order ID:</b> {order.invoiceId || order._id.slice(-6).toUpperCase()}</p>
                   <p><b>Date: </b>{new Date(order.createdAt).toLocaleString()}</p>
@@ -625,24 +522,21 @@ export default function AdminOrders() {
                   <div key={i} className="admin-invoice-item">
                     <span>{item.bookId?.title || "Book"}</span>
                     <span>{item.qty}</span>
-                    <span>₹ {item.bookId?.price || 0}</span>
+                    <span>Rs. {item.bookId?.price || 0}</span>
                   </div>
                 ))}
 
                 <div className="admin-order-summary">
                   <div className="admin-invoice-item-total">
                     <span>Delivery Charges</span>
-                    <span>₹ {order.deliveryCharge || 0}</span>
+                    <span>Rs. {order.deliveryCharge || 0}</span>
                   </div>
 
                   <div className="admin-invoice-item-total">
                     <strong>total</strong>
-                    <strong>
-                      ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}
-                    </strong>
+                    <strong>Rs. {(order.totalAmount || 0) + (order.deliveryCharge || 0)}</strong>
                   </div>
                 </div>
-
 
                 <div className="admin-Status-mobile">
                   <p><b>Status: </b>{order.status}</p>
@@ -704,12 +598,10 @@ export default function AdminOrders() {
                   <Link href={`/invoice-admin/${order._id}`}>
                     <button>View Invoice</button>
                   </Link>
-
                   <button onClick={() => handlePrint(order)}>
                     Print address slip
                   </button>
                 </div>
-
               </div>
             ))}
           </div>
@@ -721,11 +613,7 @@ export default function AdminOrders() {
             >
               Prev
             </button>
-
-            <span>
-              Page {currentPage} of {totalPages || 1}
-            </span>
-
+            <span>Page {currentPage} of {totalPages || 1}</span>
             <button
               disabled={currentPage === totalPages || totalPages === 0}
               onClick={() => setCurrentPage(currentPage + 1)}
@@ -737,6 +625,5 @@ export default function AdminOrders() {
       )
       }
     </div >
-
   );
 }

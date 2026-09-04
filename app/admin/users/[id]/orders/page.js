@@ -1,88 +1,52 @@
 "use client";
-
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
 export default function UserOrdersPage() {
     const { id } = useParams();
-
     const [orders, setOrders] = useState([]);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-
     const [currentPage, setCurrentPage] = useState(1);
     const ordersPerPage = 10;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch user's orders
-                const ordersRes = await fetch(
-                    `/api/orders?userId=${id}`
-                );
-
+                const ordersRes = await fetch(`/api/orders?userId=${id}`);
                 const ordersData = await ordersRes.json();
-
                 if (ordersData.success) {
                     setOrders(ordersData.orders);
                 }
-
-                // Fetch users
-                const usersRes = await fetch(
-                    "/api/admin/users"
-                );
-
+                const usersRes = await fetch("/api/admin/users");
                 const usersData = await usersRes.json();
-
                 if (usersData.success) {
                     const foundUser = usersData.users.find(
                         (user) => user._id === id
                     );
-
                     setUser(foundUser || null);
                 }
-
             } catch (error) {
-                console.error(
-                    "Error fetching user orders:",
-                    error
-                );
+                console.error("Error fetching user orders:", error);
             } finally {
                 setLoading(false);
             }
         };
-
         if (id) {
             fetchData();
         }
     }, [id]);
 
 
-    /* =========================
-       PAGINATION
-    ========================= */
-
-    const indexOfLastOrder =
-        currentPage * ordersPerPage;
-
-    const indexOfFirstOrder =
-        indexOfLastOrder - ordersPerPage;
-
-    const currentOrders = orders.slice(
-        indexOfFirstOrder,
-        indexOfLastOrder
-    );
-
-    const totalPages = Math.ceil(
-        orders.length / ordersPerPage
-    );
+    /* PAGINATION */
+    const indexOfLastOrder = currentPage * ordersPerPage;
+    const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+    const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+    const totalPages = Math.ceil(orders.length / ordersPerPage);
 
 
-    /* =========================
-       LOADING
-    ========================= */
-
+    /* LOADING */
     if (loading) {
         return (
             <div
@@ -92,239 +56,89 @@ export default function UserOrdersPage() {
                 }}
             >
                 <div className="loader"></div>
-
-                <p>
-                    Loading orders...
-                </p>
+                <p>Loading orders...</p>
             </div>
         );
     }
 
-
     return (
         <div className="admin-user-orders">
-
-            {/* =========================
-                BACK
-            ========================= */}
-
-            <Link
-                href="/admin/users"
-                className="back-home"
-            >
+            <Link href="/admin/users" className="back-home">
                 ← Back to Users
             </Link>
-
-
-            {/* =========================
-                USER HEADER
-            ========================= */}
-
             <div className="users-header">
-
                 <div>
-
-                    <p>
-                        <b>Name:</b>{" "}
-                        {user?.name || "-"}
-                    </p>
-
-                    <p>
-                        <b>Phone:</b>{" "}
-                        {user?.phone || "-"}
-                    </p>
-
+                    <p><b>Name:</b>{" "} {user?.name || "-"}</p>
+                    <p><b>Phone:</b>{" "} {user?.phone || "-"}</p>
                 </div>
-
-                <span>
-                    Total Orders: {orders.length}
-                </span>
-
+                <span>Total Orders: {orders.length}</span>
             </div>
 
-
-            {/* =========================
-                NO ORDERS
-            ========================= */}
-
             {orders.length === 0 ? (
-
-                <p>
-                    No orders found
-                </p>
-
+                <p>No orders found</p>
             ) : (
-
                 <>
-
-                    {/* ==================================================
-                        DESKTOP ORDERS
-                    ================================================== */}
-
+                    {/* DESKTOP ORDERS */}
                     <div className="user-orders-desktop">
-
                         {/* DESKTOP HEADER */}
-
                         <div className="user-order-table-row user-order-table-header">
-
-                            <div>
-                                Order No.
-                            </div>
-
-                            <div>
-                                No. of Books
-                            </div>
-
-                            <div>
-                                Amount
-                            </div>
-
-                            <div>
-                                Delivery Type
-                            </div>
-
-                            <div>
-                                Status
-                            </div>
-
-                            <div>
-                                Total Amount
-                            </div>
-
-                            <div>
-                                Invoice
-                            </div>
-
+                            <div>Order No.</div>
+                            <div>No. of Books</div>
+                            <div>Amount</div>
+                            <div>Delivery Type</div>
+                            <div>Status</div>
+                            <div>Total Amount</div>
+                            <div>Invoice</div>
                         </div>
 
-
                         {/* DESKTOP ORDERS */}
-
                         {currentOrders.map((order) => {
-
                             const booksCount =
                                 order.items?.reduce(
-                                    (total, item) =>
-                                        total +
-                                        (item.qty || 0),
-                                    0
+                                    (total, item) => total + (item.qty || 0), 0
                                 );
-
-                            const amount =
-                                order.totalAmount || 0;
-
-                            const deliveryCharge =
-                                order.deliveryCharge || 0;
-
-                            const totalAmount =
-                                amount +
-                                deliveryCharge;
-
+                            const amount = order.totalAmount || 0;
+                            const deliveryCharge = order.deliveryCharge || 0;
+                            const totalAmount = amount + deliveryCharge;
 
                             return (
-
-                                <div
-                                    key={order._id}
-                                    className="user-order-table-row"
-                                >
-
+                                <div key={order._id} className="user-order-table-row">
                                     {/* ORDER NUMBER */}
-
                                     <div>
-
                                         {order.invoiceId ||
                                             order._id
                                                 .slice(-6)
                                                 .toUpperCase()}
-
                                     </div>
-
-
-                                    {/* NUMBER OF BOOKS */}
-
+                                    <div>{booksCount}</div>
+                                    <div>Rs. {amount}</div>
+                                    <div>{order.deliveryType || "Not Set"}</div>
                                     <div>
-
-                                        {booksCount}
-
-                                    </div>
-
-
-                                    {/* AMOUNT */}
-
-                                    <div>
-
-                                        ₹{amount}
-
-                                    </div>
-
-
-                                    {/* DELIVERY TYPE */}
-
-                                    <div>
-
-                                        {order.deliveryType ||
-                                            "Not Set"}
-
-                                    </div>
-
-
-                                    {/* STATUS */}
-
-                                    <div>
-
                                         <span
                                             className={`user-order-status ${order.status?.toLowerCase()}`}
                                         >
-                                            {order.status ||
-                                                "Pending"}
+                                            {order.status || "Pending"}
                                         </span>
-
                                     </div>
-
-
-                                    {/* TOTAL AMOUNT */}
-
                                     <div>
-
-                                        <strong>
-                                            ₹{totalAmount}
-                                        </strong>
-
+                                        <strong>Rs. {totalAmount}</strong>
                                     </div>
-
-
-                                    {/* INVOICE */}
-
                                     <div>
-
-                                        <Link
-                                            href={`/invoice-admin/${order._id}`}
-                                        >
-
+                                        <Link href={`/invoice-admin/${order._id}`}>
                                             <button className="user-order-invoice-btn">
                                                 View Invoice
                                             </button>
-
                                         </Link>
-
                                     </div>
-
                                 </div>
-
                             );
                         })}
-
                     </div>
 
 
-                    {/* ==================================================
-                        MOBILE ORDERS
-                    ================================================== */}
-
+                    {/* MOBILE ORDERS */}
                     <div className="user-orders-mobile">
-
                         {currentOrders.map((order) => {
-
                             const booksCount =
                                 order.items?.reduce(
                                     (total, item) =>
@@ -332,196 +146,88 @@ export default function UserOrdersPage() {
                                         (item.qty || 0),
                                     0
                                 );
-
-                            const amount =
-                                order.totalAmount || 0;
-
-                            const deliveryCharge =
-                                order.deliveryCharge || 0;
-
-                            const totalAmount =
-                                amount +
-                                deliveryCharge;
-
-
+                            const amount = order.totalAmount || 0;
+                            const deliveryCharge = order.deliveryCharge || 0;
+                            const totalAmount = amount + deliveryCharge;
                             return (
-
                                 <div
                                     key={order._id}
                                     className="user-order-mobile-card"
                                 >
-
-                                    {/* ORDER NO */}
-
                                     <div className="mobile-order-field">
-
-                                        <span>
-                                            Order No.
-                                        </span>
-
+                                        <span>Order No.</span>
                                         <strong>
                                             {order.invoiceId ||
                                                 order._id
                                                     .slice(-6)
                                                     .toUpperCase()}
                                         </strong>
-
                                     </div>
-
-
-                                    {/* NUMBER OF BOOKS */}
-
                                     <div className="mobile-order-field">
-
-                                        <span>
-                                            No. of Books
-                                        </span>
-
-                                        <strong>
-                                            {booksCount}
-                                        </strong>
-
+                                        <span>No. of Books</span>
+                                        <strong>{booksCount}</strong>
                                     </div>
-
-
-                                    {/* AMOUNT */}
-
                                     <div className="mobile-order-field">
-
-                                        <span>
-                                            Amount
-                                        </span>
-
-                                        <strong>
-                                            ₹{amount}
-                                        </strong>
-
+                                        <span>Amount</span>
+                                        <strong>Rs. {amount}</strong>
                                     </div>
-
-
-                                    {/* DELIVERY TYPE */}
-
                                     <div className="mobile-order-field">
-
-                                        <span>
-                                            Delivery Type
-                                        </span>
-
-                                        <strong>
-                                            {order.deliveryType ||
-                                                "Not Set"}
-                                        </strong>
-
+                                        <span>Delivery Type</span>
+                                        <strong>{order.deliveryType || "Not Set"}</strong>
                                     </div>
-
-
-                                    {/* STATUS */}
-
                                     <div className="mobile-order-field">
-
-                                        <span>
-                                            Status
-                                        </span>
-
+                                        <span>Status</span>
                                         <span
                                             className={`user-order-status ${order.status?.toLowerCase()}`}
                                         >
-                                            {order.status ||
-                                                "Pending"}
+                                            {order.status || "Pending"}
                                         </span>
-
                                     </div>
-
-
-                                    {/* TOTAL AMOUNT */}
-
                                     <div className="mobile-order-field">
-
-                                        <span>
-                                            Total Amount
-                                        </span>
-
-                                        <strong>
-                                            ₹{totalAmount}
-                                        </strong>
-
+                                        <span>Total Amount</span>
+                                        <strong>Rs. {totalAmount}</strong>
                                     </div>
-
-
-                                    {/* INVOICE */}
-
                                     <div className="mobile-order-invoice">
-
-                                        <Link
-                                            href={`/invoice-admin/${order._id}`}
-                                        >
-
+                                        <Link href={`/invoice-admin/${order._id}`}>
                                             <button className="user-order-invoice-btn">
                                                 View Invoice
                                             </button>
-
                                         </Link>
-
                                     </div>
-
                                 </div>
-
                             );
                         })}
-
                     </div>
-
                 </>
-
             )}
 
-
-            {/* =========================
-                PAGINATION
-            ========================= */}
-
+            {/* PAGINATION  */}
             {orders.length > 0 && (
-
                 <div className="pagination">
-
                     <button
-                        disabled={
-                            currentPage === 1
-                        }
+                        disabled={currentPage === 1}
                         onClick={() =>
-                            setCurrentPage(
-                                currentPage - 1
-                            )
+                            setCurrentPage(currentPage - 1)
                         }
                     >
                         Prev
                     </button>
-
-
                     <span>
                         Page {currentPage} of{" "}
                         {totalPages || 1}
                     </span>
-
-
                     <button
                         disabled={
-                            currentPage === totalPages ||
-                            totalPages === 0
+                            currentPage === totalPages || totalPages === 0
                         }
                         onClick={() =>
-                            setCurrentPage(
-                                currentPage + 1
-                            )
+                            setCurrentPage(currentPage + 1)
                         }
                     >
                         Next
                     </button>
-
                 </div>
-
             )}
-
         </div>
     );
 }

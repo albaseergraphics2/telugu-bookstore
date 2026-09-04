@@ -1,11 +1,11 @@
 "use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function CreateSupplier() {
     const router = useRouter();
-
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
     const [formData, setFormData] = useState({
         name: "",
         companyName: "",
@@ -24,12 +24,8 @@ export default function CreateSupplier() {
         notes: "",
     });
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-
     const handleChange = (e) => {
         const { name, value } = e.target;
-
         setFormData((prev) => ({
             ...prev,
             [name]: value,
@@ -38,33 +34,26 @@ export default function CreateSupplier() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         setError("");
-
         if (!formData.name.trim()) {
             setError("Supplier Name is required.");
             return;
         }
-
         if (!formData.companyName.trim()) {
             setError("Company / Publisher Name is required.");
             return;
         }
-
         if (!formData.phone.trim()) {
             setError("Phone is required.");
             return;
         }
-
         if (!formData.supplierType) {
             setError("Supplier Type is required.");
             return;
         }
 
-
         try {
             setLoading(true);
-
             const res = await fetch("/api/admin/suppliers", {
                 method: "POST",
                 headers: {
@@ -75,16 +64,11 @@ export default function CreateSupplier() {
                     openingBalance: Number(formData.openingBalance) || 0,
                 }),
             });
-
             const data = await res.json();
-
             if (!res.ok || !data.success) {
-                setError(
-                    data.message || "Failed to create supplier."
-                );
+                setError(data.message || "Failed to create supplier.");
                 return;
             }
-
             router.push("/admin/suppliers");
         } catch (error) {
             console.error(error);
@@ -96,15 +80,8 @@ export default function CreateSupplier() {
 
     return (
         <div className="admin-create-supplier">
-
-            {/* HEADER */}
-
             <div className="create-supplier-header">
-
-                <h2>
-                    Create New Supplier
-                </h2>
-
+                <h2>Create New Supplier</h2>
                 <button
                     type="button"
                     onClick={() =>
@@ -114,32 +91,15 @@ export default function CreateSupplier() {
                 >
                     Back
                 </button>
-
             </div>
-
-
-            {/* FORM */}
 
             <form
                 onSubmit={handleSubmit}
                 className="create-supplier-form"
             >
-
-                {/* SUPPLIER DETAILS */}
-
-                <h3>
-                    Supplier Details
-                </h3>
-
-
-                {/* SUPPLIER NAME */}
-
+                <h3>Supplier Details</h3>
                 <div className="create-supplier-field">
-
-                    <label>
-                        Supplier Name
-                    </label>
-
+                    <label>Supplier Name</label>
                     <input
                         type="text"
                         name="name"
@@ -147,18 +107,9 @@ export default function CreateSupplier() {
                         onChange={handleChange}
                         placeholder="Enter supplier name"
                     />
-
                 </div>
-
-
-                {/* COMPANY */}
-
                 <div className="create-supplier-field">
-
-                    <label>
-                        Company / Publisher Name
-                    </label>
-
+                    <label>Company / Publisher Name</label>
                     <input
                         type="text"
                         name="companyName"
@@ -166,55 +117,23 @@ export default function CreateSupplier() {
                         onChange={handleChange}
                         placeholder="Enter company or publisher name"
                     />
-
                 </div>
-
-
-                {/* SUPPLIER TYPE */}
-
                 <div className="create-supplier-field">
-
-                    <label>
-                        Supplier Type
-                    </label>
-
+                    <label>Supplier Type</label>
                     <select
                         name="supplierType"
                         value={formData.supplierType}
                         onChange={handleChange}
                     >
-                        <option value="">
-                            Select Supplier Type
-                        </option>
-
-                        <option value="Publisher">
-                            Publisher
-                        </option>
-
-                        <option value="Distributor">
-                            Distributor
-                        </option>
-
-                        <option value="Wholesaler">
-                            Wholesaler
-                        </option>
-
-                        <option value="Other">
-                            Other
-                        </option>
+                        <option value="">Select Supplier Type</option>
+                        <option value="Publisher">Publisher</option>
+                        <option value="Distributor">Distributor</option>
+                        <option value="Wholesaler">Wholesaler</option>
+                        <option value="Other">Other</option>
                     </select>
-
                 </div>
-
-
-                {/* PHONE */}
-
                 <div className="create-supplier-field">
-
-                    <label>
-                        Phone
-                    </label>
-
+                    <label>Phone</label>
                     <input
                         type="tel"
                         name="phone"
@@ -222,18 +141,9 @@ export default function CreateSupplier() {
                         onChange={handleChange}
                         placeholder="Enter phone number"
                     />
-
                 </div>
-
-
-                {/* ALTERNATE PHONE */}
-
                 <div className="create-supplier-field">
-
-                    <label>
-                        Alternate Phone
-                    </label>
-
+                    <label>Alternate Phone</label>
                     <input
                         type="tel"
                         name="alternatePhone"
@@ -241,18 +151,9 @@ export default function CreateSupplier() {
                         onChange={handleChange}
                         placeholder="Enter alternate phone number"
                     />
-
                 </div>
-
-
-                {/* EMAIL */}
-
                 <div className="create-supplier-field">
-
-                    <label>
-                        Email
-                    </label>
-
+                    <label>Email</label>
                     <input
                         type="email"
                         name="email"
@@ -260,18 +161,9 @@ export default function CreateSupplier() {
                         onChange={handleChange}
                         placeholder="Enter email"
                     />
-
                 </div>
-
-
-                {/* GST */}
-
                 <div className="create-supplier-field">
-
-                    <label>
-                        GST Number
-                    </label>
-
+                    <label>GST Number</label>
                     <input
                         type="text"
                         name="gstNumber"
@@ -279,21 +171,9 @@ export default function CreateSupplier() {
                         onChange={handleChange}
                         placeholder="Enter GST number"
                     />
-
                 </div>
-
-
-                {/* ADDRESS */}
-
-                <h3>
-                    Address
-                </h3>
-
-
-                {/* FULL ADDRESS */}
-
+                <h3>Address</h3>
                 <div className="create-supplier-field">
-
                     <textarea
                         name="address"
                         value={formData.address}
@@ -301,18 +181,9 @@ export default function CreateSupplier() {
                         placeholder="Enter full address"
                         rows="3"
                     />
-
                 </div>
-
-
-                {/* AREA */}
-
                 <div className="create-supplier-field">
-
-                    <label>
-                        Area
-                    </label>
-
+                    <label>Area</label>
                     <input
                         type="text"
                         name="area"
@@ -320,18 +191,9 @@ export default function CreateSupplier() {
                         onChange={handleChange}
                         placeholder="Enter area"
                     />
-
                 </div>
-
-
-                {/* DISTRICT */}
-
                 <div className="create-supplier-field">
-
-                    <label>
-                        District
-                    </label>
-
+                    <label>District</label>
                     <input
                         type="text"
                         name="district"
@@ -339,18 +201,9 @@ export default function CreateSupplier() {
                         onChange={handleChange}
                         placeholder="Enter district"
                     />
-
                 </div>
-
-
-                {/* STATE */}
-
                 <div className="create-supplier-field">
-
-                    <label>
-                        State
-                    </label>
-
+                    <label>State</label>
                     <input
                         type="text"
                         name="state"
@@ -358,18 +211,9 @@ export default function CreateSupplier() {
                         onChange={handleChange}
                         placeholder="Enter state"
                     />
-
                 </div>
-
-
-                {/* PINCODE */}
-
                 <div className="create-supplier-field">
-
-                    <label>
-                        Pincode
-                    </label>
-
+                    <label>Pincode</label>
                     <input
                         type="text"
                         name="pincode"
@@ -377,68 +221,11 @@ export default function CreateSupplier() {
                         onChange={handleChange}
                         placeholder="Enter pincode"
                     />
-
                 </div>
 
-
-                {/* PAYMENT */}
-
-                <h3>
-                    Payment Details
-                </h3>
-
-
-                {/* PAYMENT TERMS */}
-
-                {/* <div className="create-supplier-field">
-
-                    <label>
-                        Payment Terms *
-                    </label>
-
-                    <select
-                        name="paymentTerms"
-                        value={formData.paymentTerms}
-                        onChange={handleChange}
-                    >
-
-                        <option value="">
-                            Select Payment Terms
-                        </option>
-
-                        <option value="Immediate">
-                            Immediate
-                        </option>
-
-                        <option value="15 Days">
-                            15 Days
-                        </option>
-
-                        <option value="30 Days">
-                            30 Days
-                        </option>
-
-                        <option value="45 Days">
-                            45 Days
-                        </option>
-
-                        <option value="60 Days">
-                            60 Days
-                        </option>
-
-                    </select>
-
-                </div> */}
-
-
-                {/* OPENING BALANCE */}
-
+                <h3>Payment Details</h3>
                 <div className="create-supplier-field">
-
-                    <label>
-                        Opening Balance
-                    </label>
-
+                    <label>Opening Balance</label>
                     <input
                         type="number"
                         name="openingBalance"
@@ -447,18 +234,9 @@ export default function CreateSupplier() {
                         placeholder="Enter opening balance"
                         min="0"
                     />
-
                 </div>
-
-
-                {/* NOTES */}
-
                 <div className="create-supplier-field">
-
-                    <label>
-                        Notes
-                    </label>
-
+                    <label>Notes</label>
                     <textarea
                         name="notes"
                         value={formData.notes}
@@ -466,23 +244,13 @@ export default function CreateSupplier() {
                         placeholder="Enter notes"
                         rows="3"
                     />
-
                 </div>
 
-
-                {/* ERROR */}
-
                 {error && (
-                    <div className="create-supplier-error">
-                        {error}
-                    </div>
+                    <div className="create-supplier-error">{error}</div>
                 )}
 
-
-                {/* ACTIONS */}
-
                 <div className="create-supplier-actions">
-
                     <button
                         type="button"
                         onClick={() =>
@@ -498,15 +266,10 @@ export default function CreateSupplier() {
                         disabled={loading}
                         className="create-supplier-save-btn"
                     >
-                        {loading
-                            ? "Saving..."
-                            : "Save Supplier"}
+                        {loading ? "Saving..." : "Save Supplier"}
                     </button>
-
                 </div>
-
             </form>
-
         </div>
     );
 }

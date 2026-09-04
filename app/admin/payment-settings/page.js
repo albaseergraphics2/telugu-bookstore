@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { uploadToCloudinary } from "../../lib/cloudinary";
@@ -141,7 +140,6 @@ export default function PaymentSettingsPage() {
       if (data.success) {
         setDefaultShipping(data.setting.defaultShipping ?? "");
         setFreeShippingAmount(data.setting.freeShippingAmount ?? "");
-
         toast.success("Shipping charge saved successfully");
       } else {
         toast.error(data.message || "Failed to save shipping charge");
@@ -251,10 +249,7 @@ export default function PaymentSettingsPage() {
           <label>QR Preview</label>
 
           {form.qrCode && (
-            <img
-              src={form.qrCode}
-              alt="QR"
-            />
+            <img src={form.qrCode} alt="QR" />
           )}
         </div>
       </div>

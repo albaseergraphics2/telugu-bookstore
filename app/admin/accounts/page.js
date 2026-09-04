@@ -22,8 +22,16 @@ export default function Accounts() {
         try {
             const res = await fetch("/api/admin/accounts");
             const data = await res.json();
+
             if (data.success) {
-                setTransactions(data.transactions || []);
+                const sortedTransactions = (data.transactions || []).sort(
+                    (a, b) => new Date(a.date) - new Date(b.date)
+                );
+                setTransactions(sortedTransactions);
+                const totalPages = Math.ceil(
+                    sortedTransactions.length / pageSize
+                );
+                setCurrentPage(totalPages || 1);
             } else {
                 setTransactions([]);
             }
@@ -168,7 +176,6 @@ export default function Accounts() {
 
     const getPageNumbers = () => {
         const pages = [];
-
         if (totalPages <= 7) {
             for (let i = 1; i <= totalPages; i++) {
                 pages.push(i);
@@ -248,7 +255,6 @@ export default function Accounts() {
             <div className="admin-users-header-accounts">
                 <div className="admin-users-header-accounts-box">
                     <h2>Accounts</h2>
-                    <span>Total Transactions:{" "}{filteredTransactions.length}</span>
                 </div>
                 <div className="accounts-filter-bar">
                     <button
@@ -267,61 +273,6 @@ export default function Accounts() {
                     </button>
                 </div>
             </div>
-
-            {/* SUMMARY */}
-            {/* <div className="accounts-summary">
-
-                <div className="accounts-summary-card">
-
-                    <span>
-                        Total Income
-                    </span>
-
-                    <strong>
-                        ₹{totalIncome}
-                    </strong>
-
-                </div>
-
-                <div className="accounts-summary-card">
-
-                    <span>
-                        Total Purchase
-                    </span>
-
-                    <strong>
-                        ₹{totalPurchase}
-                    </strong>
-
-                </div>
-
-                <div className="accounts-summary-card">
-
-                    <span>
-                        Total Expenses
-                    </span>
-
-                    <strong>
-                        ₹{totalExpenses}
-                    </strong>
-
-                </div>
-
-                <div className="accounts-summary-card">
-
-                    <span>
-                        Balance
-                    </span>
-
-                    <strong>
-                        ₹{balance}
-                    </strong>
-
-                </div>
-
-            </div> */}
-
-            {/* FILTER PANEL */}
 
             {showFilters && (
                 <div className="accounts-filter-panel">
@@ -527,28 +478,28 @@ export default function Accounts() {
                 </div>
             )}
 
-            {(search || fromDate || toDate || partyType !== "All" ||
-                transactionTypes.length > 0 ||
-                paymentMethods.length > 0) && (
-
-                    <div className="accounts-active-filters">
-                        <span>Filters Applied</span>
-                        {search && (<span>Search: {search}</span>)}
-                        {fromDate && (<span>From: {fromDate}</span>)}
-                        {toDate && (<span>To: {toDate}</span>)}
-                        {partyType !== "All" && (<span>{partyType}</span>)}
-                        {transactionTypes.map(
-                            (type) => (<span key={type}>{type}</span>)
-                        )}
-                        {paymentMethods.map(
-                            (method) => (<span key={method}>{method}</span>)
-                        )}
-                    </div>
-                )}
-
             <div className="accounts-history">
                 <div className="accounts-history-header">
+                    <div className="accounts-history-filter">
                     <h3>Transaction History</h3>
+                        {(search || fromDate || toDate || partyType !== "All" ||
+                            transactionTypes.length > 0 ||
+                            paymentMethods.length > 0) && (
+                                <div className="accounts-active-filters">
+                                    <span>Filters Applied :</span>
+                                    {search && (<span>Search: {search}</span>)}
+                                    {fromDate && (<span>From: {fromDate}</span>)}
+                                    {toDate && (<span>To: {toDate}</span>)}
+                                    {partyType !== "All" && (<span>{partyType}</span>)}
+                                    {transactionTypes.map(
+                                        (type) => (<span key={type}>{type}</span>)
+                                    )}
+                                    {paymentMethods.map(
+                                        (method) => (<span key={method}>{method}</span>)
+                                    )}
+                                </div>
+                            )}
+                    </div>
                     <span>{filteredTransactions.length}{" "}Transactions</span>
                 </div>
 
@@ -576,11 +527,11 @@ export default function Accounts() {
                                     >
                                         <div>
                                             {transaction.date
-                                                ? new Date(
-                                                    transaction.date
-                                                ).toLocaleDateString(
-                                                    "en-IN"
-                                                )
+                                                ? new Date(transaction.date).toLocaleDateString("en-IN", {
+                                                    day: "2-digit",
+                                                    month: "2-digit",
+                                                    year: "numeric",
+                                                })
                                                 : "-"}
                                         </div>
                                         <div>{transaction.type || "-"}</div>
@@ -658,6 +609,7 @@ export default function Accounts() {
                                     value={pageSize}
                                     onChange={(e) => setPageSize(Number(e.target.value))}
                                 >
+                                    <option value={5}>5</option>
                                     <option value={10}>10</option>
                                     <option value={25}>25</option>
                                     <option value={50}>50</option>
@@ -674,7 +626,15 @@ export default function Accounts() {
                                 onClick={() => goToPage(currentPage - 1)}
                                 disabled={currentPage === 1}
                             >
-                                Previous
+                                &lt;&lt;
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => goToPage(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            >
+                                &lt;
                             </button>
 
                             <div className="accounts-pagination-pages">
@@ -705,7 +665,15 @@ export default function Accounts() {
                                 onClick={() => goToPage(currentPage + 1)}
                                 disabled={currentPage === totalPages}
                             >
-                                Next
+                                &gt;
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => goToPage(totalPages)}
+                                disabled={currentPage === totalPages}
+                            >
+                                &gt;&gt;
                             </button>
                         </div>
                     </div>

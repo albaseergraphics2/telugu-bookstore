@@ -1,64 +1,86 @@
 import mongoose from "mongoose";
 
-const OrderSchema = new mongoose.Schema({
-  userId: String,
-  name: String,
-  phone: String,
+const OrderSchema = new mongoose.Schema(
+  {
+    userId: String,
 
-  address: {
-    full: String,
-    pincode: String,
-    area: String,
-    district: String,
-    state: String
-  },
+    name: String,
 
-  items: [
-    {
-      bookId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Book"
+    phone: String,
+
+    address: {
+      full: String,
+      pincode: String,
+      area: String,
+      district: String,
+      state: String,
+    },
+
+    items: [
+      {
+        bookId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Book",
+        },
+        qty: Number,
+        sellingPrice: Number,
+        discount: Number,
       },
-      qty: Number
-    }
-  ],
+    ],
+    totalAmount: Number,
 
-  totalAmount: Number,
+    deliveryType: {
+      type: String,
+    },
 
-  deliveryType: {
-    type: String,
-    // default: "Not Selected",
+    deliveryCharge: {
+      type: Number,
+      default: 0,
+    },
+
+    status: {
+      type: String,
+      default: "pending",
+    },
+
+    invoiceId: {
+      type: Number,
+      unique: true,
+    },
+
+    paymentMethod: {
+      type: String,
+      default: "",
+    },
+
+    paymentStatus: {
+      type: String,
+      default: "Pending",
+    },
+
+    utrNumber: {
+      type: String,
+      default: "",
+    },
+
+    // ONLINE / OFFLINE
+    orderSource: {
+      type: String,
+      enum: ["online", "offline"],
+      default: "online",
+    },
+
+    // Who created the order
+    orderCreatedBy: {
+      type: String,
+      enum: ["customer", "admin"],
+      default: "customer",
+    },
   },
+  {
+    timestamps: true,
+  }
+);
 
-  deliveryCharge: {
-    type: Number,
-    default: 0,
-  },
-
-  status: {
-    type: String,
-    default: "pending",
-  },
-
-  invoiceId: {
-    type: Number,
-    unique: true,
-  },
-
-  paymentMethod: {
-    type: String,
-    default: "",
-  },
-
-  paymentStatus: {
-    type: String,
-    default: "Pending",
-  },
-
-  utrNumber: {
-    type: String,
-    default: "",
-  },
-}, { timestamps: true });
-
-export default mongoose.models.Order || mongoose.model("Order", OrderSchema);
+export default mongoose.models.Order ||
+  mongoose.model("Order", OrderSchema);

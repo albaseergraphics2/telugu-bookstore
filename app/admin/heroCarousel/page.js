@@ -1,10 +1,8 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { uploadToCloudinary } from "../../lib/cloudinary";
 
 export default function HeroCarouselAdmin() {
-
   const [images, setImages] = useState([]);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -23,7 +21,6 @@ export default function HeroCarouselAdmin() {
     return new Promise((resolve) => {
       const img = new Image();
       const reader = new FileReader();
-
       reader.onload = (e) => (img.src = e.target.result);
 
       img.onload = () => {
@@ -86,7 +83,6 @@ export default function HeroCarouselAdmin() {
     }
   };
 
-  // 🔥 NEW FUNCTIONS
   const moveLeft = async (index) => {
     if (index === 0) return;
 
@@ -146,7 +142,6 @@ export default function HeroCarouselAdmin() {
               }}
             />
 
-            {/* DELETE BUTTON */}
             <button
               className="crossmark"
               onClick={() => {
@@ -157,7 +152,6 @@ export default function HeroCarouselAdmin() {
               ×
             </button>
 
-            {/* MOVE LEFT */}
             <button
               onClick={() => moveLeft(i)}
               style={{
