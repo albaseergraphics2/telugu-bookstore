@@ -8,6 +8,7 @@ export default function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const usersPerPage = 10;
 
   useEffect(() => {
@@ -15,12 +16,28 @@ export default function AdminUsers() {
   }, []);
 
   const fetchUsers = async () => {
-    const res = await fetch("/api/admin/users");
-    const data = await res.json();
-    if (data.success) {
-      setUsers(data.users);
+    try {
+      const res = await fetch("/api/admin/users");
+      const data = await res.json();
+      if (data.success) {
+        setUsers(data.users);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load orders.");
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "60px" }}>
+        <div className="loader"></div>
+        <p>Loading Customers...</p>
+      </div>
+    );
+  }
 
   /* FILTER USERS */
   const filteredUsers = users.filter((user) =>
@@ -167,14 +184,14 @@ export default function AdminUsers() {
         </button>
 
         <span
-          style={{ margin: "0 10px",}}
+          style={{ margin: "0 10px", }}
         >
           Page {currentPage} of{" "}
           {totalPages || 1}
         </span>
 
         <button
-          disabled={ currentPage === totalPages || totalPages === 0}
+          disabled={currentPage === totalPages || totalPages === 0}
           onClick={() =>
             setCurrentPage(currentPage + 1)
           }

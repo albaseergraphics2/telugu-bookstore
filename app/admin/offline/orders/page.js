@@ -11,6 +11,7 @@ export default function OfflineOrders() {
     const [selectedDate, setSelectedDate] = useState("");
     const [orderSearch, setOrderSearch] = useState("");
     const [loading, setLoading] = useState(true);
+    const today = new Date().toISOString().split("T")[0];
     const ordersPerPage = 10;
 
     const fetchOrders = async () => {
@@ -49,17 +50,18 @@ export default function OfflineOrders() {
         try {
             const res = await fetch("/api/admin/offline/orders", {
                 method: "PUT",
-                headers: { "Content-Type": "application/json", },
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({
                     id,
                     status,
                     deliveryType,
-                    deliveryCharge: Number(deliveryCharge) || 0,
+                    deliveryCharge:
+                        Number(deliveryCharge) || 0,
                 }),
             });
-
             const data = await res.json();
-
             if (!res.ok || !data.success) {
                 throw new Error(data.message || "Failed to update order");
             }
@@ -121,14 +123,31 @@ export default function OfflineOrders() {
                 <body>
                     <div class="container">
                         <div class="box">
-                            <div class="title">From,</div>
-                            <div class="text"><b>Abdul Vakeel</b></div>
-                            <div class="text">Telugu Bookstore</div>
-                            <div class="text">Hyderabad, Telangana</div>
-                            <div class="text"><b>Phone:</b> 9441055065</div>
+                            <div class="title">
+                                From,
+                            </div>
+
+                            <div class="text">
+                                <b>Abdul Vakeel</b>
+                            </div>
+
+                            <div class="text">
+                                Telugu Bookstore
+                            </div>
+
+                            <div class="text">
+                                Hyderabad, Telangana
+                            </div>
+
+                            <div class="text">
+                                <b>Phone:</b> 9441055065
+                            </div>
                         </div>
                         <div class="box">
-                            <div class="title">To,</div>
+                            <div class="title">
+                                To,
+                            </div>
+
                             <div class="text">
                                 ${order.name || ""}
                             </div>
@@ -145,10 +164,12 @@ export default function OfflineOrders() {
                                 ${order.address?.state || ""}
                             </div>
                             <div class="text">
-                                <b>Pincode:</b>${order.address?.pincode || ""}
+                                <b>Pincode:</b>
+                                ${order.address?.pincode || ""}
                             </div>
                             <div class="text">
-                                <b>Phone:</b>${order.phone || ""}
+                                <b>Phone:</b>
+                                ${order.phone || ""}
                             </div>
                         </div>
                     </div>
@@ -158,12 +179,16 @@ export default function OfflineOrders() {
 
         printWindow.document.close();
         printWindow.focus();
+
         setTimeout(() => {
             printWindow.print();
         }, 300);
     };
 
-    const search = orderSearch.toLowerCase().trim();
+    const search = orderSearch
+        .toLowerCase()
+        .trim();
+
     const filteredOrders = [...orders]
         .filter((order) => {
             if (search) {
@@ -216,44 +241,62 @@ export default function OfflineOrders() {
                     return false;
                 }
             }
+
             return true;
         })
         .sort((a, b) => {
             if (orderFilter === "newest") {
-                return (new Date(b.createdAt) - new Date(a.createdAt));
+                return (
+                    new Date(b.createdAt) - new Date(a.createdAt)
+                );
             }
+
             if (orderFilter === "oldest") {
-                return (new Date(a.createdAt) - new Date(b.createdAt));
+                return (
+                    new Date(a.createdAt) - new Date(b.createdAt)
+                );
             }
             const totalA = Number(a.totalAmount) || 0;
             const totalB = Number(b.totalAmount) || 0;
+
             if (orderFilter === "high-amount") {
                 return totalB - totalA;
             }
             if (orderFilter === "low-amount") {
                 return totalA - totalB;
             }
+
             const qtyA = a.items?.reduce(
-                (sum, item) => sum + (Number(item.qty) || 0), 0) || 0;
+                (sum, item) =>
+                    sum + (Number(item.qty) || 0), 0
+            ) || 0;
+
             const qtyB = b.items?.reduce(
-                (sum, item) => sum + (Number(item.qty) || 0), 0) || 0;
+                (sum, item) =>
+                    sum + (Number(item.qty) || 0), 0
+            ) || 0;
 
             if (orderFilter === "most-books") {
                 return qtyB - qtyA;
             }
+
             if (orderFilter === "least-books") {
                 return qtyA - qtyB;
             }
-            return (new Date(b.createdAt) - new Date(a.createdAt));
+
+            return (
+                new Date(b.createdAt) - new Date(a.createdAt)
+            );
         });
 
-    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+    const totalPages = Math.ceil(
+        filteredOrders.length / ordersPerPage
+    );
+
     const currentOrders =
         filteredOrders.slice(
-            (currentPage - 1) *
-            ordersPerPage,
-            currentPage *
-            ordersPerPage
+            (currentPage - 1) * ordersPerPage,
+            currentPage * ordersPerPage
         );
 
     const clearFilters = () => {
@@ -263,267 +306,20 @@ export default function OfflineOrders() {
         setCurrentPage(1);
     };
 
-    const renderOrder = (order) => {
-        const totalAmount = Number(order.totalAmount) || 0;
-        const deliveryCharge = Number(order.deliveryCharge) || 0;
-        const booksTotal = totalAmount - deliveryCharge;
-
-        return (
-            <>
-                <div className="adminorders-card">
-                    <p>
-                        <b>Order ID:</b>{" "}
-                        {order.invoiceId || order._id
-                            ?.slice(-6)
-                            .toUpperCase()}
-                    </p>
-                    <p>
-                        <b>Date:</b>{" "}
-                        {order.createdAt
-                            ? new Date(order.createdAt)
-                                .toLocaleString()
-                            : "-"}
-                    </p>
-                    <p>
-                        <b>Source:</b>{" "}
-                        {order.orderSource || "offline"}
-                    </p>
-                    <p>
-                        <b>Created By:</b>{" "}
-                        {order.orderCreatedBy || "admin"}
-                    </p>
-                </div>
-
-                <div className="adminorders-cardname">
-                    <p>
-                        <b>Name:</b>{" "}
-                        {order.name || "-"}
-                    </p>
-                    <p>
-                        <b>Phone No:</b>{" "}
-                        {order.phone || "-"}
-                    </p>
-                    <p>
-                        <b>Address:</b>{" "}
-                        {order.address?.full || "-"}
-                        {order.address?.pincode
-                            ? `, ${order.address.pincode}`
-                            : ""}
-                    </p>
-                </div>
-
-                <div className="admin-box">
-                    <div className="admin-invoice1">
-                        <div className="admin-invoice-items-header">
-                            <span>Book</span>
-                            <span>Qty</span>
-                            <span>Price</span>
-                        </div>
-
-                        {order.items?.map(
-                            (item, index) => (
-                                <div
-                                    key={index}
-                                    className="admin-invoice-item"
-                                >
-                                    <span>{item.bookId?.title || "Book"}</span>
-                                    <span>{item.qty || 0}</span>
-                                    <span>Rs. {" "}{Number(item.bookId?.price) || 0}
-                                    </span>
-                                </div>
-                            )
-                        )}
-
-                        <div className="admin-order-summary">
-                            <div className="admin-invoice-item-total">
-                                <span>Delivery Charges</span>
-                                <span>Rs. {" "}{deliveryCharge}</span>
-                            </div>
-                            <div className="admin-invoice-item-total">
-                                <strong>Total</strong>
-                                <strong>Rs.{" "}{totalAmount}</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <b>Delivery</b>
-                        <input
-                            className="delivery-input"
-                            type="text"
-                            placeholder="Delivery Type"
-                            value={order.deliveryType || ""}
-                            onChange={(e) => {
-                                setOrders(
-                                    (prev) =>
-                                        prev.map(
-                                            (o) =>
-                                                o._id === order._id
-                                                    ? {
-                                                        ...o,
-                                                        deliveryType: e.target.value,
-                                                    } : o
-                                        )
-                                );
-                            }}
-                        />
-
-                        <input
-                            className="delivery-input"
-                            type="number"
-                            min="0"
-                            placeholder="Delivery Charges"
-                            value={order.deliveryCharge ?? ""}
-                            onChange={(e) => {
-                                setOrders(
-                                    (prev) =>
-                                        prev.map(
-                                            (o) =>
-                                                o._id === order._id
-                                                    ? {
-                                                        ...o,
-                                                        deliveryCharge: Number(e.target.value) || 0,
-                                                    } : o
-                                        )
-                                );
-                            }}
-                        />
-
-                        <button
-                            type="button"
-                            className="save-delivery-btn"
-                            onClick={() =>
-                                updateOrder(
-                                    order._id,
-                                    order.status,
-                                    order.deliveryType,
-                                    order.deliveryCharge
-                                )
-                            }
-                        >
-                            Save Delivery
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <p className="statusadmin">
-                        <b>Status:</b>{" "}
-                        {order.status || "-"}
-                    </p>
-                    <p>
-                        <b>Payment:</b>{" "}
-                        {order.paymentMethod || "-"}
-                    </p>
-                    <p>
-                        <b>Payment Status:</b>{" "}
-                        {order.paymentStatus || "-"}
-                    </p>
-
-                    {order.utrNumber && (
-                        <p>
-                            <b>UTR:</b>{" "}
-                            {order.utrNumber}
-                        </p>
-                    )}
-
-                    <div className="admin-box">
-                        <div className="order-actions">
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    updateOrder(
-                                        order._id,
-                                        "completed",
-                                        order.deliveryType,
-                                        order.deliveryCharge
-                                    )
-                                }
-                            >
-                                Complete
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    updateOrder(
-                                        order._id,
-                                        "pending",
-                                        order.deliveryType,
-                                        order.deliveryCharge
-                                    )
-                                }
-                            >
-                                Pending
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    updateOrder(
-                                        order._id,
-                                        "shipped",
-                                        order.deliveryType,
-                                        order.deliveryCharge
-                                    )
-                                }
-                            >
-                                Shipped
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    updateOrder(
-                                        order._id,
-                                        "cancelled",
-                                        order.deliveryType,
-                                        order.deliveryCharge
-                                    )
-                                }
-                            >
-                                Cancel
-                            </button>
-
-                        </div>
-
-                        <div className="admin-invoice-btns">
-                            <Link href={`/invoice-admin/${order._id}`}>
-                                <button type="button">View Invoice</button>
-                            </Link>
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    handlePrint(order)
-                                }
-                            >
-                                Print address slip
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </>
-        );
-    };
-
     if (loading) {
         return (
-            <div className="admin-orders">
-                <div
-                    style={{
-                        width: "100%",
-                        padding: "60px 20px",
-                        textAlign: "center",
-                    }}
-                >
-                    Loading offline orders...
-                </div>
+            <div style={{ textAlign: "center", marginTop: "60px" }}>
+                <div className="loader"></div>
+                <p>Loading Orders...</p>
             </div>
         );
     }
 
     return (
         <div className="admin-orders">
+            {/* =========================
+                HEADER
+            ========================== */}
             <div className="orders-header">
                 <h3>Offline Orders</h3>
                 <div className="orders-filter-area">
@@ -570,7 +366,7 @@ export default function OfflineOrders() {
                             <input
                                 type="date"
                                 className="orders-date-filter"
-                                value={selectedDate}
+                                value={selectedDate || today}
                                 onChange={(e) => {
                                     setSelectedDate(e.target.value);
                                     setCurrentPage(1);
@@ -579,15 +375,19 @@ export default function OfflineOrders() {
                         </div>
                     </div>
 
-                    {(orderFilter !== "all" || selectedDate || orderSearch) && (
-                        <button
-                            type="button"
-                            className="clear-order-filter"
-                            onClick={clearFilters}
-                        >
-                            Clear
-                        </button>
-                    )}
+                    {(
+                        orderFilter !== "all" ||
+                        selectedDate ||
+                        orderSearch
+                    ) && (
+                            <button
+                                type="button"
+                                className="clear-order-filter"
+                                onClick={clearFilters}
+                            >
+                                Clear
+                            </button>
+                        )}
                 </div>
             </div>
 
@@ -600,6 +400,7 @@ export default function OfflineOrders() {
                         boxSizing: "border-box",
                     }}
                 >
+
                     <p
                         style={{
                             margin: 0,
@@ -613,42 +414,551 @@ export default function OfflineOrders() {
             ) : (
                 <>
                     <hr />
+                    {/* ==================================================
+                        DESKTOP ORDERS
+                    =================================================== */}
                     <div className="orders-table desktop-orders-table">
-                        {currentOrders.map(
-                            (order) => (
+                        {currentOrders.map((order) => {
+                            const totalAmount = Number(order.totalAmount) || 0;
+                            const deliveryCharge = Number(order.deliveryCharge) || 0;
+                            return (
                                 <div
                                     key={order._id}
                                     className="order-row"
                                 >
-                                    {renderOrder(order)}
+                                    <div className="adminorders-card">
+                                        <p>
+                                            <b>Order ID:</b>{" "}
+                                            {order.invoiceId || order._id
+                                                ?.slice(-6)
+                                                .toUpperCase()}
+                                        </p>
+                                        <p>
+                                            <b>Date:</b>{" "}
+                                            {order.createdAt
+                                                ? new Date(order.createdAt
+                                                ).toLocaleString()
+                                                : "-"}
+                                        </p>
+                                        <p>
+                                            <b>Source:</b>{" "}
+                                            {order.orderSource || "offline"}
+                                        </p>
+                                        <p>
+                                            <b>Created By:</b>{" "}
+                                            {order.orderCreatedBy || "admin"}
+                                        </p>
+                                    </div>
+                                    <div className="adminorders-cardname">
+                                        <p>
+                                            <b>Name:</b>{" "}
+                                            {order.name || "-"}
+                                        </p>
+                                        <p>
+                                            <b>Phone No:</b>{" "}
+                                            {order.phone || "-"}
+                                        </p>
+                                        <p>
+                                            <b>Address:</b>{" "}
+                                            {order.address?.full || "-"}
+                                            {order.address?.pincode
+                                                ? `, ${order.address.pincode}`
+                                                : ""}
+                                        </p>
+                                    </div>
+                                    <div className="admin-box">
+                                        <div className="admin-invoice1">
+                                            <div className="admin-invoice-items-header">
+                                                <span>Book</span>
+                                                <span>Qty</span>
+                                                <span>Price</span>
+                                            </div>
+                                            {order.items?.map(
+                                                (
+                                                    item,
+                                                    index
+                                                ) => (
+                                                    <div
+                                                        key={index}
+                                                        className="admin-invoice-item"
+                                                    >
+                                                        <span>
+                                                            {item.bookId?.title || "Book"}
+                                                        </span>
+                                                        <span>
+                                                            {item.qty || 0}
+                                                        </span>
+                                                        <span>
+                                                            Rs.{" "}
+                                                            {Number(item.bookId?.price) || 0}
+                                                        </span>
+                                                    </div>
+                                                )
+                                            )}
+                                            <div className="admin-order-summary">
+                                                <div className="admin-invoice-item-total">
+                                                    <span>Delivery Charges</span>
+                                                    <span>Rs.{" "}{deliveryCharge}</span>
+                                                </div>
+                                                <div className="admin-invoice-item-total">
+                                                    <strong>Total</strong>
+                                                    <strong>Rs.{" "}{totalAmount}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <b>Delivery</b>
+                                            <input
+                                                className="delivery-input"
+                                                type="text"
+                                                placeholder="Delivery Type"
+                                                value={order.deliveryType || ""}
+                                                onChange={(e) => {
+                                                    setOrders(
+                                                        (prev) =>
+                                                            prev.map(
+                                                                (o) =>
+                                                                    o._id === order._id
+                                                                        ? {
+                                                                            ...o,
+                                                                            deliveryType: e.target.value,
+                                                                        } : o
+                                                            )
+                                                    );
+                                                }}
+                                            />
+
+                                            <input
+                                                className="delivery-input"
+                                                type="number"
+                                                min="0"
+                                                placeholder="Delivery Charges"
+                                                value={order.deliveryCharge ?? ""}
+                                                onChange={(e) => {
+                                                    setOrders(
+                                                        (prev) =>
+                                                            prev.map(
+                                                                (
+                                                                    o
+                                                                ) =>
+                                                                    o._id ===
+                                                                        order._id
+                                                                        ? {
+                                                                            ...o,
+                                                                            deliveryCharge:
+                                                                                Number(
+                                                                                    e
+                                                                                        .target
+                                                                                        .value
+                                                                                ) || 0,
+                                                                        } : o
+                                                            )
+                                                    );
+                                                }}
+                                            />
+                                            <button
+                                                type="button"
+                                                className="save-delivery-btn"
+                                                onClick={() =>
+                                                    updateOrder(
+                                                        order._id,
+                                                        order.status,
+                                                        order.deliveryType,
+                                                        order.deliveryCharge
+                                                    )
+                                                }
+                                            >
+                                                Save Delivery
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p className="statusadmin">
+                                            <b>Status:</b>{" "}
+                                            {order.status || "-"}
+                                        </p>
+                                        <p>
+                                            <b>Payment:</b>{" "}
+                                            {order.paymentMethod || "-"}
+                                        </p>
+                                        <p>
+                                            <b>Payment Status:</b>{" "}
+                                            {order.paymentStatus || "-"}
+                                        </p>
+                                        {order.utrNumber && (
+                                            <p>
+                                                <b>UTR:</b>{" "}
+                                                {order.utrNumber}
+                                            </p>
+                                        )}
+                                        <div className="admin-box">
+                                            <div className="order-actions">
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            order._id,
+                                                            "completed",
+                                                            order.deliveryType,
+                                                            order.deliveryCharge
+                                                        )
+                                                    }
+                                                >
+                                                    Complete
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            order._id,
+                                                            "pending",
+                                                            order.deliveryType,
+                                                            order.deliveryCharge
+                                                        )
+                                                    }
+                                                >
+                                                    Pending
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            order._id,
+                                                            "shipped",
+                                                            order.deliveryType,
+                                                            order.deliveryCharge
+                                                        )
+                                                    }
+                                                >
+                                                    Shipped
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            order._id,
+                                                            "cancelled",
+                                                            order.deliveryType,
+                                                            order.deliveryCharge
+                                                        )
+                                                    }
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                            <div className="admin-invoice-btns">
+                                                <Link href={`/invoice-admin/${order._id}`}>
+                                                    <button type="button">
+                                                        View Invoice
+                                                    </button>
+                                                </Link>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handlePrint(order)
+                                                    }
+                                                >
+                                                    Print address slip
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            )
-                        )}
+                            );
+                        })}
                     </div>
 
+
+                    {/* ==================================================
+                        MOBILE ORDERS
+                    =================================================== */}
                     <div className="orders-table mobile-orders-table">
-                        {currentOrders.map(
-                            (order) => (
+                        {currentOrders.map((order) => {
+                            const totalAmount = Number(order.totalAmount) || 0;
+                            const deliveryCharge = Number(order.deliveryCharge) || 0;
+
+                            return (
                                 <div
                                     key={order._id}
                                     className="order-row"
                                 >
-                                    {renderOrder(order)}
+                                    <div className="adminorders-card">
+                                        <p>
+                                            <b>Order ID:</b>{" "}
+                                            {order.invoiceId || order._id
+                                                ?.slice(-6)
+                                                .toUpperCase()}
+                                        </p>
+                                        <p>
+                                            <b>Date:</b>{" "}
+                                            {order.createdAt
+                                                ? new Date(
+                                                    order.createdAt
+                                                ).toLocaleString()
+                                                : "-"}
+                                        </p>
+                                    </div>
+                                    <div className="adminorders-card">
+                                        <p>
+                                            <b>Source:</b>{" "}
+                                            {order.orderSource || "offline"}
+                                        </p>
+                                        <p>
+                                            <b>Created By:</b>{" "}
+                                            {order.orderCreatedBy || "admin"}
+                                        </p>
+
+                                    </div>
+                                    <div className="adminorders-cardname">
+                                        <p>
+                                            <b>Name:</b>{" "}
+                                            {order.name || "-"}
+                                        </p>
+                                        <p>
+                                            <b>Phone No:</b>{" "}
+                                            {order.phone || "-"}
+                                        </p>
+                                        <p>
+                                            <b>Address:</b>{" "}
+                                            {order.address?.full || "-"}
+                                            {order.address
+                                                ?.pincode
+                                                ? `, ${order.address.pincode}`
+                                                : ""}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <b>Delivery</b>
+                                        <div className="deliveryinputbox">
+                                            <div className="deliveryinputbox1">
+                                                <input
+                                                    className="delivery-input"
+                                                    type="text"
+                                                    placeholder="Delivery Type"
+                                                    value={order.deliveryType || ""}
+                                                    onChange={(e) => {
+                                                        setOrders(
+                                                            (prev) =>
+                                                                prev.map(
+                                                                    (
+                                                                        o
+                                                                    ) =>
+                                                                        o._id === order._id
+                                                                            ? {
+                                                                                ...o,
+                                                                                deliveryType:
+                                                                                    e
+                                                                                        .target
+                                                                                        .value,
+                                                                            } : o
+                                                                )
+                                                        );
+                                                    }}
+                                                />
+                                                <input
+                                                    className="delivery-input"
+                                                    type="number"
+                                                    min="0"
+                                                    placeholder="Delivery Charges"
+                                                    value={order.deliveryCharge ?? ""}
+                                                    onChange={(e) => {
+                                                        setOrders(
+                                                            (prev) =>
+                                                                prev.map(
+                                                                    (
+                                                                        o
+                                                                    ) =>
+                                                                        o._id ===
+                                                                            order._id
+                                                                            ? {
+                                                                                ...o,
+                                                                                deliveryCharge:
+                                                                                    Number(
+                                                                                        e
+                                                                                            .target
+                                                                                            .value
+                                                                                    ) || 0,
+                                                                            } : o
+                                                                )
+                                                        );
+                                                    }}
+                                                />
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className="save-delivery-btn"
+                                                onClick={() =>
+                                                    updateOrder(
+                                                        order._id,
+                                                        order.status,
+                                                        order.deliveryType,
+                                                        order.deliveryCharge
+                                                    )
+                                                }
+                                            >
+                                                Save Delivery
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="admin-invoice-items-header">
+                                        <span>Book</span>
+                                        <span>Qty</span>
+                                        <span>Price</span>
+                                    </div>
+                                    {order.items?.map(
+                                        (
+                                            item,
+                                            index
+                                        ) => (
+                                            <div
+                                                key={index}
+                                                className="admin-invoice-item"
+                                            >
+                                                <span>
+                                                    {item.bookId?.title || "Book"}
+                                                </span>
+                                                <span>
+                                                    {item.qty || 0}
+                                                </span>
+                                                <span>
+                                                    Rs.{" "}
+                                                    {Number(item.bookId
+                                                        ?.price
+                                                    ) || 0}
+                                                </span>
+                                            </div>
+                                        )
+                                    )}
+
+                                    <div className="admin-order-summary">
+                                        <div className="admin-invoice-item-total">
+                                            <span>Delivery Charges</span>
+                                            <span>Rs.{" "}{deliveryCharge}</span>
+                                        </div>
+                                        <div className="admin-invoice-item-total">
+                                            <strong>Total</strong>
+                                            <strong>Rs.{" "}{totalAmount}</strong>
+                                        </div>
+                                    </div>
+
+                                    <div className="admin-Status-mobile">
+                                        <p className="statusadmin">
+                                            <b>Status:</b>{" "}
+                                            {order.status || "-"}
+                                        </p>
+                                        <p>
+                                            <b>Payment:</b>{" "}
+                                            {order.paymentMethod || "-"}
+                                        </p>
+                                        <p>
+                                            <b>Payment Status:</b>{" "}
+                                            {order.paymentStatus || "-"}
+                                        </p>
+                                        {order.utrNumber && (
+                                            <p>
+                                                <b>UTR:</b>{" "}
+                                                {order.utrNumber}
+                                            </p>
+                                        )}
+                                        <div className="admin-box">
+                                            <div className="order-actions">
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            order._id,
+                                                            "completed",
+                                                            order.deliveryType,
+                                                            order.deliveryCharge
+                                                        )
+                                                    }
+                                                >
+                                                    Complete
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            order._id,
+                                                            "pending",
+                                                            order.deliveryType,
+                                                            order.deliveryCharge
+                                                        )
+                                                    }
+                                                >
+                                                    Pending
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            order._id,
+                                                            "shipped",
+                                                            order.deliveryType,
+                                                            order.deliveryCharge
+                                                        )
+                                                    }
+                                                >
+                                                    Shipped
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        updateOrder(
+                                                            order._id,
+                                                            "cancelled",
+                                                            order.deliveryType,
+                                                            order.deliveryCharge
+                                                        )
+                                                    }
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="admin-invoice-btns">
+                                        <Link href={`/invoice-admin/${order._id}`}>
+                                            <button type="button">
+                                                View Invoice
+                                            </button>
+                                        </Link>
+
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handlePrint(order)
+                                            }
+                                        >
+                                            Print address slip
+                                        </button>
+                                    </div>
                                 </div>
-                            )
-                        )}
+                            );
+                        })}
                     </div>
+
+                    {/* =========================
+                        PAGINATION
+                    ========================== */}
                     <div className="pagination">
                         <button
                             type="button"
                             disabled={currentPage === 1}
                             onClick={() =>
-                                setCurrentPage((page) => page - 1)
+                                setCurrentPage(
+                                    (page) => page - 1
+                                )
                             }
                         >
                             Prev
                         </button>
-                        <span>Page{" "}{currentPage} of{" "}{totalPages || 1}</span>
+                        <span>
+                            Page{" "}
+                            {currentPage} of{" "}
+                            {totalPages || 1}
+                        </span>
                         <button
                             type="button"
                             disabled={
@@ -657,14 +967,17 @@ export default function OfflineOrders() {
                                 totalPages === 0
                             }
                             onClick={() =>
-                                setCurrentPage((page) => page + 1)
+                                setCurrentPage(
+                                    (page) => page + 1
+                                )
                             }
                         >
                             Next
                         </button>
                     </div>
                 </>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }

@@ -6444,12 +6444,6 @@ nav {
   color: #333;
 }
 
-.offline-order-section-box {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-
 .offline-order-section-box1 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
@@ -6729,10 +6723,6 @@ nav {
 
 @media (max-width: 900px) {
 
-  .offline-order-create-page {
-    padding: 18px;
-  }
-
   .offline-order-add-book {
     grid-template-columns: 1fr 100px;
   }
@@ -6755,20 +6745,15 @@ nav {
 @media (max-width: 600px) {
 
   .offline-order-create-page {
-    padding: 12px;
+    padding: 0px;
   }
 
   .offline-order-create-header {
-    align-items: flex-start;
-    flex-direction: column;
+    display: flex !important;
   }
 
   .offline-order-create-header h1 {
     font-size: 22px;
-  }
-
-  .offline-order-back-btn {
-    width: 100%;
   }
 
   .offline-order-section {
@@ -6791,7 +6776,7 @@ nav {
 
   .offline-order-add-book {
     display: grid;
-    grid-template-columns: 1fr 90px;
+    grid-template-columns: 1fr;
     gap: 10px;
   }
 
@@ -6846,6 +6831,21 @@ nav {
   .offline-order-cancel-btn,
   .offline-order-submit-btn {
     width: 100%;
+  }
+
+  .offline-order-grid1 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    display: grid;
+  }
+
+  .offline-order-field {
+    margin-top: 4px;
+    margin-bottom: 0px !important;
+  }
+  
+  .offline-order-field textarea {
+    height: 70px;
   }
 }
 
@@ -7616,7 +7616,7 @@ nav {
   }
 
   .orders-filter,
-  .orders-date-filter,
+  /* .orders-date-filter, */
   .clear-order-filter {
     width: 100%;
     min-height: 42px;
@@ -7635,6 +7635,12 @@ nav {
     padding: 10px 12px;
     background: #fff;
     border: 1px solid #ccc;
+  }
+
+  .adminofflineorder-card {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between;
   }
 
   .clear-order-filter {

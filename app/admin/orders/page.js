@@ -11,12 +11,22 @@ export default function AdminOrders() {
   const [selectedDate, setSelectedDate] = useState("");
   const [orderSearch, setOrderSearch] = useState("");
   const today = new Date().toISOString().split("T")[0];
+  const [loading, setLoading] = useState(true);
   const ordersPerPage = 10;
+
   const fetchOrders = async () => {
-    const res = await fetch("/api/admin/orders");
-    const data = await res.json();
-    if (data.success) {
-      setOrders(data.orders);
+    try {
+      const res = await fetch("/api/admin/orders");
+      const data = await res.json();
+
+      if (data.success) {
+        setOrders(data.orders || []);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load orders.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,8 +86,8 @@ export default function AdminOrders() {
           </div>
           <div class="box">
             <div class="title">To,</div>
-            <div class="text"><b>Name:</b> ${order.name}</div>
-            <div class="text"><b>Address:</b> ${order.address?.full || ""}</div>
+            <div class="text"><b>${order.name}</b></div>
+            <div class="text">${order.address?.full || ""}</div>
             <div class="text"><b>Pincode:</b> ${order.address?.pincode || ""}</div>
             <div class="text"><b>Phone:</b> ${order.phone}</div>
           </div>
@@ -182,6 +192,15 @@ export default function AdminOrders() {
     indexOfLast
   );
   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "60px" }}>
+        <div className="loader"></div>
+        <p>Loading Orders...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-orders">
