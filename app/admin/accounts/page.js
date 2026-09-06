@@ -27,10 +27,23 @@ export default function Accounts() {
                 const sortedTransactions = (data.transactions || []).sort(
                     (a, b) => new Date(a.date) - new Date(b.date)
                 );
-                setTransactions(sortedTransactions);
-                const totalPages = Math.ceil(
-                    sortedTransactions.length / pageSize
+
+                let runningBalance = 0;
+
+                const transactionsWithBalance = sortedTransactions.map(
+                    (transaction) => {
+                        const debit = Number(transaction.debit) || 0;
+                        const credit = Number(transaction.credit) || 0;
+                        runningBalance = runningBalance - debit + credit;
+
+                        return {
+                            ...transaction,
+                            balance: runningBalance,
+                        };
+                    }
                 );
+                setTransactions(transactionsWithBalance);
+                const totalPages = Math.ceil(transactionsWithBalance.length / pageSize);
                 setCurrentPage(totalPages || 1);
             } else {
                 setTransactions([]);
@@ -481,7 +494,7 @@ export default function Accounts() {
             <div className="accounts-history">
                 <div className="accounts-history-header">
                     <div className="accounts-history-filter">
-                    <h3>Transaction History</h3>
+                        <h3>Transaction History</h3>
                         {(search || fromDate || toDate || partyType !== "All" ||
                             transactionTypes.length > 0 ||
                             paymentMethods.length > 0) && (
@@ -538,9 +551,9 @@ export default function Accounts() {
                                         <div>{transaction.party || "-"}</div>
                                         <div>{transaction.description || "-"}</div>
                                         <div>{transaction.paymentMethod || "-"}</div>
-                                        <div>₹{transaction.debit || 0}</div>
-                                        <div>₹{transaction.credit || 0}</div>
-                                        <div>₹{transaction.balance || 0}</div>
+                                        <div>Rs. {transaction.debit || 0}</div>
+                                        <div>Rs. {transaction.credit || 0}</div>
+                                        <div>Rs. {transaction.balance || 0}</div>
                                     </div>
                                 )
                             )
@@ -573,20 +586,20 @@ export default function Accounts() {
                                     >
                                         <div>
                                             {transaction.date
-                                                ? new Date(
-                                                    transaction.date
-                                                ).toLocaleDateString(
-                                                    "en-IN"
-                                                )
+                                                ? new Date(transaction.date).toLocaleDateString("en-IN", {
+                                                    day: "2-digit",
+                                                    month: "2-digit",
+                                                    year: "numeric",
+                                                })
                                                 : "-"}
                                         </div>
                                         <div>{transaction.type || "-"}</div>
                                         <div>{transaction.party || "-"}</div>
                                         <div>{transaction.description || "-"}</div>
                                         <div>{transaction.paymentMethod || "-"}</div>
-                                        <div>₹{transaction.debit || 0}</div>
-                                        <div>₹{transaction.credit || 0}</div>
-                                        <div>₹{transaction.balance || 0}</div>
+                                        <div>Rs. {transaction.debit || 0}</div>
+                                        <div>Rs. {transaction.credit || 0}</div>
+                                        <div>Rs. {transaction.balance || 0}</div>
                                     </div>
                                 )
                             )

@@ -12,7 +12,7 @@ export default function CreateOfflineOrder() {
     const [items, setItems] = useState([]);
     const [customers, setCustomers] = useState([]);
     const [deliveryType, setDeliveryType] = useState("Self Pickup");
-    const [deliveryCharge, setDeliveryCharge] = useState(0);
+    const [deliveryCharge, setDeliveryCharge] = useState("");
     const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("Cash");
     const [paymentStatus, setPaymentStatus] = useState("Paid");
@@ -530,10 +530,9 @@ export default function CreateOfflineOrder() {
 
     if (pageLoading) {
         return (
-            <div className="offline-order-create-page">
-                <div className="offline-order-loading">
-                    Loading...
-                </div>
+            <div style={{ textAlign: "center", marginTop: "60px" }}>
+                <div className="loader"></div>
+                <p>Loading...</p>
             </div>
         );
     }
@@ -750,19 +749,19 @@ export default function CreateOfflineOrder() {
                                                     ?.toLowerCase()
                                                     .includes(bookSearch.toLowerCase())
                                         ).map((book) => (
-                                                <div
-                                                    key={book._id}
-                                                    className="customer-dropdown-item"
-                                                    onClick={() => handleSelectBook(book)}
-                                                >
-                                                    <div>
-                                                        <strong>{book.title}</strong>
-                                                    </div>
-                                                    <div>
-                                                        Rs. {Number(book.price) || 0}
-                                                    </div>
+                                            <div
+                                                key={book._id}
+                                                className="customer-dropdown-item"
+                                                onClick={() => handleSelectBook(book)}
+                                            >
+                                                <div>
+                                                    <strong>{book.title}</strong>
                                                 </div>
-                                            ))}
+                                                <div>
+                                                    Rs. {Number(book.price) || 0}
+                                                </div>
+                                            </div>
+                                        ))}
 
                                         {bookSearch.trim() !== "" &&
                                             books.filter((book) =>
@@ -844,7 +843,7 @@ export default function CreateOfflineOrder() {
                                                     type="number"
                                                     min="0"
                                                     max={price}
-                                                    step="0.10"
+                                                    step="1"
                                                     value={item.sellingPrice ?? ""}
                                                     onChange={(e) =>
                                                         handleSellingPriceChange(
@@ -931,6 +930,7 @@ export default function CreateOfflineOrder() {
                                     onChange={(e) =>
                                         setDeliveryCharge(e.target.value)
                                     }
+                                    placeholder="Rs."
                                 />
                             </div>
                         </div>
@@ -1025,7 +1025,7 @@ export default function CreateOfflineOrder() {
                         type="button"
                         className="offline-order-cancel-btn"
                         onClick={() =>
-                            router.push("/admin/offline-orders")
+                            router.push("/admin/offline/orders")
                         }
                         disabled={loading}
                     >
