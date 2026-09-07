@@ -1246,10 +1246,10 @@ nav {
 }
 
 .summary-total {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 50px;
   padding: 5px 10px 5px 0px !important;
-  font-size: 17px;
+  font-size: 16px;
   color: #0a5c36;
 }
 
@@ -2063,13 +2063,18 @@ nav {
   font-size: 14px;
 }
 
+.invoice-info-box h3,
+.invoice-books h3{
+  font-size: 22px;
+}
+
 .invoice-books-admin {
   margin-top: 10px;
 }
 
 .invoice-items-header-admin {
   display: grid;
-  grid-template-columns: 1fr 80px 70px 70px !important;
+  grid-template-columns: 1fr 80px 70px 60px !important;
 
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
@@ -2079,18 +2084,18 @@ nav {
 
 .invoice-item-admin {
   border-bottom: 1px solid #eee;
-  grid-template-columns: 1fr 80px 70px 70px;
+  grid-template-columns: 1fr 85px 65px 60px;
   padding: 2px 0;
   font-size: 14px;
   display: grid;
 }
 
 .summary-row-admin {
-  justify-content: space-between;
+  grid-template-columns: 1fr 38px;
   align-items: center;
   padding: 5px 22px 5px 0px;
-  font-size: 15px;
-  display: flex;
+  font-size: 14px;
+  display: grid;
 }
 
 .summary-total-admin {

@@ -479,17 +479,17 @@ export default function CreatePurchase() {
               <div className="purchase-book-calculation">
                 <div>
                   <span>Total Cost</span>
-                  <strong>Rs. {getBookTotal(book).toFixed(2)}</strong>
+                  <strong>₹{getBookTotal(book).toFixed(2)}</strong>
                 </div>
 
                 <div>
                   <span>Profit / Book</span>
-                  <strong>Rs. {getBookProfit(book).toFixed(2)}</strong>
+                  <strong>₹{getBookProfit(book).toFixed(2)}</strong>
                 </div>
 
                 <div>
                   <span>Total Profit</span>
-                  <strong>Rs. {(
+                  <strong>₹{(
                     getBookProfit(book) *
                     (Number(book.quantity) || 0)
                   ).toFixed(2)}
@@ -510,18 +510,18 @@ export default function CreatePurchase() {
 
             <div>
               <span>Total Purchase Cost</span>
-              <strong>Rs. {totalPurchaseAmount.toFixed(2)}
+              <strong>₹{totalPurchaseAmount.toFixed(2)}
               </strong>
             </div>
 
             <div>
               <span>Total Selling Value</span>
-              <strong>Rs. {totalSellingValue.toFixed(2)}</strong>
+              <strong>₹{totalSellingValue.toFixed(2)}</strong>
             </div>
 
             <div>
               <span>Expected Profit</span>
-              <strong>Rs. {expectedProfit.toFixed(2)}</strong>
+              <strong>₹{expectedProfit.toFixed(2)}</strong>
             </div>
           </div>
         </div>

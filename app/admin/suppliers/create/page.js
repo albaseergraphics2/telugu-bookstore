@@ -172,8 +172,8 @@ export default function CreateSupplier() {
                         placeholder="Enter GST number"
                     />
                 </div>
-                <h3>Address</h3>
                 <div className="create-supplier-field">
+                    <label>Address</label>
                     <textarea
                         name="address"
                         value={formData.address}

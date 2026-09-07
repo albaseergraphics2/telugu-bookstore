@@ -141,7 +141,7 @@ export default function OrdersPage() {
                       <span>Qty: {item.qty}</span>
 
                       <strong>
-                        ₹ {item.bookId?.price || "-"}
+                        ₹{item.bookId?.price || "-"}
                       </strong>
                     </div>
                   </div>
@@ -165,7 +165,7 @@ export default function OrdersPage() {
                     {order.totalAmount >= 1000
                       ? "Free"
                       : order.deliveryCharge > 0
-                        ? `₹ ${order.deliveryCharge}`
+                        ? `₹${order.deliveryCharge}`
                         : "To Be Confirmed"}
                   </span>
                 </div>
@@ -173,7 +173,7 @@ export default function OrdersPage() {
                 <div className="summary-row grand-total">
                   <span>Total</span>
                   <strong>
-                    ₹{" "}
+                    ₹{""}
                     {order.totalAmount >= 1000
                       ? order.totalAmount || 0
                       : order.deliveryCharge > 0

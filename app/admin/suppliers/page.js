@@ -89,9 +89,9 @@ export default function AdminSuppliers() {
                         <div>{supplier.name || "-"}</div>
                         <div>{supplier.companyName || "-"}</div>
                         <div>{supplier.phone || "-"}</div>
-                        <div>Rs. {supplier.totalPurchases || 0}</div>
-                        <div>Rs. {supplier.totalPaid || 0}</div>
-                        <div>Rs. {supplier.totalDue || 0}</div>
+                        <div>₹{supplier.totalPurchases || 0}</div>
+                        <div>₹{supplier.totalPaid || 0}</div>
+                        <div>₹{supplier.totalDue || 0}</div>
                         <div>
                             <button
                                 onClick={() =>
@@ -128,15 +128,15 @@ export default function AdminSuppliers() {
                         </div>
                         <div className="supplier-user-mobile-row">
                             <span>Total Purchases</span>
-                            <strong>Rs. {supplier.totalPurchases || 0}</strong>
+                            <strong>₹{supplier.totalPurchases || 0}</strong>
                         </div>
                         <div className="supplier-user-mobile-row">
                             <span>Paid</span>
-                            <strong>Rs. {supplier.totalPaid || 0}</strong>
+                            <strong>₹{supplier.totalPaid || 0}</strong>
                         </div>
                         <div className="supplier-user-mobile-row">
                             <span>Balance</span>
-                            <strong>Rs. {supplier.totalDue || 0}</strong>
+                            <strong>₹{supplier.totalDue || 0}</strong>
                         </div>
 
                         <div className="supplier-user-mobile-row">

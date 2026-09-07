@@ -704,15 +704,15 @@ export default function Accounts() {
                                         </div>
 
                                         <div>
-                                            Rs.{" "}{transaction.debit || 0}
+                                            ₹{""}{transaction.debit || 0}
                                         </div>
 
                                         <div>
-                                            Rs.{" "}{transaction.credit || 0}
+                                            ₹{""}{transaction.credit || 0}
                                         </div>
 
                                         <div>
-                                            Rs.{" "}{transaction.balance || 0}
+                                            ₹{""}{transaction.balance || 0}
                                         </div>
                                     </div>
                                 )
@@ -773,13 +773,13 @@ export default function Accounts() {
                                             {transaction.paymentMethod || "-"}
                                         </div>
                                         <div>
-                                            Rs.{" "}{transaction.debit || 0}
+                                            ₹{""}{transaction.debit || 0}
                                         </div>
                                         <div>
-                                            Rs.{" "}{transaction.credit || 0}
+                                            ₹{""}{transaction.credit || 0}
                                         </div>
                                         <div>
-                                            Rs.{" "}{transaction.balance || 0}
+                                            ₹{""}{transaction.balance || 0}
                                         </div>
                                     </div>
                                 )

@@ -240,23 +240,23 @@ export default function PurchaseDetails() {
                             </div>
 
                             <div>
-                                Rs. {purchase.totalAmount || 0}
+                                ₹{purchase.totalAmount || 0}
                             </div>
 
                             <div>
-                                Rs. {purchase.totalSellingValue || 0}
+                                ₹{purchase.totalSellingValue || 0}
                             </div>
 
                             <div>
-                                Rs. {purchase.expectedProfit || 0}
+                                ₹{purchase.expectedProfit || 0}
                             </div>
 
                             <div>
-                                Rs. {purchase.paidAmount || 0}
+                                ₹{purchase.paidAmount || 0}
                             </div>
 
                             <div>
-                                Rs. {purchase.balanceAmount || 0}
+                                ₹{purchase.balanceAmount || 0}
                             </div>
 
                         </div>
@@ -287,12 +287,12 @@ export default function PurchaseDetails() {
                                     >
                                         <div>{book.bookName || book.name || "-"}</div>
                                         <div>{book.quantity || 0} </div>
-                                        <div>Rs. {book.mrp || 0} </div>
-                                        <div>Rs. {book.supplierRate || 0} </div>
+                                        <div>₹{book.mrp || 0} </div>
+                                        <div>₹{book.supplierRate || 0} </div>
                                         <div>{book.discount || 0} </div>
-                                        <div>Rs. {book.purchaseRate || 0} </div>
-                                        <div>Rs. {book.sellingPrice || 0} </div>
-                                        <div>Rs. {book.profitPerBook || 0}</div>
+                                        <div>₹{book.purchaseRate || 0} </div>
+                                        <div>₹{book.sellingPrice || 0} </div>
+                                        <div>₹{book.profitPerBook || 0}</div>
                                     </div>
                                 )
                             )
@@ -320,11 +320,11 @@ export default function PurchaseDetails() {
                     <div className="supplier-payment-grid">
                         <div>
                             <span>Paid Amount </span>
-                            <strong>Rs. {purchase.paidAmount || 0}</strong>
+                            <strong>₹{purchase.paidAmount || 0}</strong>
                         </div>
                         <div>
                             <span> Balance Amount</span>
-                            <strong>Rs.  {purchase.balanceAmount || 0}</strong>
+                            <strong>₹{purchase.balanceAmount || 0}</strong>
                         </div>
                     </div>
 
@@ -463,7 +463,7 @@ export default function PurchaseDetails() {
                                                     : "-"}
                                             </div>
 
-                                            <div>Rs.{payment.amount || 0}</div>
+                                            <div>₹{payment.amount || 0}</div>
                                             <div>{payment.paymentMethod || "-"}</div>
                                             <div>{payment.referenceNumber || "-"}</div>
                                             <div>{payment.notes || "-"}</div>
@@ -529,28 +529,28 @@ export default function PurchaseDetails() {
 
                         <div className="purchase-purchase-card-box">
                             <span>Total Purchase Amount</span>
-                            <strong>Rs. {purchase.totalAmount || 0}</strong>
+                            <strong>₹{purchase.totalAmount || 0}</strong>
                         </div>
 
                         <div className="purchase-purchase-card-box">
                             <span>Total Selling Value</span>
-                            <strong>Rs. {purchase.totalSellingValue || 0}</strong>
+                            <strong>₹{purchase.totalSellingValue || 0}</strong>
                         </div>
 
                         <div className="purchase-purchase-card-box">
                             <span>Expected Profit</span>
-                            <strong>Rs. {purchase.expectedProfit || 0}</strong>
+                            <strong>₹{purchase.expectedProfit || 0}</strong>
                         </div>
 
                         <div className="purchase-purchase-card-box">
                             <span>Paid Amount</span>
-                            <strong>Rs. {purchase.paidAmount || 0}
+                            <strong>₹{purchase.paidAmount || 0}
                             </strong>
                         </div>
 
                         <div className="purchase-purchase-card-box">
                             <span>Balance Amount</span>
-                            <strong>Rs. {purchase.balanceAmount || 0}</strong>
+                            <strong>₹{purchase.balanceAmount || 0}</strong>
                         </div>
                     </div>
                 </div>
@@ -576,12 +576,12 @@ export default function PurchaseDetails() {
 
                                     <div className="purchase-purchase-card-box">
                                         <span>MRP</span>
-                                        <strong>Rs. {book.mrp || 0}</strong>
+                                        <strong>₹{book.mrp || 0}</strong>
                                     </div>
 
                                     <div className="purchase-purchase-card-box">
                                         <span>Supplier Rate</span>
-                                        <strong>Rs. {book.supplierRate || 0}</strong>
+                                        <strong>₹{book.supplierRate || 0}</strong>
                                     </div>
 
                                     <div className="purchase-purchase-card-box">
@@ -591,17 +591,17 @@ export default function PurchaseDetails() {
 
                                     <div className="purchase-purchase-card-box">
                                         <span>Purchase Rate</span>
-                                        <strong>Rs. {book.purchaseRate || 0}</strong>
+                                        <strong>₹{book.purchaseRate || 0}</strong>
                                     </div>
 
                                     <div className="purchase-purchase-card-box">
                                         <span>Selling Price</span>
-                                        <strong>Rs. {book.sellingPrice || 0}</strong>
+                                        <strong>₹{book.sellingPrice || 0}</strong>
                                     </div>
 
                                     <div className="purchase-purchase-card-box">
                                         <span>Profit per Book</span>
-                                        <strong>Rs. {book.profitPerBook || 0}</strong>
+                                        <strong>₹{book.profitPerBook || 0}</strong>
                                     </div>
                                 </div>
                             )
@@ -630,12 +630,12 @@ export default function PurchaseDetails() {
                     <div className="supplier-payment-grid">
                         <div>
                             <span>Paid Amount</span>
-                            <strong>Rs. {purchase.paidAmount || 0}</strong>
+                            <strong>₹{purchase.paidAmount || 0}</strong>
                         </div>
 
                         <div>
                             <span>Balance Amount</span>
-                            <strong>Rs. {purchase.balanceAmount || 0}</strong>
+                            <strong>₹{purchase.balanceAmount || 0}</strong>
                         </div>
                     </div>
 
@@ -771,7 +771,7 @@ export default function PurchaseDetails() {
                                         </div>
                                         <div className="purchase-purchase-card-box">
                                             <span>Amount</span>
-                                            <strong>Rs. {payment.amount || 0}</strong>
+                                            <strong>₹{payment.amount || 0}</strong>
                                         </div>
                                         <div className="purchase-purchase-card-box">
                                             <span>Payment Method</span>

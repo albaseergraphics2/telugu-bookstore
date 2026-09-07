@@ -837,7 +837,7 @@ export default function CreateOfflineOrder() {
                                             className="offline-order-item"
                                         >
                                             <div>{item.title || "-"}</div>
-                                            <div>₹{" "}{price.toFixed(2)}</div>
+                                            <div>₹{""}{price.toFixed(2)}</div>
                                             <div>
                                                 <input
                                                     type="number"
@@ -883,7 +883,7 @@ export default function CreateOfflineOrder() {
                                                 />
                                             </div>
                                             <div>
-                                                ₹{" "}{itemTotal.toFixed(2)}
+                                                ₹{""}{itemTotal.toFixed(2)}
                                             </div>
 
                                             <div>
@@ -1007,17 +1007,17 @@ export default function CreateOfflineOrder() {
                 <div className="offline-order-summary">
                     <div className="offline-order-summary-row">
                         <span>Books Amount</span>
-                        <strong>₹{" "}{subtotal.toFixed(2)}</strong>
+                        <strong>₹{""}{subtotal.toFixed(2)}</strong>
                     </div>
                     {Number(deliveryCharge || 0) > 0 && (
                         <div className="offline-order-summary-row">
                             <span>Delivery Charge</span>
-                            <strong>₹{" "}{Number(deliveryCharge).toFixed(2)}</strong>
+                            <strong>₹{""}{Number(deliveryCharge).toFixed(2)}</strong>
                         </div>
                     )}
                     <div className="offline-order-summary-total">
                         <span>Total Amount</span>
-                        <strong>₹{" "}{totalAmount.toFixed(2)}</strong>
+                        <strong>₹{""}{totalAmount.toFixed(2)}</strong>
                     </div>
                 </div>
                 <div className="offline-order-actions">
