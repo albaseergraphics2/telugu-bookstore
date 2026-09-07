@@ -489,7 +489,7 @@ export default function OfflineOrders() {
                                                             {item.qty || 0}
                                                         </span>
                                                         <span>
-                                                            Rs.{" "}
+                                                            ₹{" "}
                                                             {Number(item.bookId?.price) || 0}
                                                         </span>
                                                     </div>
@@ -498,11 +498,11 @@ export default function OfflineOrders() {
                                             <div className="admin-order-summary">
                                                 <div className="admin-invoice-item-total">
                                                     <span>Delivery Charges</span>
-                                                    <span>Rs.{" "}{deliveryCharge}</span>
+                                                    <span>₹{" "}{deliveryCharge}</span>
                                                 </div>
                                                 <div className="admin-invoice-item-total">
                                                     <strong>Total</strong>
-                                                    <strong>Rs.{" "}{totalAmount}</strong>
+                                                    <strong>₹{" "}{totalAmount}</strong>
                                                 </div>
                                             </div>
                                         </div>
@@ -822,7 +822,7 @@ export default function OfflineOrders() {
                                                     {item.qty || 0}
                                                 </span>
                                                 <span>
-                                                    Rs.{" "}
+                                                    ₹{" "}
                                                     {Number(item.bookId
                                                         ?.price
                                                     ) || 0}
@@ -834,11 +834,11 @@ export default function OfflineOrders() {
                                     <div className="admin-order-summary">
                                         <div className="admin-invoice-item-total">
                                             <span>Delivery Charges</span>
-                                            <span>Rs.{" "}{deliveryCharge}</span>
+                                            <span>₹{" "}{deliveryCharge}</span>
                                         </div>
                                         <div className="admin-invoice-item-total">
                                             <strong>Total</strong>
-                                            <strong>Rs.{" "}{totalAmount}</strong>
+                                            <strong>₹{" "}{totalAmount}</strong>
                                         </div>
                                     </div>
 

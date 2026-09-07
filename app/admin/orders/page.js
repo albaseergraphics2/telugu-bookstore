@@ -321,19 +321,19 @@ export default function AdminOrders() {
                       <div key={i} className="admin-invoice-item">
                         <span>{item.bookId?.title || "Book"}</span>
                         <span>{item.qty}</span>
-                        <span>Rs. {item.bookId?.price || 0}</span>
+                        <span>₹{item.bookId?.price || 0}</span>
                       </div>
                     ))}
 
                     <div className="admin-order-summary">
                       <div className="admin-invoice-item-total">
                         <span>Delivery Charges</span>
-                        <span>Rs. {order.deliveryCharge || 0}</span>
+                        <span>₹{order.deliveryCharge || 0}</span>
                       </div>
 
                       <div className="admin-invoice-item-total">
                         <strong>Total</strong>
-                        <strong>Rs. {(order.totalAmount || 0) + (order.deliveryCharge || 0)}</strong>
+                        <strong>₹{(order.totalAmount || 0) + (order.deliveryCharge || 0)}</strong>
                       </div>
                     </div>
                   </div>
@@ -541,19 +541,19 @@ export default function AdminOrders() {
                   <div key={i} className="admin-invoice-item">
                     <span>{item.bookId?.title || "Book"}</span>
                     <span>{item.qty}</span>
-                    <span>Rs. {item.bookId?.price || 0}</span>
+                    <span>₹{item.bookId?.price || 0}</span>
                   </div>
                 ))}
 
                 <div className="admin-order-summary">
                   <div className="admin-invoice-item-total">
                     <span>Delivery Charges</span>
-                    <span>Rs. {order.deliveryCharge || 0}</span>
+                    <span>₹{order.deliveryCharge || 0}</span>
                   </div>
 
                   <div className="admin-invoice-item-total">
                     <strong>total</strong>
-                    <strong>Rs. {(order.totalAmount || 0) + (order.deliveryCharge || 0)}</strong>
+                    <strong>₹{(order.totalAmount || 0) + (order.deliveryCharge || 0)}</strong>
                   </div>
                 </div>
 

@@ -79,20 +79,20 @@ export default function InvoicePage() {
             <div key={i} className="invoice-item">
               <span>{item.bookId?.title || "Book"}</span>
               <span>{item.qty}</span>
-              <span>₹ {item.bookId?.price || 0}</span>
+              <span>₹{item.bookId?.price || 0}</span>
             </div>
           ))}
 
           <div className="invoice-summary">
             <div className="summary-row">
               <span>Shipping</span>
-              <span>₹ {order.deliveryCharge || 0}</span>
+              <span>₹{order.deliveryCharge || 0}</span>
             </div>
 
             <div className="summary-total">
               <strong>Total</strong>
               <strong>
-                ₹ {(order.totalAmount || 0) + (order.deliveryCharge || 0)}
+                ₹{(order.totalAmount || 0) + (order.deliveryCharge || 0)}
               </strong>
             </div>
           </div>

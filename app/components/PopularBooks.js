@@ -67,7 +67,7 @@ export default function PopularBooks() {
                 <p className="telugu-title">{book.teluguTitle}</p>
 
                 <div className="book-actions">
-                  <p className="price">Rs. {book.price}.00</p>
+                  <p className="price">₹{book.price}</p>
                 </div>
               </div>
             </div>

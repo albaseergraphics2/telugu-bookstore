@@ -142,7 +142,7 @@ export default function BooksPage() {
               <div className="book-actions">
                 <h3>{book.title}</h3>
                 <p className="telugu-title">{book.teluguTitle}</p>
-                <p className="price">Rs. {book.price}.00</p>
+                <p className="price">₹{book.price}</p>
 
                 {book.inStock !== false && (
                   <div

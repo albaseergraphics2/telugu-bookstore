@@ -98,7 +98,7 @@ export default function OfflineCustomers() {
                         <div>{customer.address?.state || "-"}</div>
                         <div>{customer.address?.pincode || "-"}</div>
                         <div>{customer.ordersCount || 0}</div>
-                        <div>Rs. {customer.totalAmount || 0}</div>
+                        <div>₹{customer.totalAmount || 0}</div>
                         <div>
                             <button
                                 onClick={() =>
@@ -154,7 +154,7 @@ export default function OfflineCustomers() {
                         </div>
                         <div className="user-mobile-row">
                             <span>Total</span>
-                            <strong>Rs. {customer.totalAmount || 0}</strong>
+                            <strong>₹{customer.totalAmount || 0}</strong>
                         </div>
 
                         <div className="user-mobile-action">

@@ -289,7 +289,7 @@ export default function InvoicePage() {
                   </span>
 
                   <span>
-                    Rs. {price}
+                    ₹{price}
                   </span>
 
                   <span>
@@ -297,7 +297,7 @@ export default function InvoicePage() {
                   </span>
 
                   <span>
-                    Rs. {amount}
+                    ₹{amount}
                   </span>
                 </div>
               );
@@ -313,7 +313,7 @@ export default function InvoicePage() {
               <span>Shipping Charges</span>
 
               <span>
-                ₹ {shipping}
+                ₹{shipping}
               </span>
             </div>
 
@@ -324,7 +324,7 @@ export default function InvoicePage() {
               </strong>
 
               <strong>
-                ₹ {grandTotal}
+                ₹{grandTotal}
               </strong>
 
             </div>

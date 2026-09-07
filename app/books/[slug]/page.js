@@ -119,7 +119,7 @@ export default function BookDetails({ params }) {
             <p className="telugu-author">రచయిత: {book.teluguAuthor}</p>
             <p className="desc">{book.desc}</p>
             <p className="telugu-desc">{book.teluguDesc}</p>
-            <p className="price">Rs. {book.price}.00</p>
+            <p className="price">₹{book.price}</p>
 
             <p><strong>Publisher:</strong> {book.publisher}</p>
             <p><strong>Pages:</strong> {book.pages}</p>

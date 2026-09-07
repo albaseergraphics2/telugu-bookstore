@@ -253,7 +253,7 @@ export default function CheckoutPage() {
                 <hr />
                 <div className="summary-single-row">
                     <span><strong>Books</strong> {totalBooks}</span>
-                    <span>Rs. {totalPrice}</span>
+                    <span>₹{totalPrice}</span>
                 </div>
                 <div className="summary-single-row">
                     <span className="shipping-label">
@@ -269,7 +269,7 @@ export default function CheckoutPage() {
 
                         {showShippingInfo && (
                             <div className="shipping-tooltip">
-                                Free shipping on orders above Rs. {freeShippingAmount}
+                                Free shipping on orders above ₹{freeShippingAmount}
                             </div>
                         )}
                     </span>
@@ -278,7 +278,7 @@ export default function CheckoutPage() {
                         {shippingCharge === 0
                             ? "Free"
                             : defaultShipping > 0
-                                ? `Rs. ${defaultShipping}`
+                                ? `₹${defaultShipping}`
                                 : "To Be Confirmed"}
                     </span>
                 </div>
@@ -287,7 +287,7 @@ export default function CheckoutPage() {
 
                 <div className="summary-single-row">
                     <span><strong>Total</strong></span>
-                    <span><strong>Rs. {grandTotal}</strong></span>
+                    <span><strong>₹{grandTotal}</strong></span>
                 </div>
             </div>
 

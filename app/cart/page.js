@@ -258,7 +258,7 @@ Address: ${address}`;
 
                   <div className="cart-info">
                     <h3>{item.title}</h3>
-                    <p>Rs. {item.price}</p>
+                    <p>₹{item.price}</p>
 
                     <div className="mobile-cart-actions">
                       <div className="cart-quantity">
@@ -299,7 +299,7 @@ Address: ${address}`;
 
                 {/* Total */}
                 <div className="cart-total">
-                  Rs. {subTotal}
+                  ₹{subTotal}
                 </div>
               </div>
             );
@@ -314,7 +314,7 @@ Address: ${address}`;
 
                 <div className="summary-note">
                   <p>
-                    Free shipping on orders above Rs. {freeShippingAmount}
+                    Free shipping on orders above ₹{freeShippingAmount}
                   </p>
                 </div>
 
@@ -331,7 +331,7 @@ Address: ${address}`;
 
               <div className="summary-row">
                 <span>Total Amount</span>
-                <strong>Rs. {totalPrice}</strong>
+                <strong>₹{totalPrice}</strong>
               </div>
 
               <div className="summary-row">
@@ -339,13 +339,13 @@ Address: ${address}`;
                 <strong>
                   {shippingCharge === 0
                     ? "Free"
-                    : `Rs. ${shippingCharge}`}
+                    : `₹${shippingCharge}`}
                 </strong>
               </div>
 
               <div className="summary-row grand-total">
                 <span>Total</span>
-                <strong>Rs. {grandTotal}</strong>
+                <strong>₹{grandTotal}</strong>
               </div>
 
             </div>

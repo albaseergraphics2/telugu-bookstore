@@ -111,7 +111,7 @@ export default function UserOrdersPage() {
                                                 .toUpperCase()}
                                     </div>
                                     <div>{booksCount}</div>
-                                    <div>Rs. {amount}</div>
+                                    <div>₹{amount}</div>
                                     <div>{order.deliveryType || "Not Set"}</div>
                                     <div>
                                         <span
@@ -121,7 +121,7 @@ export default function UserOrdersPage() {
                                         </span>
                                     </div>
                                     <div>
-                                        <strong>Rs. {totalAmount}</strong>
+                                        <strong>₹{totalAmount}</strong>
                                     </div>
                                     <div>
                                         <Link href={`/invoice-admin/${order._id}`}>
@@ -169,7 +169,7 @@ export default function UserOrdersPage() {
                                     </div>
                                     <div className="mobile-order-field">
                                         <span>Amount</span>
-                                        <strong>Rs. {amount}</strong>
+                                        <strong>₹{amount}</strong>
                                     </div>
                                     <div className="mobile-order-field">
                                         <span>Delivery Type</span>
@@ -185,7 +185,7 @@ export default function UserOrdersPage() {
                                     </div>
                                     <div className="mobile-order-field">
                                         <span>Total Amount</span>
-                                        <strong>Rs. {totalAmount}</strong>
+                                        <strong>₹{totalAmount}</strong>
                                     </div>
                                     <div className="mobile-order-invoice">
                                         <Link href={`/invoice-admin/${order._id}`}>

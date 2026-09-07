@@ -103,7 +103,7 @@ export default function AdminUsers() {
             <div>{user.address?.state || "-"}</div>
             <div>{user.address?.pincode || "-"}</div>
             <div>{user.ordersCount}</div>
-            <div>Rs. {user.totalAmount}</div>
+            <div>₹{user.totalAmount}</div>
             <div>
               <button
                 onClick={() =>
