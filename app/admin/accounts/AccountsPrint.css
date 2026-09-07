@@ -1,4 +1,3 @@
-
 .accounts-print-modal {
     position: fixed;
     inset: 0;
@@ -106,13 +105,13 @@
     gap: 14px;
 }
 
-.accounts-print-form-grid > div {
+.accounts-print-form-grid>div {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-.accounts-print-form-grid > div.full {
+.accounts-print-form-grid>div.full {
     grid-column: 1 / -1;
 }
 
@@ -155,7 +154,7 @@
     align-items: center;
 }
 
-.accounts-print-columns-heading > div {
+.accounts-print-columns-heading>div {
     display: flex;
     gap: 6px;
 }
@@ -229,7 +228,7 @@
     margin-bottom: 10px;
 }
 
-.accounts-print-preview-summary > div {
+.accounts-print-preview-summary>div {
     border: 1px solid #ccc;
     padding: 8px;
     text-align: center;
@@ -284,7 +283,7 @@
     gap: 10px;
 }
 
-.accounts-print-footer-actions > div {
+.accounts-print-footer-actions>div {
     display: flex;
     gap: 8px;
 }
@@ -329,9 +328,23 @@
         padding: 0;
     }
 
+    .accounts-print-content {
+        padding: 12px;
+    }
+
+    .accounts-print-section {
+        padding: 14px;
+    }
+
     .accounts-print-container {
-        height: 100vh;
+        height: 95dvh;
+        max-height: 100dvh;
         border-radius: 0;
+    }
+
+    .accounts-print-footer-actions,
+    .bottombtn {
+        font-size: 12px;
     }
 
     .accounts-print-form-grid {
@@ -347,7 +360,7 @@
         align-items: stretch;
     }
 
-    .accounts-print-footer-actions > div {
+    .accounts-print-footer-actions>div {
         width: 100%;
         flex-wrap: wrap;
     }
@@ -355,15 +368,33 @@
     .accounts-print-footer-actions button {
         flex: 1;
     }
+
+    .accounts-print-columns-heading button{
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+    
+    .accounts-print-columns-heading {
+        margin-bottom: 10px;
+    }
+
+    .accounts-print-form-grid select,
+    .accounts-print-form-grid input{
+        font-size: 12px;
+    }
+    .accounts-print-checkbox-grid label {
+        font-size: 13px;
+    }
 }
+
 
 @media (max-width: 500px) {
     .accounts-print-form-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
     }
 
     .accounts-print-checkbox-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
     }
 
     .accounts-print-preview-area {

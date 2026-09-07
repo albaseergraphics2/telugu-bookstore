@@ -5312,14 +5312,14 @@ nav {
 }
 
 .accounts-mobile-table {
-  min-width: 1000px;
+  min-width: 1140px;
 }
 
 .accounts-mobile-row {
   display: grid;
   grid-template-columns:
     100px 130px 130px 220px 150px 100px 100px 120px;
-
+  background: #f8f9fa;
   align-items: center;
 }
 
@@ -5633,7 +5633,7 @@ nav {
 
   .accounts-mobile-row {
     grid-template-columns:
-      100px 120px 130px 180px 170px 100px 100px 120px !important;
+      100px 120px 130px 180px 170px 100px 100px 120px 120px !important;
     border-bottom: 1px solid #f0f0f0;
     font-size: 14px;
   }
@@ -5649,7 +5649,6 @@ nav {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 12px;
   }
 
 
@@ -8779,6 +8778,10 @@ nav {
     font-weight: 600;
     color: #222;
     margin-bottom: 4px;
+  }
+
+  .users-header h2{
+    font-size: 22px;
   }
 
   .phone {

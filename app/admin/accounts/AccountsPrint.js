@@ -1255,7 +1255,7 @@ export default function AccountsPrint({
                         >
                             Reset Settings
                         </button>
-                        <div>
+                        <div className="bottombtn">
                             <button
                                 type="button"
                                 onClick={() =>

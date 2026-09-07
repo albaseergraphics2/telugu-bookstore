@@ -294,7 +294,7 @@ export default function Accounts() {
                         }
                         className="accounts-filter-btn"
                     >
-                        🖨 Print / 📄 PDF
+                        Print / PDF
                     </button>
                 </div>
             </div>
