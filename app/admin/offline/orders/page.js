@@ -315,11 +315,96 @@ export default function OfflineOrders() {
         );
     }
 
+    const receivePayment = async (
+        orderId,
+        amount,
+        paymentMethod,
+        referenceNumber,
+        paymentDate
+    ) => {
+        const paymentAmount = Number(amount || 0);
+
+        if (paymentAmount <= 0) {
+            alert("Please enter a valid payment amount.");
+            return;
+        }
+
+        const order = orders.find(
+            (o) => o._id === orderId
+        );
+
+        if (!order) {
+            alert("Order not found.");
+            return;
+        }
+
+        const dueAmount = Number(
+            order.dueAmount || 0
+        );
+
+        if (dueAmount <= 0) {
+            alert("This order has no due amount.");
+            return;
+        }
+
+        if (paymentAmount > dueAmount) {
+            alert(`Payment cannot be greater than due amount ₹${dueAmount}.`);
+            return;
+        }
+
+        if (!paymentMethod) {
+            alert("Please select payment method.");
+            return;
+        }
+
+        if ((paymentMethod === "UPI" || paymentMethod === "Bank Transfer") &&
+            !String(referenceNumber || "").trim()
+        ) {
+            alert("Please enter reference number.");
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/admin/offline/orders/${orderId}/payment`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    amount: paymentAmount,
+                    paymentMethod,
+                    referenceNumber: String(referenceNumber || "").trim(),
+                    paymentDate,
+                }),
+            }
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || "Failed to receive payment.");
+            }
+
+            setOrders((prev) =>
+                prev.map((o) =>
+                    o._id === orderId
+                        ? {
+                            ...data.order,
+                            newPaymentAmount: "",
+                            newPaymentMethod: "",
+                            newPaymentReference: "",
+                        } : o
+                )
+            );
+            alert("Payment received successfully.");
+        } catch (error) {
+            console.error("RECEIVE PAYMENT ERROR:", error);
+            alert(error.message || "Failed to receive payment.");
+        }
+    };
+
     return (
         <div className="admin-orders">
-            {/* =========================
-                HEADER
-            ========================== */}
             <div className="orders-header">
                 <h3>Offline Orders</h3>
                 <div className="orders-filter-area">
@@ -375,19 +460,15 @@ export default function OfflineOrders() {
                         </div>
                     </div>
 
-                    {(
-                        orderFilter !== "all" ||
-                        selectedDate ||
-                        orderSearch
-                    ) && (
-                            <button
-                                type="button"
-                                className="clear-order-filter"
-                                onClick={clearFilters}
-                            >
-                                Clear
-                            </button>
-                        )}
+                    {(orderFilter !== "all" || selectedDate || orderSearch) && (
+                        <button
+                            type="button"
+                            className="clear-order-filter"
+                            onClick={clearFilters}
+                        >
+                            Clear
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -421,6 +502,7 @@ export default function OfflineOrders() {
                         {currentOrders.map((order) => {
                             const totalAmount = Number(order.totalAmount) || 0;
                             const deliveryCharge = Number(order.deliveryCharge) || 0;
+                            
                             return (
                                 <div
                                     key={order._id}
@@ -482,15 +564,9 @@ export default function OfflineOrders() {
                                                         key={index}
                                                         className="admin-invoice-item"
                                                     >
-                                                        <span>
-                                                            {item.bookId?.title || "Book"}
-                                                        </span>
-                                                        <span>
-                                                            {item.qty || 0}
-                                                        </span>
-                                                        <span>
-                                                            ₹{""}
-                                                            {Number(item.bookId?.price) || 0}
+                                                        <span>{item.bookId?.title || "Book"}</span>
+                                                        <span>{item.qty || 0}</span>
+                                                        <span>₹{""}{Number(item.bookId?.price) || 0}
                                                         </span>
                                                     </div>
                                                 )
@@ -506,70 +582,133 @@ export default function OfflineOrders() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div>
-                                            <b>Delivery</b>
+                                        <div className="payment-section">
+                                            <b>Payment</b>
+                                            <div className="payment-summary">
+                                                <div>
+                                                    <span>Total</span>
+                                                    <strong>₹{Number(order.totalAmount || 0).toFixed(2)}</strong>
+                                                </div>
+
+                                                <div>
+                                                    <span>Paid</span>
+                                                    <strong>₹{Number(order.paidAmount || 0).toFixed(2)}</strong>
+                                                </div>
+
+                                                <div>
+                                                    <span>Due</span>
+                                                    <strong>₹{Number(order.dueAmount || 0).toFixed(2)}</strong>
+                                                </div>
+                                            </div>
+
                                             <input
                                                 className="delivery-input"
-                                                type="text"
-                                                placeholder="Delivery Type"
-                                                value={order.deliveryType || ""}
+                                                type="date"
+                                                value={
+                                                    order.newPaymentDate ||
+                                                    new Date().toISOString().split("T")[0]
+                                                }
                                                 onChange={(e) => {
-                                                    setOrders(
-                                                        (prev) =>
-                                                            prev.map(
-                                                                (o) =>
-                                                                    o._id === order._id
-                                                                        ? {
-                                                                            ...o,
-                                                                            deliveryType: e.target.value,
-                                                                        } : o
-                                                            )
+                                                    setOrders((prev) =>
+                                                        prev.map((o) =>
+                                                            o._id === order._id
+                                                                ? {
+                                                                    ...o,
+                                                                    newPaymentDate:
+                                                                        e.target.value,
+                                                                } : o
+                                                        )
                                                     );
                                                 }}
                                             />
+
+                                            <select
+                                                className="delivery-input"
+                                                value={order.newPaymentMethod || ""}
+                                                onChange={(e) => {
+                                                    setOrders((prev) =>
+                                                        prev.map((o) =>
+                                                            o._id === order._id
+                                                                ? {
+                                                                    ...o,
+                                                                    newPaymentMethod:
+                                                                        e.target.value,
+                                                                } : o
+                                                        )
+                                                    );
+                                                }}
+                                            >
+                                                <option value="">Payment Method</option>
+                                                <option value="Cash">Cash</option>
+                                                <option value="UPI">UPI</option>
+                                                <option value="Bank Transfer">Bank Transfer</option>
+                                                <option value="Card">Card</option>
+                                            </select>
 
                                             <input
                                                 className="delivery-input"
                                                 type="number"
                                                 min="0"
-                                                placeholder="Delivery Charges"
-                                                value={order.deliveryCharge ?? ""}
+                                                max={Number(order.dueAmount || 0)}
+                                                placeholder="Payment Amount"
+                                                value={order.newPaymentAmount ?? ""}
                                                 onChange={(e) => {
-                                                    setOrders(
-                                                        (prev) =>
-                                                            prev.map(
-                                                                (
-                                                                    o
-                                                                ) =>
-                                                                    o._id ===
-                                                                        order._id
-                                                                        ? {
-                                                                            ...o,
-                                                                            deliveryCharge:
-                                                                                Number(
-                                                                                    e
-                                                                                        .target
-                                                                                        .value
-                                                                                ) || 0,
-                                                                        } : o
-                                                            )
+                                                    setOrders((prev) =>
+                                                        prev.map((o) =>
+                                                            o._id === order._id
+                                                                ? {
+                                                                    ...o,
+                                                                    newPaymentAmount:
+                                                                        e.target.value,
+                                                                } : o
+                                                        )
                                                     );
                                                 }}
                                             />
-                                            <button
-                                                type="button"
-                                                className="save-delivery-btn"
-                                                onClick={() =>
-                                                    updateOrder(
-                                                        order._id,
-                                                        order.status,
-                                                        order.deliveryType,
-                                                        order.deliveryCharge
-                                                    )
-                                                }
-                                            >
-                                                Save Delivery
-                                            </button>
+
+                                            {(order.newPaymentMethod === "UPI" ||
+                                                order.newPaymentMethod === "Bank Transfer") && (
+                                                    <input
+                                                        className="delivery-input"
+                                                        type="text"
+                                                        placeholder="UTR / Reference Number"
+                                                        value={order.newPaymentUtr || ""}
+                                                        onChange={(e) => {
+                                                            setOrders((prev) =>
+                                                                prev.map((o) =>
+                                                                    o._id === order._id
+                                                                        ? {
+                                                                            ...o,
+                                                                            newPaymentUtr:
+                                                                                e.target.value,
+                                                                        } : o
+                                                                )
+                                                            );
+                                                        }}
+                                                    />
+                                                )}
+
+                                            {Number(order.dueAmount || 0) > 0 && (
+                                                <button
+                                                    type="button"
+                                                    className="save-delivery-btn"
+                                                    onClick={() =>
+                                                        receivePayment(
+                                                            order._id,
+                                                            order.newPaymentAmount,
+                                                            order.newPaymentMethod,
+                                                            order.newPaymentUtr,
+                                                            order.newPaymentDate
+                                                        )
+                                                    }
+                                                >
+                                                    Receive Payment
+                                                </button>
+                                            )}
+
+                                            {Number(order.dueAmount || 0) <= 0 && (
+                                                <div className="payment-paid">Paid</div>
+                                            )}
                                         </div>
                                     </div>
                                     <div>
@@ -648,9 +787,7 @@ export default function OfflineOrders() {
                                             </div>
                                             <div className="admin-invoice-btns">
                                                 <Link href={`/invoice-admin/${order._id}`}>
-                                                    <button type="button">
-                                                        View Invoice
-                                                    </button>
+                                                    <button type="button">View Invoice</button>
                                                 </Link>
                                                 <button
                                                     type="button"
@@ -740,16 +877,12 @@ export default function OfflineOrders() {
                                                         setOrders(
                                                             (prev) =>
                                                                 prev.map(
-                                                                    (
-                                                                        o
-                                                                    ) =>
+                                                                    (o) =>
                                                                         o._id === order._id
                                                                             ? {
                                                                                 ...o,
                                                                                 deliveryType:
-                                                                                    e
-                                                                                        .target
-                                                                                        .value,
+                                                                                    e.target.value,
                                                                             } : o
                                                                 )
                                                         );
@@ -765,18 +898,14 @@ export default function OfflineOrders() {
                                                         setOrders(
                                                             (prev) =>
                                                                 prev.map(
-                                                                    (
-                                                                        o
-                                                                    ) =>
+                                                                    (o) =>
                                                                         o._id ===
                                                                             order._id
                                                                             ? {
                                                                                 ...o,
                                                                                 deliveryCharge:
                                                                                     Number(
-                                                                                        e
-                                                                                            .target
-                                                                                            .value
+                                                                                        e.target.value
                                                                                     ) || 0,
                                                                             } : o
                                                                 )
@@ -815,17 +944,9 @@ export default function OfflineOrders() {
                                                 key={index}
                                                 className="admin-invoice-item"
                                             >
-                                                <span>
-                                                    {item.bookId?.title || "Book"}
-                                                </span>
-                                                <span>
-                                                    {item.qty || 0}
-                                                </span>
-                                                <span>
-                                                    ₹{""}
-                                                    {Number(item.bookId
-                                                        ?.price
-                                                    ) || 0}
+                                                <span>{item.bookId?.title || "Book"}</span>
+                                                <span>{item.qty || 0}</span>
+                                                <span>₹{""}{Number(item.bookId?.price) || 0}
                                                 </span>
                                             </div>
                                         )
@@ -949,8 +1070,7 @@ export default function OfflineOrders() {
                             onClick={() =>
                                 setCurrentPage(
                                     (page) => page - 1
-                                )
-                            }
+                                )}
                         >
                             Prev
                         </button>
@@ -962,22 +1082,18 @@ export default function OfflineOrders() {
                         <button
                             type="button"
                             disabled={
-                                currentPage ===
-                                totalPages ||
-                                totalPages === 0
+                                currentPage === totalPages || totalPages === 0
                             }
                             onClick={() =>
                                 setCurrentPage(
                                     (page) => page + 1
-                                )
-                            }
+                                )}
                         >
                             Next
                         </button>
                     </div>
                 </>
-            )
-            }
+            )}
         </div >
     );
 }

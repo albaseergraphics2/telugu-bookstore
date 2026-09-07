@@ -26,7 +26,9 @@ export async function GET() {
         const purchaseTransactions = purchases.map(
             (purchase) => ({
                 _id: `purchase-${purchase._id}`,
+
                 date: purchase.purchaseDate,
+
                 type: "Purchase",
 
                 party:
@@ -41,11 +43,19 @@ export async function GET() {
                         ? `Purchase Invoice ${purchase.invoiceNumber}`
                         : "Book Purchase",
 
-                debit: purchase.totalAmount || 0,
+                // Actual amount paid at the time of purchase
+                debit: Number(purchase.paidAmount) || 0,
+
                 credit: 0,
+
+                // Amount still owed to supplier
+                due: Number(purchase.balanceAmount) || 0,
+
+                paymentMethod: "",
+
+                referenceNumber: "",
             })
         );
-
         const paymentTransactions = payments.map(
             (payment) => ({
                 _id: `payment-${payment._id}`,
@@ -113,8 +123,9 @@ export async function GET() {
 
                     debit: 0,
 
-                    credit: order.totalAmount || 0,
-
+                    // Only actual amount received
+                    credit: Number(order.paidAmount) || 0,
+                    due: Number(order.dueAmount) || 0,
                     paymentMethod: displayPaymentMethod,
 
                     referenceNumber:

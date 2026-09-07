@@ -63,7 +63,10 @@ export default function SupplierDetails() {
 
     if (loading) {
         return (
-            <div className="admin-supplier-view">Loading supplier...</div>
+            <div style={{ textAlign: "center", marginTop: "60px" }}>
+                <div className="loader"></div>
+                <p>Loading...</p>
+            </div>
         );
     }
 
@@ -149,6 +152,8 @@ export default function SupplierDetails() {
                     purchase._id !== purchaseId
                 )
             );
+
+            await fetchSupplier();
         } catch (error) {
             console.error("DELETE PURCHASE ERROR:", error);
             alert("Something went wrong.");
@@ -428,9 +433,10 @@ export default function SupplierDetails() {
                         <div>
                             <span>Last Payment Date</span>
                             <strong>
-                                {purchases.length > 0 &&
-                                    purchases[0].paymentDate
-                                    ? new Date(purchases[0].paymentDate
+                                {payments.length > 0 &&
+                                    payments[0]?.paymentDate
+                                    ? new Date(
+                                        payments[0].paymentDate
                                     ).toLocaleDateString("en-IN")
                                     : "-"}
                             </strong>
@@ -451,91 +457,6 @@ export default function SupplierDetails() {
                             + Add Purchase
                         </button>
                     </div>
-
-                    {/* <div className="supplier-purchase-mobile">
-                        {purchases.length === 0 ? (
-                            <div className="supplier-no-purchases">
-                                No purchases found.
-                            </div>
-                        ) : (
-                            purchases.map((purchase) => (
-                                <div
-                                    key={purchase._id}
-                                    className="supplier-purchase-card"
-                                >
-                                    <div>
-                                        <span>
-                                            Purchase Date
-                                        </span>
-                                        <strong>
-                                            {purchase.purchaseDate
-                                                ? new Date(
-                                                    purchase.purchaseDate
-                                                ).toLocaleDateString("en-IN")
-                                                : "-"}
-                                        </strong>
-                                    </div>
-
-                                    <div>
-                                        <span>
-                                            Bill No
-                                        </span>
-                                        <strong>
-                                            {purchase.invoiceNumber || "-"}
-                                        </strong>
-                                    </div>
-
-                                    <div>
-                                        <span>
-                                            Total Books
-                                        </span>
-                                        <strong>
-                                            {purchase.totalBooks || 0}
-                                        </strong>
-                                    </div>
-
-                                    <div>
-                                        <span>
-                                            Total Amount
-                                        </span>
-                                        <strong>
-                                            ₹{purchase.totalAmount || 0}
-                                        </strong>
-                                    </div>
-
-                                    <div>
-                                        <span>
-                                            Paid
-                                        </span>
-                                        <strong>
-                                            ₹{purchase.paidAmount || 0}
-                                        </strong>
-                                    </div>
-
-                                    <div>
-                                        <span>
-                                            Balance
-                                        </span>
-                                        <strong>
-                                            ₹{purchase.balanceAmount || 0}
-                                        </strong>
-                                    </div>
-
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            router.push(
-                                                `/admin/suppliers/${supplier._id}/purchases/${purchase._id}`
-                                            )
-                                        }
-                                        className="supplier-view-btn"
-                                    >
-                                        View Purchase
-                                    </button>
-                                </div>
-                            ))
-                        )}
-                    </div> */}
 
                     <div className="supplier-purchase-mobile">
                         <div className="supplier-purchase-card supplier-purchase-header">

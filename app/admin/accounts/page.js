@@ -34,25 +34,20 @@ export default function Accounts() {
 
                 let runningBalance = 0;
 
-                const transactionsWithBalance =
-                    sortedTransactions.map(
-                        (transaction) => {
-                            const debit = Number(transaction.debit) || 0;
-                            const credit = Number(transaction.credit) || 0;
-                            runningBalance = runningBalance - debit + credit;
+                const transactionsWithBalance = sortedTransactions.map(
+                    (transaction) => {
+                        const debit = Number(transaction.debit) || 0;
+                        const credit = Number(transaction.credit) || 0;
+                        runningBalance = runningBalance - debit + credit;
 
-                            return {
-                                ...transaction,
-                                balance: runningBalance,
-                            };
-                        }
-                    );
-                setTransactions(
-                    transactionsWithBalance
+                        return {
+                            ...transaction,
+                            balance: runningBalance,
+                        };
+                    }
                 );
-                const totalPages = Math.ceil(
-                    transactionsWithBalance.length / pageSize
-                );
+                setTransactions(transactionsWithBalance);
+                const totalPages = Math.ceil(transactionsWithBalance.length / pageSize);
                 setCurrentPage(totalPages || 1);
             } else {
                 setTransactions([]);
@@ -97,8 +92,7 @@ export default function Accounts() {
                     .trim()
                     .toLowerCase();
 
-                const matchesSearch =
-                    !searchText ||
+                const matchesSearch = !searchText ||
                     transaction.description
                         ?.toLowerCase()
                         .includes(searchText) ||
@@ -112,29 +106,23 @@ export default function Accounts() {
                         ?.toLowerCase()
                         .includes(searchText);
 
-                const transactionDate =
-                    transaction.date
-                        ? new Date(
-                            transaction.date
-                        )
-                        : null;
+                const transactionDate = transaction.date
+                    ? new Date(
+                        transaction.date
+                    ) : null;
 
-                const matchesFromDate = !fromDate ||
-                    (transactionDate &&
-                        transactionDate >=
-                        new Date(`${fromDate}T00:00:00`));
+                const matchesFromDate = !fromDate || (transactionDate &&
+                    transactionDate >=
+                    new Date(`${fromDate}T00:00:00`));
 
-                const matchesToDate = !toDate ||
-                    (transactionDate &&
-                        transactionDate <=
-                        new Date(`${toDate}T23:59:59.999`));
+                const matchesToDate = !toDate || (transactionDate &&
+                    transactionDate <=
+                    new Date(`${toDate}T23:59:59.999`));
 
-                const matchesType =
-                    transactionTypes.length === 0 ||
+                const matchesType = transactionTypes.length === 0 ||
                     transactionTypes.includes(transaction.type);
 
-                const matchesPaymentMethod =
-                    paymentMethods.length === 0 ||
+                const matchesPaymentMethod = paymentMethods.length === 0 ||
                     paymentMethods.some(
                         (method) =>
                             String(method)
@@ -147,8 +135,7 @@ export default function Accounts() {
                                 .toLowerCase()
                     );
 
-                const matchesParty =
-                    partyType === "All" || transaction.partyType === partyType;
+                const matchesParty = partyType === "All" || transaction.partyType === partyType;
 
                 return (
                     matchesSearch &&
@@ -161,25 +148,13 @@ export default function Accounts() {
             }
         );
 
-    const totalPages = Math.ceil(
-        filteredTransactions.length / pageSize
-    );
-
+    const totalPages = Math.ceil(filteredTransactions.length / pageSize);
     const startIndex = (currentPage - 1) * pageSize;
-
     const endIndex = startIndex + pageSize;
-
-    const paginatedTransactions =
-        filteredTransactions.slice(startIndex, endIndex);
-
-    const displayStart =
-        filteredTransactions.length === 0
-            ? 0 : startIndex + 1;
-
-    const displayEnd = Math.min(
-        endIndex, filteredTransactions.length
-    );
-
+    const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);
+    const displayStart = filteredTransactions.length === 0
+        ? 0 : startIndex + 1;
+    const displayEnd = Math.min(endIndex, filteredTransactions.length);
     const goToPage = (page) => {
         if (
             page >= 1 &&
@@ -236,14 +211,8 @@ export default function Accounts() {
         if (currentPage > 4) {
             pages.push("...");
         }
-        const startPage = Math.max(
-            2,
-            currentPage - 1
-        );
-        const endPage = Math.min(
-            totalPages - 1,
-            currentPage + 1
-        );
+        const startPage = Math.max(2, currentPage - 1);
+        const endPage = Math.min(totalPages - 1, currentPage + 1);
         for (
             let i = startPage;
             i <= endPage;
@@ -262,42 +231,35 @@ export default function Accounts() {
         return pages;
     };
 
-    const totalPurchase =
-        filteredTransactions
-            .filter(
-                (transaction) =>
-                    transaction.type === "Purchase"
-            )
-            .reduce(
-                (total, transaction) =>
-                    total +
-                    (Number(transaction.moneyOut) || 0),
-                0
-            );
-
-    const totalExpenses =
-        filteredTransactions
-            .filter(
-                (transaction) =>
-                    transaction.type === "Expense"
-            )
-            .reduce(
-                (total, transaction) =>
-                    total + (Number(transaction.moneyOut) || 0),
-                0
-            );
-
-    const totalDebit =
-        filteredTransactions.reduce(
+    const totalPurchase = filteredTransactions
+        .filter(
+            (transaction) =>
+                transaction.type === "Purchase"
+        )
+        .reduce(
             (total, transaction) =>
-                total + (Number(transaction.debit) || 0), 0
+                total + (Number(transaction.moneyOut) || 0), 0
         );
 
-    const totalCredit =
-        filteredTransactions.reduce(
+    const totalExpenses = filteredTransactions
+        .filter(
+            (transaction) =>
+                transaction.type === "Expense"
+        )
+        .reduce(
             (total, transaction) =>
-                total + (Number(transaction.credit) || 0), 0
+                total + (Number(transaction.moneyOut) || 0), 0
         );
+
+    const totalDebit = filteredTransactions.reduce(
+        (total, transaction) =>
+            total + (Number(transaction.debit) || 0), 0
+    );
+
+    const totalCredit = filteredTransactions.reduce(
+        (total, transaction) =>
+            total + (Number(transaction.credit) || 0), 0
+    );
 
     const balance = totalCredit - totalDebit;
 
@@ -334,15 +296,6 @@ export default function Accounts() {
                     >
                         🖨 Print / 📄 PDF
                     </button>
-
-                    {/* <button
-                        type="button"
-                        onClick={() =>
-                            setShowPrint(true)
-                        }
-                        className="accounts-pdf-btn"
-                    >
-                    </button> */}
                 </div>
             </div>
 
@@ -590,55 +543,35 @@ export default function Accounts() {
                     <div className="accounts-history-filter">
                         <h3>Transaction History</h3>
 
-                        {(search ||
-                            fromDate ||
-                            toDate ||
-                            partyType !==
-                            "All" ||
+                        {(search || fromDate || toDate || partyType !== "All" ||
                             transactionTypes.length > 0 ||
                             paymentMethods.length > 0) && (
                                 <div className="accounts-active-filters">
                                     <span>Filters Applied :</span>
                                     {search && (
-                                        <span>
-                                            Search:{" "}{search}
-                                        </span>
+                                        <span>Search:{" "}{search}</span>
                                     )}
 
                                     {fromDate && (
-                                        <span>
-                                            From:{" "}{fromDate}
-                                        </span>
+                                        <span>From:{" "}{fromDate}</span>
                                     )}
 
                                     {toDate && (
-                                        <span>
-                                            To:{" "}{toDate}
-                                        </span>
+                                        <span>To:{" "}{toDate}</span>
                                     )}
 
                                     {partyType !== "All" && (
-                                        <span>
-                                            {partyType}
-                                        </span>
+                                        <span>{partyType}</span>
                                     )}
 
                                     {transactionTypes.map(
                                         (type) => (
-                                            <span
-                                                key={type}
-                                            >
-                                                {type}
-                                            </span>
+                                            <span key={type}>{type}</span>
                                         )
                                     )}
                                     {paymentMethods.map(
                                         (method) => (
-                                            <span
-                                                key={method}
-                                            >
-                                                {method}
-                                            </span>
+                                            <span key={method}>{method}</span>
                                         )
                                     )}
                                 </div>
@@ -658,6 +591,7 @@ export default function Accounts() {
                             <div>Payment Method</div>
                             <div>Debit</div>
                             <div>Credit</div>
+                            <div>Due</div>
                             <div>Balance</div>
                         </div>
 
@@ -678,42 +612,21 @@ export default function Accounts() {
                                                 ? new Date(
                                                     transaction.date
                                                 ).toLocaleDateString(
-                                                    "en-IN",
-                                                    {
-                                                        day: "2-digit",
-                                                        month: "2-digit",
-                                                        year: "numeric",
-                                                    }
-                                                ) : "-"}
+                                                    "en-IN", {
+                                                    day: "2-digit",
+                                                    month: "2-digit",
+                                                    year: "numeric",
+                                                }) : "-"}
                                         </div>
 
-                                        <div>
-                                            {transaction.type || "-"}
-                                        </div>
-
-                                        <div>
-                                            {transaction.party || "-"}
-                                        </div>
-
-                                        <div>
-                                            {transaction.description || "-"}
-                                        </div>
-
-                                        <div>
-                                            {transaction.paymentMethod || "-"}
-                                        </div>
-
-                                        <div>
-                                            ₹{""}{transaction.debit || 0}
-                                        </div>
-
-                                        <div>
-                                            ₹{""}{transaction.credit || 0}
-                                        </div>
-
-                                        <div>
-                                            ₹{""}{transaction.balance || 0}
-                                        </div>
+                                        <div>{transaction.type || "-"}</div>
+                                        <div>{transaction.party || "-"}</div>
+                                        <div>{transaction.description || "-"}</div>
+                                        <div>{transaction.paymentMethod || "-"}</div>
+                                        <div>₹{""}{transaction.debit || 0}</div>
+                                        <div>₹{""}{transaction.credit || 0}</div>
+                                        <div>₹{transaction.due || 0}</div>
+                                        <div>₹{""}{transaction.balance || 0}</div>
                                     </div>
                                 )
                             )
@@ -731,6 +644,7 @@ export default function Accounts() {
                             <div>Payment Method</div>
                             <div>Debit</div>
                             <div>Credit</div>
+                            <div>Due</div>
                             <div>Balance</div>
                         </div>
 
@@ -751,36 +665,21 @@ export default function Accounts() {
                                                 ? new Date(
                                                     transaction.date
                                                 ).toLocaleDateString(
-                                                    "en-IN",
-                                                    {
-                                                        day: "2-digit",
-                                                        month: "2-digit",
-                                                        year: "numeric",
-                                                    }
-                                                )
-                                                : "-"}
+                                                    "en-IN", {
+                                                    day: "2-digit",
+                                                    month: "2-digit",
+                                                    year: "numeric",
+                                                }
+                                                ) : "-"}
                                         </div>
-                                        <div>
-                                            {transaction.type || "-"}
-                                        </div>
-                                        <div>
-                                            {transaction.party || "-"}
-                                        </div>
-                                        <div>
-                                            {transaction.description || "-"}
-                                        </div>
-                                        <div>
-                                            {transaction.paymentMethod || "-"}
-                                        </div>
-                                        <div>
-                                            ₹{""}{transaction.debit || 0}
-                                        </div>
-                                        <div>
-                                            ₹{""}{transaction.credit || 0}
-                                        </div>
-                                        <div>
-                                            ₹{""}{transaction.balance || 0}
-                                        </div>
+                                        <div>{transaction.type || "-"}</div>
+                                        <div>{transaction.party || "-"}</div>
+                                        <div>{transaction.description || "-"}</div>
+                                        <div>{transaction.paymentMethod || "-"}</div>
+                                        <div>₹{""}{transaction.debit || 0}</div>
+                                        <div>₹{""}{transaction.credit || 0}</div>
+                                        <div>₹{transaction.due || 0}</div>
+                                        <div>₹{""}{transaction.balance || 0}</div>
                                     </div>
                                 )
                             )
@@ -792,26 +691,18 @@ export default function Accounts() {
                     <div className="accounts-pagination">
                         <div className="accounts-pagination-info">
                             <span>
-                                <strong>
-                                    {displayStart}
-                                </strong>
+                                <strong>{displayStart}</strong>
                                 {" – "}
-                                <strong>
-                                    {displayEnd}
-                                </strong>
+                                <strong>{displayEnd}</strong>
                                 {" of "}
-                                <strong>
-                                    {filteredTransactions.length}
-                                </strong>
+                                <strong>{filteredTransactions.length}</strong>
                             </span>
 
                             <label>
                                 <select
                                     value={pageSize}
                                     onChange={(e) =>
-                                        setPageSize(
-                                            Number(e.target.value)
-                                        )
+                                        setPageSize(Number(e.target.value))
                                     }
                                 >
                                     <option value={5}>5</option>
@@ -819,9 +710,7 @@ export default function Accounts() {
                                     <option value={25}>25</option>
                                     <option value={50}>50</option>
                                     <option value={100}>100</option>
-                                    <option
-                                        value={filteredTransactions.length}
-                                    >
+                                    <option value={filteredTransactions.length}>
                                         All
                                     </option>
                                 </select>

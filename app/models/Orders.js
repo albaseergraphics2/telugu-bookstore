@@ -3,11 +3,8 @@ import mongoose from "mongoose";
 const OrderSchema = new mongoose.Schema(
   {
     userId: String,
-
     name: String,
-
     phone: String,
-
     address: {
       full: String,
       pincode: String,
@@ -27,7 +24,11 @@ const OrderSchema = new mongoose.Schema(
         discount: Number,
       },
     ],
-    totalAmount: Number,
+
+    totalAmount: {
+      type: Number,
+      default: 0,
+    },
 
     deliveryType: {
       type: String,
@@ -55,6 +56,7 @@ const OrderSchema = new mongoose.Schema(
 
     paymentStatus: {
       type: String,
+      enum: ["Paid", "Pending", "Partial"],
       default: "Pending",
     },
 
@@ -63,23 +65,56 @@ const OrderSchema = new mongoose.Schema(
       default: "",
     },
 
-    // ONLINE / OFFLINE
+    paidAmount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    dueAmount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    paymentHistory: [
+      {
+        amount: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+
+        paymentMethod: {
+          type: String,
+          required: true,
+        },
+
+        utrNumber: {
+          type: String,
+          default: "",
+        },
+
+        paidAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+
     orderSource: {
       type: String,
       enum: ["online", "offline"],
       default: "online",
     },
 
-    // Who created the order
     orderCreatedBy: {
       type: String,
       enum: ["customer", "admin"],
       default: "customer",
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true, }
 );
 
 export default mongoose.models.Order ||

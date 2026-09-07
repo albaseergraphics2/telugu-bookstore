@@ -7,17 +7,21 @@ import User from "../../../../models/User";
 export async function GET() {
     try {
         await connectDB();
-        const orders = await Order.find({ orderSource: "offline", })
+        const orders = await Order.find({
+            orderSource: "offline",
+        })
             .populate("items.bookId")
             .sort({ createdAt: -1 });
         return NextResponse.json({ success: true, orders, });
     } catch (error) {
         console.error("GET OFFLINE ORDERS ERROR:", error);
-        return NextResponse.json({
-            success: false,
-            message: "Failed to fetch offline orders.",
-            error: error.message,
-        }, { status: 500 }
+
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Failed to fetch offline orders.",
+                error: error.message,
+            }, { status: 500 }
         );
     }
 }
@@ -35,6 +39,7 @@ export async function POST(req) {
             paymentMethod,
             paymentStatus,
             utrNumber,
+            paidAmount: requestedPaidAmount,
         } = body;
 
         if (!customer) {
@@ -88,7 +93,7 @@ export async function POST(req) {
             if (!item.bookId) {
                 return NextResponse.json({
                     success: false,
-                    message: "Invalid book."
+                    message: "Invalid book.",
                 }, { status: 400 }
                 );
             }
@@ -142,27 +147,79 @@ export async function POST(req) {
 
         const finalDeliveryCharge = Number(deliveryCharge) || 0;
         const finalTotalAmount = subtotal + finalDeliveryCharge;
+        const finalPaymentMethod = String(paymentMethod || "Cash").trim();
+        let finalPaidAmount = 0;
+        let finalDueAmount = finalTotalAmount;
+        let finalPaymentStatus = "Pending";
+        if (finalPaymentMethod === "Credit") {
+            finalPaidAmount = 0;
+            finalDueAmount = finalTotalAmount;
+            finalPaymentStatus = "Pending";
+        } else if (finalPaymentMethod === "COD") {
+            finalPaidAmount = 0;
+            finalDueAmount = finalTotalAmount;
+            finalPaymentStatus = "Pending";
+        } else {
+            if (paymentStatus === "Partial") {
+                finalPaidAmount = Number(requestedPaidAmount) || 0;
+
+                if (finalPaidAmount < 0) {
+                    return NextResponse.json({
+                        success: false,
+                        message: "Paid amount cannot be negative.",
+                    }, { status: 400 }
+                    );
+                }
+
+                if (finalPaidAmount > finalTotalAmount) {
+                    return NextResponse.json({
+                        success: false,
+                        message: "Paid amount cannot be greater than total amount.",
+                    }, { status: 400 }
+                    );
+                }
+
+                finalDueAmount = finalTotalAmount - finalPaidAmount;
+
+                if (finalDueAmount === 0) {
+                    finalPaymentStatus = "Paid";
+                } else {
+                    finalPaymentStatus = "Partial";
+                }
+            } else {
+                finalPaidAmount = finalTotalAmount;
+                finalDueAmount = 0;
+                finalPaymentStatus = "Paid";
+            }
+        }
 
         let user = null;
+
         if (customer._id) {
             user = await User.findById(customer._id);
         }
+
         if (!user) {
             user = await User.findOne({ phone, });
         }
+
         if (!user && email) {
             user = await User.findOne({ email, });
         }
+
         if (user) {
             user.name = name;
             user.phone = phone;
+
             if (email) {
                 user.email = email;
             }
+
             user.address = address;
             await user.save();
         } else {
             const username = `offline_${phone}_${Date.now()}`;
+
             user = await User.create({
                 name,
                 username,
@@ -173,19 +230,40 @@ export async function POST(req) {
                 role: "user",
             });
         }
+
         let invoiceId = 1001;
+
         const lastOrder = await Order.findOne({
             invoiceId: {
                 $exists: true,
                 $ne: null,
             },
-        }).sort({
-            invoiceId: -1,
-        }).select("invoiceId");
+        })
+            .sort({ invoiceId: -1, })
+            .select("invoiceId");
 
         if (lastOrder?.invoiceId) {
-            invoiceId = Math.max(1001, Number(lastOrder.invoiceId) + 1);
+            invoiceId = Math.max(
+                1001,
+                Number(lastOrder.invoiceId) + 1
+            );
         }
+
+        const cleanUtrNumber =
+            finalPaymentMethod === "Cash" ||
+                finalPaymentMethod === "COD" ||
+                finalPaymentMethod === "Credit"
+                ? ""
+                : String(utrNumber || "").trim();
+
+        const initialPaymentHistory = finalPaidAmount > 0
+            ? [{
+                amount: finalPaidAmount,
+                paymentMethod: finalPaymentMethod,
+                utrNumber: cleanUtrNumber,
+                paidAt: new Date(),
+            },
+            ] : [];
 
         const order = await Order.create({
             userId: user._id.toString(),
@@ -198,17 +276,19 @@ export async function POST(req) {
             deliveryCharge: finalDeliveryCharge,
             status: status || "completed",
             invoiceId,
-            paymentMethod: paymentMethod || "Cash",
-            paymentStatus: paymentStatus || "Paid",
-            utrNumber: paymentMethod === "Cash" ||
-                paymentMethod === "COD"
-                ? ""
-                : String(utrNumber || "").trim(),
+            paymentMethod: finalPaymentMethod,
+            paymentStatus: finalPaymentStatus,
+            utrNumber: cleanUtrNumber,
+            paidAmount: finalPaidAmount,
+            dueAmount: finalDueAmount,
+            paymentHistory: initialPaymentHistory,
             orderSource: "offline",
             orderCreatedBy: "admin",
         });
 
-        const populatedOrder = await Order.findById(order._id).populate("items.bookId");
+        const populatedOrder = await Order.findById(
+            order._id
+        ).populate("items.bookId");
 
         return NextResponse.json(
             {

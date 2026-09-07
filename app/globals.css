@@ -2064,7 +2064,7 @@ nav {
 }
 
 .invoice-info-box h3,
-.invoice-books h3{
+.invoice-books h3 {
   font-size: 22px;
 }
 
@@ -3026,7 +3026,7 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
 }
 
 .supplier-view-header h2 {
@@ -3460,6 +3460,392 @@ nav {
 }
 
 
+
+/* =========================================================
+   EDIT SUPPLIER PAGE
+========================================================= */
+
+.admin-supplier-edit {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.supplier-edit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.supplier-edit-header h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.supplier-edit-header p {
+  margin: 6px 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.supplier-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.supplier-edit-section {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 22px;
+  box-sizing: border-box;
+}
+
+.supplier-edit-section h3 {
+  margin: 0 0 20px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.supplier-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 20px;
+}
+
+/* =========================================================
+   FIELD
+========================================================= */
+
+.supplier-edit-field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.supplier-edit-field label {
+  margin-bottom: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.supplier-edit-field label span {
+  margin-left: 3px;
+  color: #d00;
+}
+
+.supplier-edit-field input,
+.supplier-edit-field select,
+.supplier-edit-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d5d5d5;
+  border-radius: 7px;
+  background: #fff;
+  color: #222;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.supplier-edit-field input,
+.supplier-edit-field select {
+  height: 44px;
+  padding: 0 12px;
+}
+
+.supplier-edit-field textarea {
+  min-height: 110px;
+  padding: 12px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.supplier-edit-field input::placeholder,
+.supplier-edit-field textarea::placeholder {
+  color: #999;
+}
+
+.supplier-edit-field input:focus,
+.supplier-edit-field select:focus,
+.supplier-edit-field textarea:focus {
+  border-color: #222;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
+}
+
+/* Full width field */
+
+.supplier-edit-full {
+  grid-column: 1 / -1;
+}
+
+/* =========================================================
+   PURCHASE SUMMARY
+========================================================= */
+
+.supplier-edit-summary {
+  background: #fafafa;
+}
+
+.supplier-edit-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.supplier-edit-summary-grid>div {
+  border: 1px solid #e2e2e2;
+  border-radius: 8px;
+  background: #fff;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.supplier-edit-summary-grid span {
+  font-size: 13px;
+  color: #666;
+}
+
+.supplier-edit-summary-grid strong {
+  font-size: 19px;
+  font-weight: 700;
+  color: #222;
+}
+
+.supplier-edit-summary p {
+  margin: 15px 0 0;
+  font-size: 13px;
+  color: #777;
+}
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.supplier-edit-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 4px 0 20px;
+}
+
+.supplier-edit-cancel-btn,
+.supplier-edit-save-btn {
+  min-width: 130px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.supplier-edit-cancel-btn {
+  border: 1px solid #d0d0d0;
+  background: #fff;
+  color: #333;
+}
+
+.supplier-edit-cancel-btn:hover {
+  background: #f5f5f5;
+}
+
+.supplier-edit-save-btn {
+  border: 1px solid #222;
+  background: #222;
+  color: #fff;
+}
+
+.supplier-edit-save-btn:hover {
+  background: #000;
+}
+
+.supplier-edit-cancel-btn:disabled,
+.supplier-edit-save-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.supplier-edit-header .create-supplier-back-btn,
+.admin-supplier-edit .create-supplier-back-btn {
+  height: 42px;
+  padding: 0 16px;
+  border: 1px solid #d5d5d5;
+  border-radius: 7px;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.supplier-edit-header .create-supplier-back-btn:hover,
+.admin-supplier-edit .create-supplier-back-btn:hover {
+  background: #f5f5f5;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.admin-supplier-edit .create-supplier-error {
+  margin-bottom: 15px;
+  padding: 14px 16px;
+  border: 1px solid #f0b4b4;
+  border-radius: 8px;
+  background: #fff3f3;
+  color: #c00;
+  font-size: 14px;
+}
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+.admin-supplier-edit .loader {
+  width: 30px;
+  height: 30px;
+  margin: 0 auto 12px;
+  border: 3px solid #e5e5e5;
+  border-top-color: #222;
+  border-radius: 50%;
+  animation: supplierEditLoader 0.8s linear infinite;
+}
+
+@keyframes supplierEditLoader {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 768px) {
+  .admin-supplier-edit {
+    padding: 18px;
+  }
+
+  .supplier-edit-header {
+    align-items: flex-start;
+  }
+
+  .supplier-edit-header h2 {
+    font-size: 23px;
+  }
+
+  .supplier-edit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .supplier-edit-full {
+    grid-column: auto;
+  }
+
+  .supplier-edit-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .admin-supplier-edit {
+    padding: 12px;
+  }
+
+  .supplier-edit-header {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .supplier-edit-header h2 {
+    font-size: 21px;
+  }
+
+  .supplier-edit-header p {
+    font-size: 13px;
+  }
+
+  .supplier-edit-header .create-supplier-back-btn {
+    width: 100%;
+  }
+
+  .supplier-edit-section {
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .supplier-edit-section h3 {
+    font-size: 17px;
+    margin-bottom: 16px;
+  }
+
+  .supplier-edit-grid {
+    gap: 15px;
+  }
+
+  .supplier-edit-field input,
+  .supplier-edit-field select {
+    height: 42px;
+  }
+
+  .supplier-edit-field textarea {
+    min-height: 100px;
+  }
+
+  .supplier-edit-actions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+
+  .supplier-edit-cancel-btn,
+  .supplier-edit-save-btn {
+    width: 100%;
+  }
+}
 
 
 
@@ -4892,7 +5278,7 @@ nav {
 .accounts-table-row {
   display: grid;
   grid-template-columns:
-    1fr 1.2fr 1.3fr 1.3fr 1.2fr 1fr 1fr 1fr;
+    1fr 1.2fr 1.3fr 1.3fr 1.2fr 1fr 1fr 1fr 1fr;
   min-width: 900px;
   border-bottom: 1px solid #e5e7eb;
 }

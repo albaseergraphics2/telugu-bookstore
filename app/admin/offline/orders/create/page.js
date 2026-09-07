@@ -502,7 +502,7 @@ export default function CreateOfflineOrder() {
                 };
 
                 const response =
-                    await fetch("/api/admin/offline-orders", {
+                    await fetch("/api/admin/offline/orders", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -944,10 +944,16 @@ export default function CreateOfflineOrder() {
                                     value={paymentMethod}
                                     onChange={(e) => {
                                         const value = e.target.value;
+
                                         setPaymentMethod(value);
-                                        if (value === "Cash" || value === "COD"
-                                        ) {
-                                            setUtrNumber("");
+                                        setUtrNumber("");
+
+                                        if (value === "Credit") {
+                                            setPaymentStatus("Pending");
+                                        } else if (value === "COD") {
+                                            setPaymentStatus("Pending");
+                                        } else {
+                                            setPaymentStatus("Paid");
                                         }
                                     }}
                                 >
@@ -956,12 +962,17 @@ export default function CreateOfflineOrder() {
                                     <option value="Bank Transfer">Bank Transfer</option>
                                     <option value="Card">Card</option>
                                     <option value="COD">COD</option>
+                                    <option value="Credit">Credit / Pay Later</option>
                                 </select>
                             </div>
+
                             <div className="offline-order-field">
                                 <label>Payment Status</label>
                                 <select
                                     value={paymentStatus}
+                                    disabled={
+                                        paymentMethod === "Credit" || paymentMethod === "COD"
+                                    }
                                     onChange={(e) =>
                                         setPaymentStatus(e.target.value)
                                     }
@@ -972,8 +983,8 @@ export default function CreateOfflineOrder() {
                                 </select>
                             </div>
 
-                            {paymentMethod !== "Cash" &&
-                                paymentMethod !== "COD" && (
+                            {paymentMethod !== "Cash" && paymentMethod !== "COD" &&
+                                paymentMethod !== "Credit" && paymentStatus !== "Pending" && (
                                     <div className="offline-order-field">
                                         <label>UTR Number</label>
                                         <input
