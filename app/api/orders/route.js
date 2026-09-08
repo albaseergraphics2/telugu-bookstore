@@ -9,10 +9,9 @@ export async function POST(req) {
     await connectDB();
     const body = await req.json();
 
-    const address =
-      typeof body.address === "object"
-        ? body.address
-        : { full: body.address || "" };
+    const address = typeof body.address === "object"
+      ? body.address
+      : { full: body.address || "" };
 
 
     const lastOrder = await Order.findOne().sort({ invoiceId: -1 });
@@ -23,18 +22,20 @@ export async function POST(req) {
       nextInvoiceId = lastOrder.invoiceId + 1;
     }
 
+    const finalTotal = Number(body.totalAmount || 0) + Number(body.deliveryCharge || 0);
+
     const order = await Order.create({
       ...body,
       address,
       invoiceId: nextInvoiceId,
       status: "pending",
 
-      paymentStatus:
-        body.paymentMethod === "online"
-          ? "Paid"
-          : body.paymentMethod === "bank"
-            ? "Verification Pending"
-            : "Pending",
+      paidAmount: body.paymentMethod === "cod" ? 0 : finalTotal,
+
+      dueAmount: body.paymentMethod === "cod" ? finalTotal : 0,
+
+      paymentStatus: body.paymentMethod === "online" ? "Paid"
+        : body.paymentMethod === "bank" ? "Verification Pending" : "Pending",
     });
 
     await sendEmail({
@@ -154,13 +155,12 @@ ${body.paymentMethod === "bank" ? `
         <tr>
           <td><strong>Delivery Charge</strong></td>
           <td align="right">
-            ${
-              body.totalAmount >= 1000
-                ? "Free"
-                : body.deliveryCharge > 0
-                  ? `₹${body.deliveryCharge}`
-                  : "To Be Confirmed"
-            }
+            ${body.totalAmount >= 1000
+          ? "Free"
+          : body.deliveryCharge > 0
+            ? `₹${body.deliveryCharge}`
+            : "To Be Confirmed"
+        }
           </td>
         </tr>
 
@@ -175,13 +175,12 @@ ${body.paymentMethod === "bank" ? `
               font-size:22px;
               font-weight:bold;
             ">
-              ₹${
-                body.totalAmount >= 1000
-                  ? body.totalAmount
-                  : body.deliveryCharge > 0
-                    ? body.totalAmount + body.deliveryCharge
-                    : body.totalAmount
-              }
+              ₹${body.totalAmount >= 1000
+          ? body.totalAmount
+          : body.deliveryCharge > 0
+            ? body.totalAmount + body.deliveryCharge
+            : body.totalAmount
+        }
             </span>
           </td>
         </tr>
@@ -205,7 +204,6 @@ ${body.paymentMethod === "bank" ? `
 </div>
 `,
     });
-
     return NextResponse.json({
       success: true,
       order,
@@ -223,11 +221,10 @@ export async function GET(req) {
     const userId = searchParams.get("userId");
 
     const orders = await Order.find({ userId })
-      .populate("items.bookId") // ✅ works now
+      .populate("items.bookId")
       .sort({ createdAt: -1 });
 
     return NextResponse.json({ success: true, orders });
-
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message });
   }

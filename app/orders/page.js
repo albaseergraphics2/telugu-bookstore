@@ -150,7 +150,7 @@ export default function OrdersPage() {
 
 
 
-              <div className="payment-summary">
+              <div className="payment-summary-page">
                 <div className="summary-row">
                   <span>Delivery Type</span>
                   <span>

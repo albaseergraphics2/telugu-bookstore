@@ -502,7 +502,7 @@ export default function OfflineOrders() {
                         {currentOrders.map((order) => {
                             const totalAmount = Number(order.totalAmount) || 0;
                             const deliveryCharge = Number(order.deliveryCharge) || 0;
-                            
+
                             return (
                                 <div
                                     key={order._id}
@@ -586,128 +586,222 @@ export default function OfflineOrders() {
                                             <b>Payment</b>
                                             <div className="payment-summary">
                                                 <div>
-                                                    <span>Total</span>
-                                                    <strong>₹{Number(order.totalAmount || 0).toFixed(2)}</strong>
+                                                    <span>Total: </span>
+                                                    <strong>₹{(
+                                                            Number(order.totalAmount || 0) +
+                                                            Number(order.deliveryCharge || 0)
+                                                        )}
+                                                    </strong>
                                                 </div>
-
                                                 <div>
-                                                    <span>Paid</span>
-                                                    <strong>₹{Number(order.paidAmount || 0).toFixed(2)}</strong>
-                                                </div>
-
-                                                <div>
-                                                    <span>Due</span>
-                                                    <strong>₹{Number(order.dueAmount || 0).toFixed(2)}</strong>
+                                                    <span>Due: </span>
+                                                    <strong>
+                                                        ₹{Number(order.dueAmount || 0)}
+                                                    </strong>
                                                 </div>
                                             </div>
+                                            {Number(order.dueAmount || 0) <= 0 ? (
+                                                <>
+                                                    {order.paymentHistory?.length > 0 && (
+                                                        <div className="payment-received-details">
 
-                                            <input
-                                                className="delivery-input"
-                                                type="date"
-                                                value={
-                                                    order.newPaymentDate ||
-                                                    new Date().toISOString().split("T")[0]
-                                                }
-                                                onChange={(e) => {
-                                                    setOrders((prev) =>
-                                                        prev.map((o) =>
-                                                            o._id === order._id
-                                                                ? {
-                                                                    ...o,
-                                                                    newPaymentDate:
-                                                                        e.target.value,
-                                                                } : o
-                                                        )
-                                                    );
-                                                }}
-                                            />
+                                                            {order.paymentHistory.map((payment, index) => (
+                                                                <div
+                                                                    className="payment-received-row-offline"
+                                                                    key={index}
+                                                                >
+                                                                    <div>
+                                                                        <span>Payment Date</span>
+                                                                        <strong>
+                                                                            {payment.paidAt
+                                                                                ? new Date(
+                                                                                    payment.paidAt
+                                                                                ).toLocaleDateString(
+                                                                                    "en-IN",
+                                                                                    {
+                                                                                        day: "2-digit",
+                                                                                        month: "2-digit",
+                                                                                        year: "numeric",
+                                                                                    }
+                                                                                )
+                                                                                : "—"}
+                                                                        </strong>
+                                                                    </div>
 
-                                            <select
-                                                className="delivery-input"
-                                                value={order.newPaymentMethod || ""}
-                                                onChange={(e) => {
-                                                    setOrders((prev) =>
-                                                        prev.map((o) =>
-                                                            o._id === order._id
-                                                                ? {
-                                                                    ...o,
-                                                                    newPaymentMethod:
-                                                                        e.target.value,
-                                                                } : o
-                                                        )
-                                                    );
-                                                }}
-                                            >
-                                                <option value="">Payment Method</option>
-                                                <option value="Cash">Cash</option>
-                                                <option value="UPI">UPI</option>
-                                                <option value="Bank Transfer">Bank Transfer</option>
-                                                <option value="Card">Card</option>
-                                            </select>
+                                                                    <div>
+                                                                        <span>Payment Method</span>
+                                                                        <strong>
+                                                                            {payment.paymentMethod || "—"}
+                                                                        </strong>
+                                                                    </div>
 
-                                            <input
-                                                className="delivery-input"
-                                                type="number"
-                                                min="0"
-                                                max={Number(order.dueAmount || 0)}
-                                                placeholder="Payment Amount"
-                                                value={order.newPaymentAmount ?? ""}
-                                                onChange={(e) => {
-                                                    setOrders((prev) =>
-                                                        prev.map((o) =>
-                                                            o._id === order._id
-                                                                ? {
-                                                                    ...o,
-                                                                    newPaymentAmount:
-                                                                        e.target.value,
-                                                                } : o
-                                                        )
-                                                    );
-                                                }}
-                                            />
+                                                                    <div>
+                                                                        <span>Paid</span>
+                                                                        <strong>
+                                                                            ₹
+                                                                            {Number(
+                                                                                payment.amount || 0
+                                                                            )}
+                                                                        </strong>
+                                                                    </div>
 
-                                            {(order.newPaymentMethod === "UPI" ||
-                                                order.newPaymentMethod === "Bank Transfer") && (
+                                                                    {(payment.paymentMethod === "UPI" ||
+                                                                        payment.paymentMethod ===
+                                                                        "Bank Transfer") &&
+                                                                        payment.utrNumber && (
+                                                                            <div>
+                                                                                <span>
+                                                                                    UTR / Reference
+                                                                                </span>
+                                                                                <strong>
+                                                                                    {payment.utrNumber}
+                                                                                </strong>
+                                                                            </div>
+                                                                        )}
+                                                                </div>
+                                                            ))}
+
+                                                        </div>
+                                                    )}
+
+                                                    <div className="payment-paid">
+                                                        Paid
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
                                                     <input
                                                         className="delivery-input"
-                                                        type="text"
-                                                        placeholder="UTR / Reference Number"
-                                                        value={order.newPaymentUtr || ""}
+                                                        type="date"
+                                                        value={
+                                                            order.newPaymentDate ||
+                                                            new Date()
+                                                                .toISOString()
+                                                                .split("T")[0]
+                                                        }
                                                         onChange={(e) => {
                                                             setOrders((prev) =>
                                                                 prev.map((o) =>
                                                                     o._id === order._id
                                                                         ? {
                                                                             ...o,
-                                                                            newPaymentUtr:
+                                                                            newPaymentDate:
                                                                                 e.target.value,
-                                                                        } : o
+                                                                        }
+                                                                        : o
                                                                 )
                                                             );
                                                         }}
                                                     />
-                                                )}
 
-                                            {Number(order.dueAmount || 0) > 0 && (
-                                                <button
-                                                    type="button"
-                                                    className="save-delivery-btn"
-                                                    onClick={() =>
-                                                        receivePayment(
-                                                            order._id,
-                                                            order.newPaymentAmount,
-                                                            order.newPaymentMethod,
-                                                            order.newPaymentUtr,
-                                                            order.newPaymentDate
-                                                        )
-                                                    }
-                                                >
-                                                    Receive Payment
-                                                </button>
-                                            )}
+                                                    <select
+                                                        className="delivery-input"
+                                                        value={
+                                                            order.newPaymentMethod || ""
+                                                        }
+                                                        onChange={(e) => {
+                                                            setOrders((prev) =>
+                                                                prev.map((o) =>
+                                                                    o._id === order._id
+                                                                        ? {
+                                                                            ...o,
+                                                                            newPaymentMethod:
+                                                                                e.target.value,
+                                                                        }
+                                                                        : o
+                                                                )
+                                                            );
+                                                        }}
+                                                    >
+                                                        <option value="">
+                                                            Payment Method
+                                                        </option>
 
-                                            {Number(order.dueAmount || 0) <= 0 && (
-                                                <div className="payment-paid">Paid</div>
+                                                        <option value="Cash">
+                                                            Cash
+                                                        </option>
+
+                                                        <option value="UPI">
+                                                            UPI
+                                                        </option>
+
+                                                        <option value="Bank Transfer">
+                                                            Bank Transfer
+                                                        </option>
+
+                                                        <option value="Card">
+                                                            Card
+                                                        </option>
+                                                    </select>
+
+                                                    <input
+                                                        className="delivery-input"
+                                                        type="number"
+                                                        min="0"
+                                                        max={Number(
+                                                            order.dueAmount || 0
+                                                        )}
+                                                        placeholder="Payment Amount"
+                                                        value={
+                                                            order.newPaymentAmount ?? ""
+                                                        }
+                                                        onChange={(e) => {
+                                                            setOrders((prev) =>
+                                                                prev.map((o) =>
+                                                                    o._id === order._id
+                                                                        ? {
+                                                                            ...o,
+                                                                            newPaymentAmount:
+                                                                                e.target.value,
+                                                                        }
+                                                                        : o
+                                                                )
+                                                            );
+                                                        }}
+                                                    />
+
+                                                    {(order.newPaymentMethod === "UPI" ||
+                                                        order.newPaymentMethod ===
+                                                        "Bank Transfer") && (
+                                                            <input
+                                                                className="delivery-input"
+                                                                type="text"
+                                                                placeholder="UTR / Reference Number"
+                                                                value={
+                                                                    order.newPaymentUtr || ""
+                                                                }
+                                                                onChange={(e) => {
+                                                                    setOrders((prev) =>
+                                                                        prev.map((o) =>
+                                                                            o._id === order._id
+                                                                                ? {
+                                                                                    ...o,
+                                                                                    newPaymentUtr:
+                                                                                        e.target.value,
+                                                                                }
+                                                                                : o
+                                                                        )
+                                                                    );
+                                                                }}
+                                                            />
+                                                        )}
+
+                                                    <button
+                                                        type="button"
+                                                        className="save-delivery-btn"
+                                                        onClick={() =>
+                                                            receivePayment(
+                                                                order._id,
+                                                                order.newPaymentAmount,
+                                                                order.newPaymentMethod,
+                                                                order.newPaymentUtr,
+                                                                order.newPaymentDate
+                                                            )
+                                                        }
+                                                    >
+                                                        Receive Payment
+                                                    </button>
+                                                </>
                                             )}
                                         </div>
                                     </div>

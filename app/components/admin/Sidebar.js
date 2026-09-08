@@ -36,8 +36,8 @@ export default function Sidebar() {
         { name: "Suppliers", path: "/admin/suppliers" },
       ],
     },
-    { name: "Books", path: "/admin/books" },
     { name: "Accounts", path: "/admin/accounts" },
+    { name: "Books", path: "/admin/books" },
     { name: "HeroCarousel", path: "/admin/heroCarousel" },
     { name: "Payment Settings", path: "/admin/payment-settings" },
   ];

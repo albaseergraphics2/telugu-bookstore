@@ -18,7 +18,6 @@ export default function AdminOrders() {
     try {
       const res = await fetch("/api/admin/orders");
       const data = await res.json();
-
       if (data.success) {
         setOrders(data.orders || []);
       }
@@ -169,17 +168,13 @@ export default function AdminOrders() {
         return amountA - amountB;
       }
       if (orderFilter === "most-books") {
-        const booksA =
-          a.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
-        const booksB =
-          b.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
+        const booksA = a.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
+        const booksB = b.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
         return booksB - booksA;
       }
       if (orderFilter === "least-books") {
-        const booksA =
-          a.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
-        const booksB =
-          b.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
+        const booksA = a.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
+        const booksB = b.items?.reduce((total, item) => total + (item.qty || 0), 0) || 0;
         return booksA - booksB;
       }
       return 0;
@@ -192,6 +187,91 @@ export default function AdminOrders() {
     indexOfLast
   );
   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+
+  const receivePayment = async (
+    orderId,
+    amount,
+    paymentMethod,
+    referenceNumber,
+    paymentDate
+  ) => {
+    const paymentAmount = Number(amount || 0);
+
+    if (paymentAmount <= 0) {
+      alert("Please enter a valid payment amount.");
+      return;
+    }
+
+    const order = orders.find(
+      (o) => o._id === orderId
+    );
+
+    if (!order) {
+      alert("Order not found.");
+      return;
+    }
+
+    const dueAmount = Number(order.dueAmount || 0);
+
+    if (dueAmount <= 0) {
+      alert("This order has no due amount.");
+      return;
+    }
+
+    if (paymentAmount > dueAmount) {
+      alert(`Payment cannot be greater than due amount ₹${dueAmount}.`);
+      return;
+    }
+
+    if (!paymentMethod) {
+      alert("Please select payment method.");
+      return;
+    }
+
+    if ((paymentMethod === "UPI" || paymentMethod === "Bank Transfer") &&
+      !String(referenceNumber || "").trim()
+    ) {
+      alert("Please enter reference number.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}/payment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          amount: paymentAmount,
+          paymentMethod,
+          referenceNumber,
+          paymentDate
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to receive payment.");
+      }
+
+      setOrders((prev) =>
+        prev.map((o) =>
+          o._id === orderId
+            ? {
+              ...data.order,
+              newPaymentAmount: "",
+              newPaymentMethod: "",
+              newPaymentReference: "",
+            } : o
+        )
+      );
+      alert("Payment received successfully.");
+    } catch (error) {
+      console.error("RECEIVE PAYMENT ERROR:", error);
+      alert(error.message || "Failed to receive payment.");
+    }
+  };
 
   if (loading) {
     return (
@@ -338,56 +418,254 @@ export default function AdminOrders() {
                     </div>
                   </div>
 
-                  <div>
-                    <b>Delivery</b>
-                    <input
-                      className="delivery-input"
-                      type="text"
-                      placeholder="Delivery Type"
-                      value={order.deliveryType || ""}
-                      onChange={(e) => {
-                        setOrders(prev =>
-                          prev.map(o =>
-                            o._id === order._id
-                              ? { ...o, deliveryType: e.target.value }
-                              : o
-                          )
-                        );
-                      }}
-                    />
+                  <div className="deliverypaymentbox">
+                    <div className="deliverybox">
+                      <b>Delivery</b>
+                      <input
+                        className="delivery-input"
+                        type="text"
+                        placeholder="Delivery Type"
+                        value={order.deliveryType || ""}
+                        onChange={(e) => {
+                          setOrders(prev =>
+                            prev.map(o =>
+                              o._id === order._id
+                                ? { ...o, deliveryType: e.target.value }
+                                : o
+                            )
+                          );
+                        }}
+                      />
 
-                    <input
-                      className="delivery-input"
-                      type="number"
-                      placeholder="Delivery Charges"
-                      value={order.deliveryCharge || ""}
-                      onChange={(e) => {
-                        setOrders(prev =>
-                          prev.map(o =>
-                            o._id === order._id
-                              ? {
-                                ...o,
-                                deliveryCharge: Number(e.target.value)
-                              }
-                              : o
-                          )
-                        );
-                      }}
-                    />
+                      <input
+                        className="delivery-input"
+                        type="number"
+                        placeholder="Delivery Charges"
+                        value={order.deliveryCharge || ""}
+                        onChange={(e) => {
+                          setOrders(prev =>
+                            prev.map(o =>
+                              o._id === order._id
+                                ? {
+                                  ...o,
+                                  deliveryCharge: Number(e.target.value)
+                                }
+                                : o
+                            )
+                          );
+                        }}
+                      />
 
-                    <button
-                      className="save-delivery-btn"
-                      onClick={() =>
-                        updateStatus(
-                          order._id,
-                          order.status,
-                          order.deliveryType,
-                          order.deliveryCharge
-                        )
-                      }
-                    >
-                      Save Delivery
-                    </button>
+                      <button
+                        className="save-delivery-btn"
+                        onClick={() =>
+                          updateStatus(
+                            order._id,
+                            order.status,
+                            order.deliveryType,
+                            order.deliveryCharge
+                          )
+                        }
+                      >
+                        Save Delivery
+                      </button>
+
+                    </div>
+                    <div className="payment-section">
+                      <b>Payment</b>
+
+                      <div className="payment-summary">
+                        <div>
+                          <span>Total: </span>
+                          <strong>
+                            ₹
+                            {Number(order.totalAmount || 0) +
+                              Number(order.deliveryCharge || 0)}
+                          </strong>
+                        </div>
+
+                        {/* <div>
+                          <span>Paid: </span>
+                          <strong>₹{Number(order.paidAmount || 0)}</strong>
+                        </div> */}
+
+                        <div>
+                          <span>Due: </span>
+                          <strong>₹{Number(order.dueAmount || 0)}</strong>
+                        </div>
+                      </div>
+
+                      {Number(order.dueAmount || 0) <= 0 ? (
+                        <>
+                          {order.paymentHistory?.length > 0 && (
+                            <div className="payment-received-details">
+
+                              {order.paymentHistory.map((payment, index) => (
+                                <div
+                                  className="payment-received-row"
+                                  key={index}
+                                >
+                                  <div>
+                                    <span>Payment Date</span>
+                                    <strong>
+                                      {payment.paidAt
+                                        ? new Date(payment.paidAt).toLocaleDateString(
+                                          "en-IN",
+                                          {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                          }
+                                        )
+                                        : "—"}
+                                    </strong>
+                                  </div>
+
+                                  <div>
+                                    <span>Payment Method</span>
+                                    <strong>
+                                      {payment.paymentMethod || "—"}
+                                    </strong>
+                                  </div>
+
+                                  <div>
+                                    <span>Paid</span>
+                                    <strong>
+                                      ₹{Number(payment.amount || 0)}
+                                    </strong>
+                                  </div>
+
+                                  {(payment.paymentMethod === "UPI" ||
+                                    payment.paymentMethod === "Bank Transfer") &&
+                                    payment.utrNumber && (
+                                      <div>
+                                        <span>UTR / Reference</span>
+                                        <strong>
+                                          {payment.utrNumber}
+                                        </strong>
+                                      </div>
+                                    )}
+                                </div>
+                              ))}
+
+                            </div>
+                          )}
+
+                          <div className="payment-paid">
+                            Paid
+                          </div>
+                        </>
+                      ) : (
+                        <>
+
+                          <input
+                            className="delivery-input"
+                            type="date"
+                            value={
+                              order.newPaymentDate ||
+                              new Date().toISOString().split("T")[0]
+                            }
+                            onChange={(e) => {
+                              setOrders((prev) =>
+                                prev.map((o) =>
+                                  o._id === order._id
+                                    ? {
+                                      ...o,
+                                      newPaymentDate: e.target.value,
+                                    }
+                                    : o
+                                )
+                              );
+                            }}
+                          />
+
+                          <select
+                            className="delivery-input"
+                            value={order.newPaymentMethod || ""}
+                            onChange={(e) => {
+                              setOrders((prev) =>
+                                prev.map((o) =>
+                                  o._id === order._id
+                                    ? {
+                                      ...o,
+                                      newPaymentMethod: e.target.value,
+                                    }
+                                    : o
+                                )
+                              );
+                            }}
+                          >
+                            <option value="">Payment Method</option>
+                            <option value="Cash">Cash</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Bank Transfer">
+                              Bank Transfer
+                            </option>
+                            <option value="Card">Card</option>
+                          </select>
+
+                          <input
+                            className="delivery-input"
+                            type="number"
+                            min="0"
+                            max={Number(order.dueAmount || 0)}
+                            placeholder="Payment Amount"
+                            value={order.newPaymentAmount ?? ""}
+                            onChange={(e) => {
+                              setOrders((prev) =>
+                                prev.map((o) =>
+                                  o._id === order._id
+                                    ? {
+                                      ...o,
+                                      newPaymentAmount: e.target.value,
+                                    }
+                                    : o
+                                )
+                              );
+                            }}
+                          />
+
+                          {(order.newPaymentMethod === "UPI" ||
+                            order.newPaymentMethod === "Bank Transfer") && (
+                              <input
+                                className="delivery-input"
+                                type="text"
+                                placeholder="UTR / Reference Number"
+                                value={order.newPaymentUtr || ""}
+                                onChange={(e) => {
+                                  setOrders((prev) =>
+                                    prev.map((o) =>
+                                      o._id === order._id
+                                        ? {
+                                          ...o,
+                                          newPaymentUtr: e.target.value,
+                                        }
+                                        : o
+                                    )
+                                  );
+                                }}
+                              />
+                            )}
+
+                          <button
+                            type="button"
+                            className="save-delivery-btn"
+                            onClick={() =>
+                              receivePayment(
+                                order._id,
+                                order.newPaymentAmount,
+                                order.newPaymentMethod,
+                                order.newPaymentUtr,
+                                order.newPaymentDate
+                              )
+                            }
+                          >
+                            Receive Payment
+                          </button>
+                        </>
+                      )}
+                    </div>
+
                   </div>
                 </div>
 
