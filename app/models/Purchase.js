@@ -46,6 +46,10 @@ const PurchaseBookSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    profitPerBook: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     _id: true,
@@ -100,6 +104,18 @@ const PurchaseSchema = new mongoose.Schema(
     paidAmount: {
       type: Number,
       default: 0,
+    },
+
+    paidPaymentMethod: {
+      type: String,
+      enum: [
+        "Cash",
+        "UPI",
+        "Bank Transfer",
+        "Cheque",
+        "Other",
+      ],
+      default: "Cash",
     },
 
     balanceAmount: {

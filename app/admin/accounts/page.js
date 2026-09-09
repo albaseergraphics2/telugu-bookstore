@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import AccountsPrint from "./AccountsPrint";
+import useRealtime from "@/app/hooks/useRealtime";
 
 export default function Accounts() {
     const [transactions, setTransactions] = useState([]);
@@ -15,10 +16,7 @@ export default function Accounts() {
     const [pageSize, setPageSize] = useState(10);
     const [partyTypeOpen, setPartyTypeOpen] = useState(false);
     const [showPrint, setShowPrint] = useState(false);
-
-    useEffect(() => {
-        fetchTransactions();
-    }, []);
+    const [dueStatus, setDueStatus] = useState([]);
 
     const fetchTransactions = async () => {
         try {
@@ -26,37 +24,24 @@ export default function Accounts() {
             const data = await res.json();
 
             if (data.success) {
-                const sortedTransactions =
-                    (data.transactions || []).sort(
-                        (a, b) =>
-                            new Date(a.date) - new Date(b.date)
-                    );
-
-                let runningBalance = 0;
-
-                const transactionsWithBalance = sortedTransactions.map(
-                    (transaction) => {
-                        const debit = Number(transaction.debit) || 0;
-                        const credit = Number(transaction.credit) || 0;
-                        runningBalance = runningBalance - debit + credit;
-
-                        return {
-                            ...transaction,
-                            balance: runningBalance,
-                        };
-                    }
-                );
-                setTransactions(transactionsWithBalance);
-                const totalPages = Math.ceil(transactionsWithBalance.length / pageSize);
-                setCurrentPage(totalPages || 1);
+                setTransactions(data.transactions || []);
+                setCurrentPage(1);
             } else {
                 setTransactions([]);
+                setCurrentPage(1);
             }
         } catch (error) {
             console.error(error);
             setTransactions([]);
+            setCurrentPage(1);
         }
     };
+
+    useEffect(() => {
+        fetchTransactions();
+    }, []);
+
+    useRealtime(fetchTransactions);
 
     const handleTransactionType = (type) => {
         setTransactionTypes((prev) =>
@@ -76,6 +61,14 @@ export default function Accounts() {
         );
     };
 
+    const handleDueStatus = (status) => {
+        setDueStatus((prev) =>
+            prev.includes(status)
+                ? prev.filter((item) => item !== status)
+                : [...prev, status]
+        );
+    };
+
     const resetFilters = () => {
         setSearch("");
         setFromDate("");
@@ -83,7 +76,13 @@ export default function Accounts() {
         setTransactionTypes([]);
         setPaymentMethods([]);
         setPartyType("All");
+        setDueStatus("All");
     };
+
+    const matchesDue =
+        dueStatus === "All" ||
+        (dueStatus === "Due" && Number(transaction.due) > 0) ||
+        (dueStatus === "Paid" && Number(transaction.due) === 0);
 
     const filteredTransactions =
         transactions.filter(
@@ -107,22 +106,27 @@ export default function Accounts() {
                         .includes(searchText);
 
                 const transactionDate = transaction.date
-                    ? new Date(
-                        transaction.date
-                    ) : null;
+                    ? new Date(transaction.date)
+                    : null;
 
-                const matchesFromDate = !fromDate || (transactionDate &&
-                    transactionDate >=
-                    new Date(`${fromDate}T00:00:00`));
+                const matchesFromDate =
+                    !fromDate ||
+                    (transactionDate &&
+                        transactionDate >=
+                        new Date(`${fromDate}T00:00:00`));
 
-                const matchesToDate = !toDate || (transactionDate &&
-                    transactionDate <=
-                    new Date(`${toDate}T23:59:59.999`));
+                const matchesToDate =
+                    !toDate ||
+                    (transactionDate &&
+                        transactionDate <=
+                        new Date(`${toDate}T23:59:59.999`));
 
-                const matchesType = transactionTypes.length === 0 ||
+                const matchesType =
+                    transactionTypes.length === 0 ||
                     transactionTypes.includes(transaction.type);
 
-                const matchesPaymentMethod = paymentMethods.length === 0 ||
+                const matchesPaymentMethod =
+                    paymentMethods.length === 0 ||
                     paymentMethods.some(
                         (method) =>
                             String(method)
@@ -135,7 +139,16 @@ export default function Accounts() {
                                 .toLowerCase()
                     );
 
-                const matchesParty = partyType === "All" || transaction.partyType === partyType;
+                const matchesParty =
+                    partyType === "All" ||
+                    transaction.partyType === partyType;
+
+                const matchesDue =
+                    dueStatus.length === 0 ||
+                    (dueStatus.includes("Due") &&
+                        Number(transaction.due) > 0) ||
+                    (dueStatus.includes("Paid") &&
+                        Number(transaction.due) === 0);
 
                 return (
                     matchesSearch &&
@@ -143,7 +156,8 @@ export default function Accounts() {
                     matchesToDate &&
                     matchesType &&
                     matchesPaymentMethod &&
-                    matchesParty
+                    matchesParty &&
+                    matchesDue
                 );
             }
         );
@@ -524,6 +538,33 @@ export default function Accounts() {
                         </div>
                     </div>
 
+                    <div className="accounts-filter-group">
+                        <label>Due Status</label>
+                        <div className="accounts-checkboxes">
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={dueStatus.includes("Due")}
+                                    onChange={() =>
+                                        handleDueStatus("Due")
+                                    }
+                                />
+                                Due
+                            </label>
+
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={dueStatus.includes("Paid")}
+                                    onChange={() =>
+                                        handleDueStatus("Paid")
+                                    }
+                                />
+                                Paid
+                            </label>
+                        </div>
+                    </div>
+
                     <div className="accounts-filter-actions">
                         <button
                             type="button"
@@ -608,25 +649,32 @@ export default function Accounts() {
                                         className="accounts-table-row"
                                     >
                                         <div>
-                                            {transaction.date
-                                                ? new Date(
-                                                    transaction.date
-                                                ).toLocaleDateString(
-                                                    "en-IN", {
-                                                    day: "2-digit",
-                                                    month: "2-digit",
-                                                    year: "numeric",
-                                                }) : "-"}
+                                            {(() => {
+                                                const value =
+                                                    transaction.createdAt ||
+                                                    transaction.paymentDate ||
+                                                    transaction.paidAt ||
+                                                    transaction.date;
+
+                                                return value
+                                                    ? new Date(value).toLocaleString("en-IN", {
+                                                        day: "2-digit",
+                                                        month: "2-digit",
+                                                        year: "numeric",
+
+                                                    })
+                                                    : "-";
+                                            })()}
                                         </div>
 
                                         <div>{transaction.type || "-"}</div>
                                         <div>{transaction.party || "-"}</div>
                                         <div>{transaction.description || "-"}</div>
                                         <div>{transaction.paymentMethod || "-"}</div>
-                                        <div>₹{""}{transaction.debit || 0}</div>
+                                        <div>₹{""}{transaction.debit.toFixed(0) || 0}</div>
                                         <div>₹{""}{transaction.credit || 0}</div>
-                                        <div>₹{transaction.due || 0}</div>
-                                        <div>₹{""}{transaction.balance || 0}</div>
+                                        <div>₹{transaction.due.toFixed(0) || 0}</div>
+                                        <div>₹{""}{transaction.balance.toFixed(0) || 0}</div>
                                     </div>
                                 )
                             )
@@ -661,16 +709,21 @@ export default function Accounts() {
                                         className="accounts-mobile-row"
                                     >
                                         <div>
-                                            {transaction.date
-                                                ? new Date(
-                                                    transaction.date
-                                                ).toLocaleDateString(
-                                                    "en-IN", {
-                                                    day: "2-digit",
-                                                    month: "2-digit",
-                                                    year: "numeric",
-                                                }
-                                                ) : "-"}
+                                            {(() => {
+                                                const value =
+                                                    transaction.createdAt ||
+                                                    transaction.paymentDate ||
+                                                    transaction.paidAt ||
+                                                    transaction.date;
+
+                                                return value
+                                                    ? new Date(value).toLocaleString("en-IN", {
+                                                        day: "2-digit",
+                                                        month: "2-digit",
+                                                        year: "numeric",
+                                                    })
+                                                    : "-";
+                                            })()}
                                         </div>
                                         <div>{transaction.type || "-"}</div>
                                         <div>{transaction.party || "-"}</div>

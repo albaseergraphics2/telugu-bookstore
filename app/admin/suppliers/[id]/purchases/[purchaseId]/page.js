@@ -23,9 +23,14 @@ export default function PurchaseDetails() {
     useEffect(() => {
         if (params?.id && params?.purchaseId) {
             fetchPurchase();
-            fetchPayments();
         }
     }, [params?.id, params?.purchaseId]);
+
+    useEffect(() => {
+        if (purchase) {
+            fetchPayments();
+        }
+    }, [purchase]);
 
     const fetchPurchase = async () => {
         try {
@@ -48,10 +53,50 @@ export default function PurchaseDetails() {
     const fetchPayments = async () => {
         try {
             setPaymentsLoading(true);
-            const res = await fetch(`/api/admin/suppliers/${params.id}/purchases/${params.purchaseId}/payments`);
+
+            const res = await fetch(
+                `/api/admin/suppliers/${params.id}/purchases/${params.purchaseId}/payments`
+            );
+
             const data = await res.json();
+
             if (data.success) {
-                setPayments(data.payments || []);
+                const laterPayments = data.payments || [];
+
+                const laterPaymentsTotal = laterPayments.reduce(
+                    (total, payment) =>
+                        total + (Number(payment.amount) || 0),
+                    0
+                );
+
+                const currentPaidAmount =
+                    Number(purchase?.paidAmount) || 0;
+
+                const initialPayment =
+                    currentPaidAmount - laterPaymentsTotal;
+
+                const history = [];
+
+                if (initialPayment > 0) {
+                    history.push({
+                        _id: `initial-${purchase._id}`,
+                        paymentDate: purchase.purchaseDate,
+                        amount: initialPayment,
+                        paymentMethod: purchase.paidPaymentMethod || "Initial Payment",
+                        referenceNumber: "",
+                        notes: "Initial Payment",
+                    });
+                }
+
+                history.push(...laterPayments);
+
+                history.sort(
+                    (a, b) =>
+                        new Date(b.paymentDate).getTime() -
+                        new Date(a.paymentDate).getTime()
+                );
+
+                setPayments(history);
             }
         } catch (error) {
             console.error(error);
@@ -227,7 +272,11 @@ export default function PurchaseDetails() {
                                 {purchase.purchaseDate
                                     ? new Date(
                                         purchase.purchaseDate
-                                    ).toLocaleDateString("en-IN")
+                                    ).toLocaleDateString("en-IN", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                    })
                                     : "-"}
                             </div>
 
@@ -252,11 +301,11 @@ export default function PurchaseDetails() {
                             </div>
 
                             <div>
-                                ₹{purchase.paidAmount || 0}
+                                ₹{purchase.paidAmount.toFixed(2) || 0}
                             </div>
 
                             <div>
-                                ₹{purchase.balanceAmount || 0}
+                                ₹{purchase.balanceAmount.toFixed(2) || 0}
                             </div>
 
                         </div>
@@ -289,7 +338,7 @@ export default function PurchaseDetails() {
                                         <div>{book.quantity || 0} </div>
                                         <div>₹{book.mrp || 0} </div>
                                         <div>₹{book.supplierRate || 0} </div>
-                                        <div>{book.discount || 0} </div>
+                                        <div>{book.discount || "-"}%</div>
                                         <div>₹{book.purchaseRate || 0} </div>
                                         <div>₹{book.sellingPrice || 0} </div>
                                         <div>₹{book.profitPerBook || 0}</div>
@@ -320,11 +369,11 @@ export default function PurchaseDetails() {
                     <div className="supplier-payment-grid">
                         <div>
                             <span>Paid Amount </span>
-                            <strong>₹{purchase.paidAmount || 0}</strong>
+                            <strong>₹{purchase.paidAmount.toFixed(2) || 0}</strong>
                         </div>
                         <div>
                             <span> Balance Amount</span>
-                            <strong>₹{purchase.balanceAmount || 0}</strong>
+                            <strong>₹{purchase.balanceAmount.toFixed(2) || 0}</strong>
                         </div>
                     </div>
 
@@ -455,15 +504,15 @@ export default function PurchaseDetails() {
                                         >
                                             <div>
                                                 {payment.paymentDate
-                                                    ? new Date(
-                                                        payment.paymentDate
-                                                    ).toLocaleDateString(
-                                                        "en-IN"
-                                                    )
+                                                    ? new Date(payment.paymentDate).toLocaleDateString("en-IN", {
+                                                        day: "2-digit",
+                                                        month: "2-digit",
+                                                        year: "numeric",
+                                                    })
                                                     : "-"}
                                             </div>
 
-                                            <div>₹{payment.amount || 0}</div>
+                                            <div>₹{payment.amount.toFixed(2) || 0}</div>
                                             <div>{payment.paymentMethod || "-"}</div>
                                             <div>{payment.referenceNumber || "-"}</div>
                                             <div>{payment.notes || "-"}</div>
@@ -511,9 +560,11 @@ export default function PurchaseDetails() {
                                     ? new Date(
                                         purchase.purchaseDate
                                     ).toLocaleDateString(
-                                        "en-IN"
-                                    )
-                                    : "-"}
+                                        "en-IN", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                    }) : "-"}
                             </strong>
                         </div>
 
@@ -539,18 +590,18 @@ export default function PurchaseDetails() {
 
                         <div className="purchase-purchase-card-box">
                             <span>Expected Profit</span>
-                            <strong>₹{purchase.expectedProfit || 0}</strong>
+                            <strong>₹{purchase.expectedProfit.toFixed(2) || 0}</strong>
                         </div>
 
                         <div className="purchase-purchase-card-box">
                             <span>Paid Amount</span>
-                            <strong>₹{purchase.paidAmount || 0}
+                            <strong>₹{purchase.paidAmount.toFixed(2) || 0}
                             </strong>
                         </div>
 
                         <div className="purchase-purchase-card-box">
                             <span>Balance Amount</span>
-                            <strong>₹{purchase.balanceAmount || 0}</strong>
+                            <strong>₹{purchase.balanceAmount.toFixed(2) || 0}</strong>
                         </div>
                     </div>
                 </div>
@@ -586,7 +637,7 @@ export default function PurchaseDetails() {
 
                                     <div className="purchase-purchase-card-box">
                                         <span>Discount</span>
-                                        <strong>{book.discount || 0}</strong>
+                                        <strong>{book.discount || 0}%</strong>
                                     </div>
 
                                     <div className="purchase-purchase-card-box">
@@ -761,11 +812,11 @@ export default function PurchaseDetails() {
                                             <span>Payment Date</span>
                                             <strong>
                                                 {payment.paymentDate
-                                                    ? new Date(
-                                                        payment.paymentDate
-                                                    ).toLocaleDateString(
-                                                        "en-IN"
-                                                    )
+                                                    ? new Date(payment.paymentDate).toLocaleDateString("en-IN", {
+                                                        day: "2-digit",
+                                                        month: "2-digit",
+                                                        year: "numeric",
+                                                    })
                                                     : "-"}
                                             </strong>
                                         </div>

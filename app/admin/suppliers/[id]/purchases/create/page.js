@@ -9,9 +9,12 @@ export default function CreatePurchase() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [purchaseDate, setPurchaseDate] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [paidAmount, setPaidAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Cash");
   const [books, setBooks] = useState([
     {
       bookName: "",
@@ -82,25 +85,48 @@ export default function CreatePurchase() {
         if (bookIndex !== index) {
           return book;
         }
+
         const updatedBook = {
           ...book,
           [field]: value,
         };
-        if (
-          field === "supplierRate" || field === "discount"
-        ) {
-          const supplierRate = Number(
-            field === "supplierRate" ? value : book.supplierRate
-          ) || 0;
 
-          const discount = Number(
-            field === "discount" ? value : book.discount
-          ) || 0;
+        const mrp = Number(updatedBook.mrp) || 0;
 
-          updatedBook.purchaseRate = (
-            supplierRate - (supplierRate * discount) / 100
-          ).toFixed(2);
+        if (field === "supplierRate" && mrp > 0) {
+          const supplierRate = Number(value) || 0;
+
+          updatedBook.discount = Number(
+            (((mrp - supplierRate) / mrp) * 100).toFixed(2)
+          );
+
+          updatedBook.purchaseRate = supplierRate.toFixed(2);
         }
+
+        if (field === "discount" && mrp > 0) {
+          const discount = Number(value) || 0;
+
+          updatedBook.supplierRate = (
+            mrp -
+            (mrp * discount) / 100
+          ).toFixed(2);
+
+          updatedBook.purchaseRate = updatedBook.supplierRate;
+        }
+
+        if (field === "mrp") {
+          const discount = Number(updatedBook.discount) || 0;
+
+          if (discount > 0) {
+            updatedBook.supplierRate = (
+              mrp -
+              (mrp * discount) / 100
+            ).toFixed(2);
+
+            updatedBook.purchaseRate = updatedBook.supplierRate;
+          }
+        }
+
         return updatedBook;
       })
     );
@@ -204,6 +230,9 @@ export default function CreatePurchase() {
             discount: Number(book.discount) || 0,
             purchaseRate: Number(book.purchaseRate) || 0,
             sellingPrice: Number(book.sellingPrice) || 0,
+            profitPerBook:
+              (Number(book.sellingPrice) || 0) -
+              (Number(book.purchaseRate) || 0),
           })),
           totalBooks,
           totalAmount: totalPurchaseAmount,
@@ -211,6 +240,7 @@ export default function CreatePurchase() {
           expectedProfit,
           paidAmount: paid,
           balanceAmount: balance,
+          paymentMethod,
         }),
       });
 
@@ -357,7 +387,6 @@ export default function CreatePurchase() {
                         "bookName",
                         e.target.value
                       )}
-                    placeholder="Book name"
                   />
                 </div>
 
@@ -399,11 +428,8 @@ export default function CreatePurchase() {
                     step="0.01"
                     value={book.mrp}
                     onChange={(e) =>
-                      updateBook(
-                        index,
-                        "mrp",
-                        e.target.value
-                      )}
+                      updateBook(index, "mrp", e.target.value)
+                    }
                     placeholder="₹"
                   />
                 </div>
@@ -416,11 +442,8 @@ export default function CreatePurchase() {
                     step="0.01"
                     value={book.supplierRate}
                     onChange={(e) =>
-                      updateBook(
-                        index,
-                        "supplierRate",
-                        e.target.value
-                      )}
+                      updateBook(index, "supplierRate", e.target.value)
+                    }
                     placeholder="₹"
                   />
                 </div>
@@ -434,11 +457,8 @@ export default function CreatePurchase() {
                     step="0.01"
                     value={book.discount}
                     onChange={(e) =>
-                      updateBook(
-                        index,
-                        "discount",
-                        e.target.value
-                      )}
+                      updateBook(index, "discount", e.target.value)
+                    }
                     placeholder="%"
                   />
                 </div>
@@ -528,24 +548,38 @@ export default function CreatePurchase() {
 
         <div className="create-purchase-section">
           <h3>Payment</h3>
+
           <div className="create-purchase-grid">
             <div className="create-purchase-field">
               <label>Paid Amount</label>
               <input
                 type="number"
                 min="0"
-                step="0.01"
+                step="0.1"
                 value={paidAmount}
-                onChange={(e) =>
-                  setPaidAmount(e.target.value)
-                }
+                onChange={(e) => setPaidAmount(e.target.value)}
                 placeholder="₹"
               />
             </div>
 
+            <div className="create-purchase-field">
+              <label>Payment Method</label>
+              <select
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                disabled={Number(paidAmount) <= 0}
+              >
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
             <div className="purchase-balance">
               <span>Balance Due</span>
-              <strong>Rs {balance.toFixed(2)}</strong>
+              <strong>₹{balance}</strong>
             </div>
           </div>
         </div>

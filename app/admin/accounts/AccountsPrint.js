@@ -22,6 +22,7 @@ const DEFAULT_SETTINGS = {
     showDebit: true,
     showCredit: true,
     showBalance: true,
+    showDue: true,
     showPageNumber: true,
     fontSize: "medium",
     footerText: "",
@@ -82,11 +83,17 @@ const COLUMNS = [
         label: "Credit",
         title: "Credit",
     },
+        {
+        key: "showDue",
+        label: "Due",
+        title: "Due",
+    },
     {
         key: "showBalance",
         label: "Balance",
         title: "Balance",
     },
+
 ];
 
 function formatDate(value) {
@@ -189,6 +196,11 @@ export default function AccountsPrint({
 
     const balance = totalCredit - totalDebit;
 
+    const totalDue = transactions.reduce(
+        (total, transaction) =>
+            total + (Number(transaction.due) || 0),
+        0
+    );
     const hasFilters =
         search ||
         fromDate ||
@@ -247,6 +259,9 @@ export default function AccountsPrint({
             if (settings.showBalance) {
                 row.push(`Rs. ${formatAmount(transaction.balance)}`);
             }
+            if (settings.showDue) {
+                row.push(`Rs. ${formatAmount(transaction.due)}`);
+            }
             return row;
         });
     };
@@ -282,6 +297,9 @@ export default function AccountsPrint({
                 }
                 if (settings.showBalance) {
                     values.push(`Rs. ${formatAmount(transaction.balance)}`);
+                }
+                if (settings.showDue) {
+                    values.push(`Rs. ${formatAmount(transaction.due)}`);
                 }
                 return values;
             }).map(
@@ -389,7 +407,7 @@ export default function AccountsPrint({
             .accounts-print-summary {
                 display: grid;
                 grid-template-columns: repeat(
-                    4,
+                    5,
                     minmax(0, 1fr)
                 );
                 gap: 6px;
@@ -545,6 +563,20 @@ export default function AccountsPrint({
                                             <span class="accounts-print-summary-value">
                                                 Rs. ${formatAmount(totalCredit)}
                                             </span>
+                                        </div>
+                                        <div className="accounts-print-summary-box">
+                                        <span className="accounts-print-summary-label">
+                                            Total Due
+                                        </span>
+                                        <span className="accounts-print-summary-value">
+                                            Rs. ${formatAmount(
+                    transactions.reduce(
+                        (total, transaction) =>
+                            total + (Number(transaction.due) || 0),
+                        0
+                    )
+                )}
+                                        </span>
                                         </div>
 
                                         <div class="accounts-print-summary-box">
@@ -736,7 +768,8 @@ export default function AccountsPrint({
                     if (
                         column.key === "showDebit" ||
                         column.key === "showCredit" ||
-                        column.key === "showBalance"
+                        column.key === "showBalance" ||
+                        column.key === "showDue"
                     ) {
                         columnStyles[index] = {
                             halign: "right",
@@ -950,6 +983,9 @@ export default function AccountsPrint({
                                     if (settings.showBalance) {
                                         values.push(`Rs. ${formatAmount(transaction.balance)}`);
                                     }
+                                    if (settings.showDue) {
+                                        values.push(`Rs. ${formatAmount(transaction.due)}`);
+                                    }
 
                                     return (
                                         <tr key={transaction._id || index}>
@@ -1007,7 +1043,7 @@ export default function AccountsPrint({
                             type="button"
                             className={
                                 activeTab === "customize"
-                                    ? "active" 
+                                    ? "active"
                                     : ""
                             }
                             onClick={() =>
@@ -1225,7 +1261,7 @@ export default function AccountsPrint({
                                                 <label key={column.key}>
                                                     <input
                                                         type="checkbox"
-                                                        checked={settings[column.key]}
+                                                        checked={Boolean(settings[column.key])}
                                                         onChange={(e) =>
                                                             updateSetting(column.key,
                                                                 e.target.checked

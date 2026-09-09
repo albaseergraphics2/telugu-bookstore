@@ -3210,6 +3210,10 @@ nav {
   padding: 10px;
 }
 
+.supplier-purchase-row-book {
+  font-size: 14px;
+}
+
 .supplier-view-grid-row {
   grid-template-columns: repeat(8, 1fr);
   gap: 10px;
@@ -4113,20 +4117,15 @@ nav {
 
 .admin-create-purchase {
   width: 100%;
-  padding: 20px;
+  padding: 10px;
   box-sizing: border-box;
 }
-
-
-/* =========================================
-   HEADER
-========================================= */
 
 .create-purchase-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .create-purchase-header h2 {
@@ -4140,19 +4139,9 @@ nav {
   font-size: 14px;
 }
 
-
-/* =========================================
-   FORM
-========================================= */
-
 .create-purchase-form {
   width: 100%;
 }
-
-
-/* =========================================
-   SECTION
-========================================= */
 
 .create-purchase-section {
   width: 100%;
@@ -4166,7 +4155,7 @@ nav {
 }
 
 .create-purchase-section h3 {
-  margin: 0 0 20px;
+  margin: 0 0 10px;
   padding-bottom: 12px;
 
   border-bottom: 1px solid #eee;
@@ -4682,8 +4671,8 @@ nav {
 ========================================= */
 
 .supplier-payment-history {
-  margin-top: 28px;
-  padding-top: 24px;
+  margin-top: 15px;
+  padding-top: 15px;
   border-top: 1px solid #e5e7eb;
 }
 
@@ -4719,7 +4708,7 @@ nav {
 
 .supplier-payment-history .supplier-purchase-row {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1.2fr 1.5fr 1.5fr;
+  grid-template-columns: 1.2fr 1fr 1.2fr 1.5fr 1.5fr !important;
   min-width: 750px;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -4754,9 +4743,9 @@ nav {
   color: #374151;
 }
 
-/* =========================================
-   MAKE PAYMENT FORM
-========================================= */
+.supplier-purchase-row.supplier-purchase-header>div {
+  padding: 10px;
+}
 
 .supplier-payment-form {
   margin-top: 24px;
@@ -5350,7 +5339,7 @@ nav {
 .accounts-table-row {
   display: grid;
   grid-template-columns:
-    1fr 1.2fr 1.3fr 1.3fr 1.2fr 1fr 1fr 1fr 1fr;
+    1fr 1fr 1.3fr 1.6fr 1.2fr 1fr 1fr 1fr 1fr;
   min-width: 900px;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -5965,11 +5954,13 @@ nav {
 }
 
 .cart-info h3 {
+  font-size: 22px;
   margin-bottom: 8px;
 }
 
 .cart-info p {
   color: #666;
+  font-size: 14px;
 }
 
 .cart-quantity {
@@ -5995,6 +5986,14 @@ nav {
   text-align: right;
   font-size: 20px;
   font-weight: 600;
+}
+
+.summary-title{
+  font-size: 26px;
+}
+
+.summary-note p {
+  font-size: 14px;
 }
 
 .price {
@@ -6260,9 +6259,9 @@ nav {
 
 
 .checkout-title {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 700;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .checkout-card {
@@ -6296,7 +6295,7 @@ nav {
 .checkout-card input,
 .checkout-card textarea {
   width: 100%;
-  padding: 12px 15px;
+  padding: 8px 10px;
   margin-bottom: 10px;
   border: 1px solid #dcdcdc;
   border-radius: 6px;
@@ -6329,7 +6328,7 @@ nav {
 
 .checkout-btn {
   width: 100%;
-  padding: 16px;
+  padding: 10px;
   background: #111;
   color: #fff;
   border: none;

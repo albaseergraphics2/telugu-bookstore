@@ -3,17 +3,11 @@ import { connectDB } from "@/app/lib/mongodb";
 import Supplier from "../../../../../models/Supplier";
 import Purchase from "../../../../../models/Purchase";
 
-
-/* =========================================
-   CREATE PURCHASE
-========================================= */
-
 export async function POST(request, { params }) {
   try {
     await connectDB();
 
     const { id } = await params;
-
     const body = await request.json();
 
     const {
@@ -26,12 +20,8 @@ export async function POST(request, { params }) {
       expectedProfit,
       paidAmount,
       balanceAmount,
+      paymentMethod,
     } = body;
-
-
-    /* =========================
-       CHECK SUPPLIER
-    ========================= */
 
     const supplier = await Supplier.findById(id);
 
@@ -44,11 +34,6 @@ export async function POST(request, { params }) {
         { status: 404 }
       );
     }
-
-
-    /* =========================
-       VALIDATION
-    ========================= */
 
     if (!purchaseDate) {
       return NextResponse.json(
@@ -70,44 +55,62 @@ export async function POST(request, { params }) {
       );
     }
 
+    let finalInvoiceNumber = String(invoiceNumber || "").trim();
 
-    /* =========================
-       CREATE PURCHASE
-    ========================= */
+    if (!finalInvoiceNumber) {
+      const latestPurchase = await Purchase.findOne({
+        invoiceNumber: { $regex: /^INV-\d+$/ },
+      })
+        .sort({ createdAt: -1 })
+        .lean();
+
+      let nextNumber = 1;
+
+      if (latestPurchase?.invoiceNumber) {
+        const match = latestPurchase.invoiceNumber.match(/^INV-(\d+)$/);
+
+        if (match) {
+          nextNumber = Number(match[1]) + 1;
+        }
+      }
+
+      finalInvoiceNumber = `INV-${String(nextNumber).padStart(3, "0")}`;
+    }
+
+    const formattedBooks = books.map((book) => {
+      const supplierRate = Number(book.supplierRate) || 0;
+      const sellingPrice = Number(book.sellingPrice) || 0;
+
+      const profitPerBook = Number(
+        (sellingPrice - supplierRate).toFixed(2)
+      );
+
+      return {
+        bookName: String(book.bookName || "").trim(),
+        isbn: String(book.isbn || "").trim(),
+        quantity: Number(book.quantity) || 0,
+        mrp: Number(book.mrp) || 0,
+        supplierRate,
+        discount: Number(book.discount) || 0,
+        purchaseRate: Number(book.purchaseRate) || 0,
+        sellingPrice,
+        profitPerBook,
+      };
+    });
 
     const purchase = await Purchase.create({
       supplier: id,
-
       purchaseDate,
-
-      invoiceNumber:
-        invoiceNumber || "",
-
-      books,
-
-      totalBooks:
-        Number(totalBooks) || 0,
-
-      totalAmount:
-        Number(totalAmount) || 0,
-
-      totalSellingValue:
-        Number(totalSellingValue) || 0,
-
-      expectedProfit:
-        Number(expectedProfit) || 0,
-
-      paidAmount:
-        Number(paidAmount) || 0,
-
-      balanceAmount:
-        Number(balanceAmount) || 0,
+      invoiceNumber: finalInvoiceNumber,
+      books: formattedBooks,
+      totalBooks: Number(totalBooks) || 0,
+      totalAmount: Number(totalAmount) || 0,
+      totalSellingValue: Number(totalSellingValue) || 0,
+      expectedProfit: Number(expectedProfit) || 0,
+      paidAmount: Number(paidAmount) || 0,
+      paidPaymentMethod: paymentMethod || "Cash",
+      balanceAmount: Number(balanceAmount) || 0,
     });
-
-
-    /* =========================
-       UPDATE SUPPLIER TOTALS
-    ========================= */
 
     supplier.totalPurchases =
       (Number(supplier.totalPurchases) || 0) +
@@ -123,11 +126,6 @@ export async function POST(request, { params }) {
 
     await supplier.save();
 
-
-    /* =========================
-       RESPONSE
-    ========================= */
-
     return NextResponse.json(
       {
         success: true,
@@ -136,20 +134,13 @@ export async function POST(request, { params }) {
       },
       { status: 201 }
     );
-
   } catch (error) {
-
-    console.error(
-      "CREATE PURCHASE ERROR:",
-      error
-    );
+    console.error("CREATE PURCHASE ERROR:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message:
-          error.message ||
-          "Failed to create purchase.",
+        message: error.message || "Failed to create purchase.",
       },
       { status: 500 }
     );
@@ -172,7 +163,6 @@ export async function GET(request, { params }) {
       success: true,
       purchases,
     });
-
   } catch (error) {
     console.error("GET PURCHASES ERROR:", error);
 

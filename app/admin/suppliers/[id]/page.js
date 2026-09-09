@@ -407,12 +407,12 @@ export default function SupplierDetails() {
 
                         <div>
                             <span>Total Paid</span>
-                            <strong>₹{supplier.totalPaid || totalPaid || 0}</strong>
+                            <strong>₹{supplier.totalPaid.toFixed(0) || totalPaid.toFixed(0) || 0}</strong>
                         </div>
 
                         <div>
                             <span>Total Balance</span>
-                            <strong>₹{supplier.totalDue || totalBalance || 0}</strong>
+                            <strong>₹{supplier.totalDue.toFixed(0) || totalBalance.toFixed(0) || 0}</strong>
                         </div>
 
                         <div>
@@ -486,8 +486,8 @@ export default function SupplierDetails() {
                                     <div>{purchase.invoiceNumber || "-"}</div>
                                     <div>{purchase.totalBooks || 0}</div>
                                     <div>₹{purchase.totalAmount || 0}</div>
-                                    <div>₹{purchase.paidAmount || 0}</div>
-                                    <div>₹{purchase.balanceAmount || 0}</div>
+                                    <div>₹{purchase.paidAmount.toFixed(0) || 0}</div>
+                                    <div>₹{purchase.balanceAmount.toFixed(0) || 0}</div>
                                     <div>
                                         <button
                                             type="button"
