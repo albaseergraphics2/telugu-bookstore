@@ -188,7 +188,10 @@ export default function PurchaseDetails() {
 
     if (loading) {
         return (
-            <div className="admin-purchase-view">Loading purchase...</div>
+            <div style={{ textAlign: "center", marginTop: "60px" }}>
+                <div className="loader"></div>
+                <p>Loading...</p>
+            </div>
         );
     }
 

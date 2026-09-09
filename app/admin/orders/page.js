@@ -449,8 +449,7 @@ export default function AdminOrders() {
                                 ? {
                                   ...o,
                                   deliveryCharge: Number(e.target.value)
-                                }
-                                : o
+                                } : o
                             )
                           );
                         }}
@@ -471,93 +470,60 @@ export default function AdminOrders() {
                       </button>
 
                     </div>
+
                     <div className="payment-section">
-                      <b>Payment</b>
-
-                      <div className="payment-summary">
-                        <div>
-                          <span>Total: </span>
-                          <strong>
-                            ₹
-                            {Number(order.totalAmount || 0) +
-                              Number(order.deliveryCharge || 0)}
-                          </strong>
-                        </div>
-
-                        {/* <div>
-                          <span>Paid: </span>
-                          <strong>₹{Number(order.paidAmount || 0)}</strong>
-                        </div> */}
-
-                        <div>
-                          <span>Due: </span>
-                          <strong>₹{Number(order.dueAmount || 0)}</strong>
-                        </div>
-                      </div>
-
-                      {Number(order.dueAmount || 0) <= 0 ? (
-                        <>
-                          {order.paymentHistory?.length > 0 && (
-                            <div className="payment-received-details">
-
-                              {order.paymentHistory.map((payment, index) => (
-                                <div
-                                  className="payment-received-row"
-                                  key={index}
-                                >
-                                  <div>
-                                    <span>Payment Date</span>
-                                    <strong>
-                                      {payment.paidAt
-                                        ? new Date(payment.paidAt).toLocaleDateString(
-                                          "en-IN",
-                                          {
-                                            day: "2-digit",
-                                            month: "2-digit",
-                                            year: "numeric",
-                                          }
-                                        )
-                                        : "—"}
-                                    </strong>
-                                  </div>
-
-                                  <div>
-                                    <span>Payment Method</span>
-                                    <strong>
-                                      {payment.paymentMethod || "—"}
-                                    </strong>
-                                  </div>
-
-                                  <div>
-                                    <span>Paid</span>
-                                    <strong>
-                                      ₹{Number(payment.amount || 0)}
-                                    </strong>
-                                  </div>
-
-                                  {(payment.paymentMethod === "UPI" ||
-                                    payment.paymentMethod === "Bank Transfer") &&
-                                    payment.utrNumber && (
-                                      <div>
-                                        <span>UTR / Reference</span>
-                                        <strong>
-                                          {payment.utrNumber}
-                                        </strong>
-                                      </div>
-                                    )}
+                      <b>Payments</b>
+                      {order.paymentHistory?.length > 0 && (
+                        <div className="payment-history-section">
+                          <div className="payment-received-details">
+                            {order.paymentHistory.map((payment, index) => (
+                              <div
+                                className="payment-received-row"
+                                key={index}
+                              >
+                                <div>
+                                  <span>Payment Date</span>
+                                  <strong>
+                                    {payment.paidAt
+                                      ? new Date(payment.paidAt).toLocaleDateString(
+                                        "en-IN", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                      }) : "—"}
+                                  </strong>
                                 </div>
-                              ))}
 
+                                <div>
+                                  <span>Payment Method</span>
+                                  <strong>{payment.paymentMethod || "—"}</strong>
+                                </div>
+
+                                <div>
+                                  <span>Paid</span>
+                                  <strong>₹{Number(payment.amount || 0)}</strong>
+                                </div>
+
+                                {(payment.paymentMethod === "UPI" ||
+                                  payment.paymentMethod === "Bank Transfer") &&
+                                  payment.utrNumber && (
+                                    <div>
+                                      <span>UTR / Reference</span>
+                                      <strong>{payment.utrNumber}</strong>
+                                    </div>
+                                  )}
+                              </div>
+                            ))}
+                            <div>
+                              <span>Due: </span>
+                              <strong>₹{Number(order.dueAmount || 0)}</strong>
                             </div>
-                          )}
-
-                          <div className="payment-paid">
-                            Paid
                           </div>
-                        </>
-                      ) : (
-                        <>
+                        </div>
+                      )}
 
+                      {Number(order.dueAmount || 0) > 0 ? (
+                        <div className="receive-payment-section">
                           <input
                             className="delivery-input"
                             type="date"
@@ -572,10 +538,8 @@ export default function AdminOrders() {
                                     ? {
                                       ...o,
                                       newPaymentDate: e.target.value,
-                                    }
-                                    : o
-                                )
-                              );
+                                    } : o
+                                ));
                             }}
                           />
 
@@ -589,18 +553,14 @@ export default function AdminOrders() {
                                     ? {
                                       ...o,
                                       newPaymentMethod: e.target.value,
-                                    }
-                                    : o
-                                )
-                              );
+                                    } : o
+                                ));
                             }}
                           >
                             <option value="">Payment Method</option>
                             <option value="Cash">Cash</option>
                             <option value="UPI">UPI</option>
-                            <option value="Bank Transfer">
-                              Bank Transfer
-                            </option>
+                            <option value="Bank Transfer">Bank Transfer</option>
                             <option value="Card">Card</option>
                           </select>
 
@@ -618,10 +578,8 @@ export default function AdminOrders() {
                                     ? {
                                       ...o,
                                       newPaymentAmount: e.target.value,
-                                    }
-                                    : o
-                                )
-                              );
+                                    } : o
+                                ));
                             }}
                           />
 
@@ -639,10 +597,8 @@ export default function AdminOrders() {
                                         ? {
                                           ...o,
                                           newPaymentUtr: e.target.value,
-                                        }
-                                        : o
-                                    )
-                                  );
+                                        } : o
+                                    ));
                                 }}
                               />
                             )}
@@ -657,15 +613,15 @@ export default function AdminOrders() {
                                 order.newPaymentMethod,
                                 order.newPaymentUtr,
                                 order.newPaymentDate
-                              )
-                            }
+                              )}
                           >
                             Receive Payment
                           </button>
-                        </>
+                        </div>
+                      ) : (
+                        <div className="payment-paid">Paid</div>
                       )}
                     </div>
-
                   </div>
                 </div>
 
@@ -680,8 +636,7 @@ export default function AdminOrders() {
                             "Completed",
                             order.deliveryType,
                             order.deliveryCharge
-                          )
-                        }
+                          )}
                       >
                         Complete
                       </button>
@@ -693,8 +648,7 @@ export default function AdminOrders() {
                             "Pending",
                             order.deliveryType,
                             order.deliveryCharge
-                          )
-                        }
+                          )}
                       >
                         Pending
                       </button>
@@ -706,8 +660,7 @@ export default function AdminOrders() {
                             "Shipped",
                             order.deliveryType,
                             order.deliveryCharge
-                          )
-                        }
+                          )}
                       >
                         Shipped
                       </button>
@@ -719,8 +672,7 @@ export default function AdminOrders() {
                             "Cancelled",
                             order.deliveryType,
                             order.deliveryCharge
-                          )
-                        }
+                          )}
                       >
                         Cancel
                       </button>
@@ -770,8 +722,7 @@ export default function AdminOrders() {
                               o._id === order._id
                                 ? { ...o, deliveryType: e.target.value }
                                 : o
-                            )
-                          );
+                            ));
                         }}
                       />
 
@@ -786,8 +737,7 @@ export default function AdminOrders() {
                               o._id === order._id
                                 ? { ...o, deliveryCharge: Number(e.target.value) }
                                 : o
-                            )
-                          );
+                            ));
                         }}
                       />
                     </div>
@@ -835,6 +785,157 @@ export default function AdminOrders() {
                   </div>
                 </div>
 
+                <div className="payment-section">
+                  <b>Payments</b>
+                  {order.paymentHistory?.length > 0 && (
+                    <div className="payment-history-section">
+                      <div className="payment-received-details">
+                        {order.paymentHistory.map((payment, index) => (
+                          <div
+                            className="payment-received-row"
+                            key={index}
+                          >
+                            <div>
+                              <span>Payment Date</span>
+                              <strong>
+                                {payment.paidAt
+                                  ? new Date(payment.paidAt).toLocaleDateString("en-IN", {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric",
+                                  }) : "—"}
+                              </strong>
+                            </div>
+
+                            <div>
+                              <span>Payment Method</span>
+                              <strong>{payment.paymentMethod || "—"}</strong>
+                            </div>
+
+                            <div>
+                              <span>Paid</span>
+                              <strong>₹{Number(payment.amount || 0)}</strong>
+                            </div>
+
+                            {(payment.paymentMethod === "UPI" ||
+                              payment.paymentMethod === "Bank Transfer") &&
+                              payment.utrNumber && (
+                                <div>
+                                  <span>UTR / Reference</span>
+                                  <strong>{payment.utrNumber}</strong>
+                                </div>
+                              )}
+                          </div>
+                        ))}
+                        <div>
+                          <span>Due: </span>
+                          <strong>₹{Number(order.dueAmount || 0)}</strong>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {Number(order.dueAmount || 0) > 0 ? (
+                    <div className="receive-payment-section">
+                      <input
+                        className="delivery-input"
+                        type="date"
+                        value={
+                          order.newPaymentDate ||
+                          new Date().toISOString().split("T")[0]
+                        }
+                        onChange={(e) => {
+                          setOrders((prev) =>
+                            prev.map((o) =>
+                              o._id === order._id
+                                ? {
+                                  ...o,
+                                  newPaymentDate: e.target.value,
+                                } : o
+                            ));
+                        }}
+                      />
+
+                      <select
+                        className="delivery-input"
+                        value={order.newPaymentMethod || ""}
+                        onChange={(e) => {
+                          setOrders((prev) =>
+                            prev.map((o) =>
+                              o._id === order._id
+                                ? {
+                                  ...o,
+                                  newPaymentMethod: e.target.value,
+                                } : o
+                            ));
+                        }}
+                      >
+                        <option value="">Payment Method</option>
+                        <option value="Cash">Cash</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Card">Card</option>
+                      </select>
+
+                      <input
+                        className="delivery-input"
+                        type="number"
+                        min="0"
+                        max={Number(order.dueAmount || 0)}
+                        placeholder="Payment Amount"
+                        value={order.newPaymentAmount ?? ""}
+                        onChange={(e) => {
+                          setOrders((prev) =>
+                            prev.map((o) =>
+                              o._id === order._id
+                                ? {
+                                  ...o,
+                                  newPaymentAmount: e.target.value,
+                                } : o
+                            ));
+                        }}
+                      />
+
+                      {(order.newPaymentMethod === "UPI" ||
+                        order.newPaymentMethod === "Bank Transfer") && (
+                          <input
+                            className="delivery-input"
+                            type="text"
+                            placeholder="UTR / Reference Number"
+                            value={order.newPaymentUtr || ""}
+                            onChange={(e) => {
+                              setOrders((prev) =>
+                                prev.map((o) =>
+                                  o._id === order._id
+                                    ? {
+                                      ...o,
+                                      newPaymentUtr: e.target.value,
+                                    } : o
+                                ));
+                            }}
+                          />
+                        )}
+
+                      <button
+                        type="button"
+                        className="save-delivery-btn"
+                        onClick={() =>
+                          receivePayment(
+                            order._id,
+                            order.newPaymentAmount,
+                            order.newPaymentMethod,
+                            order.newPaymentUtr,
+                            order.newPaymentDate
+                          )}
+                      >
+                        Receive Payment
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="payment-paid">Paid</div>
+                  )}
+                </div>
+
                 <div className="admin-Status-mobile">
                   <p><b>Status: </b>{order.status}</p>
                   <div className="order-actions">
@@ -845,8 +946,7 @@ export default function AdminOrders() {
                           "Completed",
                           order.deliveryType,
                           order.deliveryCharge
-                        )
-                      }
+                        )}
                     >
                       Complete
                     </button>
@@ -858,8 +958,7 @@ export default function AdminOrders() {
                           "Pending",
                           order.deliveryType,
                           order.deliveryCharge
-                        )
-                      }
+                        )}
                     >
                       Pending
                     </button>
@@ -871,8 +970,7 @@ export default function AdminOrders() {
                           "Shipped",
                           order.deliveryType,
                           order.deliveryCharge
-                        )
-                      }
+                        )}
                     >
                       Shipped
                     </button>
@@ -884,8 +982,7 @@ export default function AdminOrders() {
                           "Cancelled",
                           order.deliveryType,
                           order.deliveryCharge
-                        )
-                      }
+                        )}
                     >
                       Cancel
                     </button>
@@ -919,8 +1016,7 @@ export default function AdminOrders() {
             </button>
           </div>
         </>
-      )
-      }
+      )}
     </div >
   );
 }

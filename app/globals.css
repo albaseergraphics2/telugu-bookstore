@@ -1836,7 +1836,7 @@ nav {
 }
 
 .payment-received-details {
-  margin-top: 12px;
+  margin-top: 4px;
   padding: 12px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -1845,8 +1845,9 @@ nav {
 
 .payment-received-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
+  margin-bottom: 10px;
 }
 
 .payment-received-row-offline {
@@ -1870,6 +1871,7 @@ nav {
 .payment-received-row strong {
   font-size: 14px;
   color: #111827;
+  font-weight: 500;
 }
 
 .payment-paid {
@@ -1885,7 +1887,8 @@ nav {
 
 @media (max-width: 768px) {
   .payment-received-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1.3fr 1fr !important;
+    margin-bottom: 8px !important;
     gap: 8px;
   }
 }
@@ -2181,7 +2184,11 @@ nav {
 
 
 .deliverybox {
-  width: 60%;
+  width: 40% !important;
+}
+
+.payment-section {
+  width: 100%;
 }
 
 /* admin users order list*/
@@ -2415,7 +2422,7 @@ nav {
 .admin-box {
   display: flex;
   justify-content: space-between;
-  gap: 30px;
+  gap: 20px;
 }
 
 .admin-invoice1 {
@@ -5988,7 +5995,7 @@ nav {
   font-weight: 600;
 }
 
-.summary-title{
+.summary-title {
   font-size: 26px;
 }
 
@@ -7917,12 +7924,9 @@ nav {
     text-align: left;
   }
 
-  /* .cart-btn {
-    width: 100%;
-    max-width: 480px;
-    margin: 15px 0 0;
-    display: block;
-  } */
+  .statusadmin {
+    margin-top: 10px !important;
+  }
 
   .book-stock-badge {
     display: inline-block;

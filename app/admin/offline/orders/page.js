@@ -61,9 +61,17 @@ export default function OfflineOrders() {
                         Number(deliveryCharge) || 0,
                 }),
             });
-            const data = await res.json();
+
+            const text = await res.text();
+            let data = {};
+            try {
+                data = text ? JSON.parse(text) : {};
+            } catch {
+                throw new Error(`Invalid server response (${res.status})`);
+            }
+
             if (!res.ok || !data.success) {
-                throw new Error(data.message || "Failed to update order");
+                throw new Error(data.message || `Failed to update order (${res.status})`);
             }
 
             setOrders((prev) =>
@@ -75,8 +83,7 @@ export default function OfflineOrders() {
                             deliveryType,
                             deliveryCharge: Number(deliveryCharge) || 0,
                         } : order
-                )
-            );
+                ));
             toast.success("Order updated successfully", { id: toastId, });
         } catch (error) {
             console.error("UPDATE ORDER ERROR:", error);
@@ -179,7 +186,6 @@ export default function OfflineOrders() {
 
         printWindow.document.close();
         printWindow.focus();
-
         setTimeout(() => {
             printWindow.print();
         }, 300);
@@ -227,8 +233,7 @@ export default function OfflineOrders() {
 
             const status = order.status?.toLowerCase();
 
-            if (
-                [
+            if ([
                     "pending",
                     "shipped",
                     "completed",
@@ -241,24 +246,17 @@ export default function OfflineOrders() {
                     return false;
                 }
             }
-
             return true;
         })
         .sort((a, b) => {
             if (orderFilter === "newest") {
-                return (
-                    new Date(b.createdAt) - new Date(a.createdAt)
-                );
+                return (new Date(b.createdAt) - new Date(a.createdAt));
             }
-
             if (orderFilter === "oldest") {
-                return (
-                    new Date(a.createdAt) - new Date(b.createdAt)
-                );
+                return (new Date(a.createdAt) - new Date(b.createdAt));
             }
             const totalA = Number(a.totalAmount) || 0;
             const totalB = Number(b.totalAmount) || 0;
-
             if (orderFilter === "high-amount") {
                 return totalB - totalA;
             }
@@ -481,7 +479,6 @@ export default function OfflineOrders() {
                         boxSizing: "border-box",
                     }}
                 >
-
                     <p
                         style={{
                             margin: 0,
@@ -583,101 +580,75 @@ export default function OfflineOrders() {
                                             </div>
                                         </div>
                                         <div className="payment-section">
-                                            <b>Payment</b>
-                                            <div className="payment-summary">
-                                                <div>
-                                                    <span>Total: </span>
-                                                    <strong>₹{(
-                                                            Number(order.totalAmount || 0) +
-                                                            Number(order.deliveryCharge || 0)
-                                                        )}
-                                                    </strong>
-                                                </div>
-                                                <div>
-                                                    <span>Due: </span>
-                                                    <strong>
-                                                        ₹{Number(order.dueAmount || 0)}
-                                                    </strong>
-                                                </div>
-                                            </div>
-                                            {Number(order.dueAmount || 0) <= 0 ? (
-                                                <>
-                                                    {order.paymentHistory?.length > 0 && (
-                                                        <div className="payment-received-details">
-
-                                                            {order.paymentHistory.map((payment, index) => (
-                                                                <div
-                                                                    className="payment-received-row-offline"
-                                                                    key={index}
-                                                                >
-                                                                    <div>
-                                                                        <span>Payment Date</span>
-                                                                        <strong>
-                                                                            {payment.paidAt
-                                                                                ? new Date(
-                                                                                    payment.paidAt
-                                                                                ).toLocaleDateString(
-                                                                                    "en-IN",
-                                                                                    {
-                                                                                        day: "2-digit",
-                                                                                        month: "2-digit",
-                                                                                        year: "numeric",
-                                                                                    }
-                                                                                )
-                                                                                : "—"}
-                                                                        </strong>
-                                                                    </div>
-
-                                                                    <div>
-                                                                        <span>Payment Method</span>
-                                                                        <strong>
-                                                                            {payment.paymentMethod || "—"}
-                                                                        </strong>
-                                                                    </div>
-
-                                                                    <div>
-                                                                        <span>Paid</span>
-                                                                        <strong>
-                                                                            ₹
-                                                                            {Number(
-                                                                                payment.amount || 0
-                                                                            )}
-                                                                        </strong>
-                                                                    </div>
-
-                                                                    {(payment.paymentMethod === "UPI" ||
-                                                                        payment.paymentMethod ===
-                                                                        "Bank Transfer") &&
-                                                                        payment.utrNumber && (
-                                                                            <div>
-                                                                                <span>
-                                                                                    UTR / Reference
-                                                                                </span>
-                                                                                <strong>
-                                                                                    {payment.utrNumber}
-                                                                                </strong>
-                                                                            </div>
-                                                                        )}
+                                            <b>Payments</b>
+                                            {order.paymentHistory?.length > 0 && (
+                                                <div className="payment-history-section">
+                                                    <div className="payment-received-details">
+                                                        {order.paymentHistory.map((payment, index) => (
+                                                            <div
+                                                                className="payment-received-row"
+                                                                key={index}
+                                                            >
+                                                                <div>
+                                                                    <span>Payment Date</span>
+                                                                    <strong>
+                                                                        {payment.paidAt
+                                                                            ? new Date(payment.paidAt).toLocaleDateString(
+                                                                                "en-IN",
+                                                                                {
+                                                                                    day: "2-digit",
+                                                                                    month: "2-digit",
+                                                                                    year: "numeric",
+                                                                                }
+                                                                            )
+                                                                            : "—"}
+                                                                    </strong>
                                                                 </div>
-                                                            ))}
 
+                                                                <div>
+                                                                    <span>Payment Method</span>
+                                                                    <strong>
+                                                                        {payment.paymentMethod || "—"}
+                                                                    </strong>
+                                                                </div>
+
+                                                                <div>
+                                                                    <span>Paid</span>
+                                                                    <strong>
+                                                                        ₹{Number(payment.amount || 0)}
+                                                                    </strong>
+                                                                </div>
+
+                                                                {(payment.paymentMethod === "UPI" ||
+                                                                    payment.paymentMethod === "Bank Transfer") &&
+                                                                    payment.utrNumber && (
+                                                                        <div>
+                                                                            <span>UTR / Reference</span>
+                                                                            <strong>
+                                                                                {payment.utrNumber}
+                                                                            </strong>
+                                                                        </div>
+                                                                    )}
+                                                            </div>
+                                                        ))}
+                                                        <div>
+                                                            <span>Due: </span>
+                                                            <strong>₹{Number(order.dueAmount || 0)}</strong>
                                                         </div>
-                                                    )}
-
-                                                    <div className="payment-paid">
-                                                        Paid
                                                     </div>
-                                                </>
-                                            ) : (
-                                                <>
+                                                </div>
+                                            )}
+
+                                            {Number(order.dueAmount || 0) > 0 ? (
+                                                <div className="receive-payment-section">
+                                                    <b>Receive Payment</b>
+
                                                     <input
                                                         className="delivery-input"
                                                         type="date"
                                                         value={
                                                             order.newPaymentDate ||
-                                                            new Date()
-                                                                .toISOString()
-                                                                .split("T")[0]
+                                                            new Date().toISOString().split("T")[0]
                                                         }
                                                         onChange={(e) => {
                                                             setOrders((prev) =>
@@ -685,8 +656,7 @@ export default function OfflineOrders() {
                                                                     o._id === order._id
                                                                         ? {
                                                                             ...o,
-                                                                            newPaymentDate:
-                                                                                e.target.value,
+                                                                            newPaymentDate: e.target.value,
                                                                         }
                                                                         : o
                                                                 )
@@ -696,63 +666,43 @@ export default function OfflineOrders() {
 
                                                     <select
                                                         className="delivery-input"
-                                                        value={
-                                                            order.newPaymentMethod || ""
-                                                        }
+                                                        value={order.newPaymentMethod || ""}
                                                         onChange={(e) => {
                                                             setOrders((prev) =>
                                                                 prev.map((o) =>
                                                                     o._id === order._id
                                                                         ? {
                                                                             ...o,
-                                                                            newPaymentMethod:
-                                                                                e.target.value,
+                                                                            newPaymentMethod: e.target.value,
                                                                         }
                                                                         : o
                                                                 )
                                                             );
                                                         }}
                                                     >
-                                                        <option value="">
-                                                            Payment Method
-                                                        </option>
-
-                                                        <option value="Cash">
-                                                            Cash
-                                                        </option>
-
-                                                        <option value="UPI">
-                                                            UPI
-                                                        </option>
-
+                                                        <option value="">Payment Method</option>
+                                                        <option value="Cash">Cash</option>
+                                                        <option value="UPI">UPI</option>
                                                         <option value="Bank Transfer">
                                                             Bank Transfer
                                                         </option>
-
-                                                        <option value="Card">
-                                                            Card
-                                                        </option>
+                                                        <option value="Card">Card</option>
                                                     </select>
 
                                                     <input
                                                         className="delivery-input"
                                                         type="number"
                                                         min="0"
-                                                        max={Number(
-                                                            order.dueAmount || 0
-                                                        )}
+                                                        max={Number(order.dueAmount || 0)}
                                                         placeholder="Payment Amount"
-                                                        value={
-                                                            order.newPaymentAmount ?? ""
-                                                        }
+                                                        value={order.newPaymentAmount ?? ""}
                                                         onChange={(e) => {
                                                             setOrders((prev) =>
                                                                 prev.map((o) =>
                                                                     o._id === order._id
                                                                         ? {
                                                                             ...o,
-                                                                            newPaymentAmount:
-                                                                                e.target.value,
+                                                                            newPaymentAmount: e.target.value,
                                                                         }
                                                                         : o
                                                                 )
@@ -761,23 +711,19 @@ export default function OfflineOrders() {
                                                     />
 
                                                     {(order.newPaymentMethod === "UPI" ||
-                                                        order.newPaymentMethod ===
-                                                        "Bank Transfer") && (
+                                                        order.newPaymentMethod === "Bank Transfer") && (
                                                             <input
                                                                 className="delivery-input"
                                                                 type="text"
                                                                 placeholder="UTR / Reference Number"
-                                                                value={
-                                                                    order.newPaymentUtr || ""
-                                                                }
+                                                                value={order.newPaymentUtr || ""}
                                                                 onChange={(e) => {
                                                                     setOrders((prev) =>
                                                                         prev.map((o) =>
                                                                             o._id === order._id
                                                                                 ? {
                                                                                     ...o,
-                                                                                    newPaymentUtr:
-                                                                                        e.target.value,
+                                                                                    newPaymentUtr: e.target.value,
                                                                                 }
                                                                                 : o
                                                                         )
@@ -801,7 +747,11 @@ export default function OfflineOrders() {
                                                     >
                                                         Receive Payment
                                                     </button>
-                                                </>
+                                                </div>
+                                            ) : (
+                                                <div className="payment-paid">
+                                                    Paid
+                                                </div>
                                             )}
                                         </div>
                                     </div>
@@ -810,20 +760,6 @@ export default function OfflineOrders() {
                                             <b>Status:</b>{" "}
                                             {order.status || "-"}
                                         </p>
-                                        <p>
-                                            <b>Payment:</b>{" "}
-                                            {order.paymentMethod || "-"}
-                                        </p>
-                                        <p>
-                                            <b>Payment Status:</b>{" "}
-                                            {order.paymentStatus || "-"}
-                                        </p>
-                                        {order.utrNumber && (
-                                            <p>
-                                                <b>UTR:</b>{" "}
-                                                {order.utrNumber}
-                                            </p>
-                                        )}
                                         <div className="admin-box">
                                             <div className="order-actions">
                                                 <button
@@ -978,8 +914,7 @@ export default function OfflineOrders() {
                                                                                 deliveryType:
                                                                                     e.target.value,
                                                                             } : o
-                                                                )
-                                                        );
+                                                                ));
                                                     }}
                                                 />
                                                 <input
@@ -1002,8 +937,7 @@ export default function OfflineOrders() {
                                                                                         e.target.value
                                                                                     ) || 0,
                                                                             } : o
-                                                                )
-                                                        );
+                                                                ));
                                                     }}
                                                 />
                                             </div>
@@ -1058,24 +992,165 @@ export default function OfflineOrders() {
                                     </div>
 
                                     <div className="admin-Status-mobile">
+                                        <div className="payment-section">
+                                            <b>Payments</b>
+                                            {order.paymentHistory?.length > 0 && (
+                                                <div className="payment-history-section">
+                                                    <div className="payment-received-details">
+                                                        {order.paymentHistory.map((payment, index) => (
+                                                            <div
+                                                                className="payment-received-row"
+                                                                key={index}
+                                                            >
+                                                                <div>
+                                                                    <span>Payment Date</span>
+                                                                    <strong>
+                                                                        {payment.paidAt
+                                                                            ? new Date(payment.paidAt).toLocaleDateString(
+                                                                                "en-IN",{
+                                                                                    day: "2-digit",
+                                                                                    month: "2-digit",
+                                                                                    year: "numeric",
+                                                                                }): "—"}
+                                                                    </strong>
+                                                                </div>
+
+                                                                <div>
+                                                                    <span>Payment Method</span>
+                                                                    <strong>{payment.paymentMethod || "—"}</strong>
+                                                                </div>
+
+                                                                <div>
+                                                                    <span>Paid</span>
+                                                                    <strong>₹{Number(payment.amount || 0)}</strong>
+                                                                </div>
+
+                                                                {(payment.paymentMethod === "UPI" ||
+                                                                    payment.paymentMethod === "Bank Transfer") &&
+                                                                    payment.utrNumber && (
+                                                                        <div>
+                                                                            <span>UTR / Reference</span>
+                                                                            <strong>{payment.utrNumber}</strong>
+                                                                        </div>
+                                                                    )}
+                                                            </div>
+                                                        ))}
+                                                        <div>
+                                                            <span>Due: </span>
+                                                            <strong>₹{Number(order.dueAmount || 0)}</strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {Number(order.dueAmount || 0) > 0 ? (
+                                                <div className="receive-payment-section">
+                                                    <b>Receive Payment</b>
+                                                    <input
+                                                        className="delivery-input"
+                                                        type="date"
+                                                        value={
+                                                            order.newPaymentDate ||
+                                                            new Date().toISOString().split("T")[0]
+                                                        }
+                                                        onChange={(e) => {
+                                                            setOrders((prev) =>
+                                                                prev.map((o) =>
+                                                                    o._id === order._id
+                                                                        ? {
+                                                                            ...o,
+                                                                            newPaymentDate: e.target.value,
+                                                                        }: o
+                                                                ));
+                                                        }}
+                                                    />
+
+                                                    <select
+                                                        className="delivery-input"
+                                                        value={order.newPaymentMethod || ""}
+                                                        onChange={(e) => {
+                                                            setOrders((prev) =>
+                                                                prev.map((o) =>
+                                                                    o._id === order._id
+                                                                        ? {
+                                                                            ...o,
+                                                                            newPaymentMethod: e.target.value,
+                                                                        }: o
+                                                                ));
+                                                        }}
+                                                    >
+                                                        <option value="">Payment Method</option>
+                                                        <option value="Cash">Cash</option>
+                                                        <option value="UPI">UPI</option>
+                                                        <option value="Bank Transfer">Bank Transfer</option>
+                                                        <option value="Card">Card</option>
+                                                    </select>
+
+                                                    <input
+                                                        className="delivery-input"
+                                                        type="number"
+                                                        min="0"
+                                                        max={Number(order.dueAmount || 0)}
+                                                        placeholder="Payment Amount"
+                                                        value={order.newPaymentAmount ?? ""}
+                                                        onChange={(e) => {
+                                                            setOrders((prev) =>
+                                                                prev.map((o) =>
+                                                                    o._id === order._id
+                                                                        ? {
+                                                                            ...o,
+                                                                            newPaymentAmount: e.target.value,
+                                                                        }: o
+                                                                ));
+                                                        }}
+                                                    />
+
+                                                    {(order.newPaymentMethod === "UPI" ||
+                                                        order.newPaymentMethod === "Bank Transfer") && (
+                                                            <input
+                                                                className="delivery-input"
+                                                                type="text"
+                                                                placeholder="UTR / Reference Number"
+                                                                value={order.newPaymentUtr || ""}
+                                                                onChange={(e) => {
+                                                                    setOrders((prev) =>
+                                                                        prev.map((o) =>
+                                                                            o._id === order._id
+                                                                                ? {
+                                                                                    ...o,
+                                                                                    newPaymentUtr: e.target.value,
+                                                                                }: o
+                                                                        ));
+                                                                }}
+                                                            />
+                                                        )}
+
+                                                    <button
+                                                        type="button"
+                                                        className="save-delivery-btn"
+                                                        onClick={() =>
+                                                            receivePayment(
+                                                                order._id,
+                                                                order.newPaymentAmount,
+                                                                order.newPaymentMethod,
+                                                                order.newPaymentUtr,
+                                                                order.newPaymentDate
+                                                            )
+                                                        }
+                                                    >
+                                                        Receive Payment
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <div className="payment-paid">Paid</div>
+                                            )}
+                                        </div>
+
                                         <p className="statusadmin">
                                             <b>Status:</b>{" "}
                                             {order.status || "-"}
                                         </p>
-                                        <p>
-                                            <b>Payment:</b>{" "}
-                                            {order.paymentMethod || "-"}
-                                        </p>
-                                        <p>
-                                            <b>Payment Status:</b>{" "}
-                                            {order.paymentStatus || "-"}
-                                        </p>
-                                        {order.utrNumber && (
-                                            <p>
-                                                <b>UTR:</b>{" "}
-                                                {order.utrNumber}
-                                            </p>
-                                        )}
+
                                         <div className="admin-box">
                                             <div className="order-actions">
                                                 <button
@@ -1086,8 +1161,7 @@ export default function OfflineOrders() {
                                                             "completed",
                                                             order.deliveryType,
                                                             order.deliveryCharge
-                                                        )
-                                                    }
+                                                        )}
                                                 >
                                                     Complete
                                                 </button>
@@ -1099,8 +1173,7 @@ export default function OfflineOrders() {
                                                             "pending",
                                                             order.deliveryType,
                                                             order.deliveryCharge
-                                                        )
-                                                    }
+                                                        )}
                                                 >
                                                     Pending
                                                 </button>
@@ -1112,8 +1185,7 @@ export default function OfflineOrders() {
                                                             "shipped",
                                                             order.deliveryType,
                                                             order.deliveryCharge
-                                                        )
-                                                    }
+                                                        )}
                                                 >
                                                     Shipped
                                                 </button>
@@ -1125,8 +1197,7 @@ export default function OfflineOrders() {
                                                             "cancelled",
                                                             order.deliveryType,
                                                             order.deliveryCharge
-                                                        )
-                                                    }
+                                                        )}
                                                 >
                                                     Cancel
                                                 </button>
@@ -1135,9 +1206,7 @@ export default function OfflineOrders() {
                                     </div>
                                     <div className="admin-invoice-btns">
                                         <Link href={`/invoice-admin/${order._id}`}>
-                                            <button type="button">
-                                                View Invoice
-                                            </button>
+                                            <button type="button">View Invoice</button>
                                         </Link>
 
                                         <button

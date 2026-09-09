@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import useRealtime from "../../../hooks/useRealtime";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { FaTrash } from "react-icons/fa";
 
 export default function SupplierDetails() {
     const params = useParams();
@@ -287,12 +289,12 @@ export default function SupplierDetails() {
 
                                         <button
                                             type="button"
-                                            onClick={() =>
-                                                handleDeletePurchase(purchase._id)
-                                            }
+                                            onClick={() => handleDeletePurchase(purchase._id)}
                                             className="supplier-delete-btn"
+                                            title="Delete"
                                         >
-                                            Delete
+                                            {/* <RiDeleteBin6Line /> */}
+                                            <FaTrash />
                                         </button>
                                     </div>
                                 </div>

@@ -15,9 +15,7 @@ export async function GET() {
         return NextResponse.json({ success: true, orders, });
     } catch (error) {
         console.error("GET OFFLINE ORDERS ERROR:", error);
-
-        return NextResponse.json(
-            {
+        return NextResponse.json({
                 success: false,
                 message: "Failed to fetch offline orders.",
                 error: error.message,
@@ -309,6 +307,85 @@ export async function POST(req) {
             success: false,
             message: error.message || "Failed to create offline order.",
         }, { status: 500 }
+        );
+    }
+}
+
+export async function PUT(req) {
+    try {
+        await connectDB();
+        const body = await req.json();
+        const {
+            id,
+            status,
+            deliveryType,
+            deliveryCharge,
+        } = body;
+
+        if (!id) {
+            return NextResponse.json({
+                    success: false,
+                    message: "Order ID is required.",
+                },{ status: 400 }
+            );
+        }
+
+        const order = await Order.findOne({
+            _id: id,
+            orderSource: "offline",
+        });
+
+        if (!order) {
+            return NextResponse.json({
+                    success: false,
+                    message: "Offline order not found.",
+                },{ status: 404 }
+            );
+        }
+
+        if (status !== undefined) {
+            order.status = status;
+        }
+
+        if (deliveryType !== undefined) {
+            order.deliveryType = deliveryType;
+        }
+
+        if (deliveryCharge !== undefined) {
+            const newDeliveryCharge = Number(deliveryCharge) || 0;
+            const oldDeliveryCharge = Number(order.deliveryCharge) || 0;
+            const oldTotalAmount = Number(order.totalAmount) || 0;
+            const subtotal = oldTotalAmount - oldDeliveryCharge;
+            const newTotalAmount = subtotal + newDeliveryCharge;
+            const paidAmount = Number(order.paidAmount) || 0;
+            order.deliveryCharge = newDeliveryCharge;
+            order.totalAmount = newTotalAmount;
+            order.dueAmount = Math.max(0,newTotalAmount - paidAmount);
+
+            if (order.dueAmount === 0) {
+                order.paymentStatus = "Paid";
+            } else if (paidAmount > 0) {
+                order.paymentStatus = "Partial";
+            } else {
+                order.paymentStatus = "Pending";
+            }
+        }
+        await order.save();
+        const populatedOrder = await Order.findById(
+            order._id
+        ).populate("items.bookId");
+
+        return NextResponse.json({
+            success: true,
+            message: "Offline order updated successfully.",
+            order: populatedOrder,
+        });
+    } catch (error) {
+        console.error("UPDATE OFFLINE ORDER ERROR:", error);
+        return NextResponse.json({
+                success: false,
+                message: error.message ||"Failed to update offline order.",
+            },{ status: 500 }
         );
     }
 }
