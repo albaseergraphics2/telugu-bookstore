@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 export default function OfflineCustomerOrdersPage() {
-    const { id } = useParams();
+    const { name } = useParams();
     const router = useRouter();
 
     const [orders, setOrders] = useState([]);
@@ -19,7 +19,7 @@ export default function OfflineCustomerOrdersPage() {
         const fetchData = async () => {
             try {
                 const ordersRes = await fetch(
-                    `/api/admin/offline/customers/${id}/orders`
+                    `/api/admin/online/customers/${encodeURIComponent(name)}/orders`
                 );
 
                 const ordersData = await ordersRes.json();
@@ -38,10 +38,10 @@ export default function OfflineCustomerOrdersPage() {
             }
         };
 
-        if (id) {
+        if (name) {
             fetchData();
         }
-    }, [id]);
+    }, [name]);
 
     const indexOfLastOrder =
         currentPage * ordersPerPage;
@@ -74,7 +74,7 @@ export default function OfflineCustomerOrdersPage() {
 
     return (
         <div className="admin-user-orders">
-            <Link href="/admin/offline/customers" className="back-home">
+            <Link href="/admin/online/customers" className="back-home">
                 ← Back to Customers
             </Link>
 
@@ -175,7 +175,9 @@ export default function OfflineCustomerOrdersPage() {
 
                                     <div>
                                         <Link
-                                            href={`/invoice-admin/${order._id}`}
+                                            href={`/admin/online/customers/${encodeURIComponent(
+                                                name
+                                            )}/orders/${order.invoiceId}`}
                                         >
                                             <button className="user-order-invoice-btn">
                                                 View Invoice
@@ -285,7 +287,9 @@ export default function OfflineCustomerOrdersPage() {
 
                                     <div className="mobile-order-invoice">
                                         <Link
-                                            href={`/invoice-admin/${order._id}`}
+                                            href={`/admin/online/customers/${encodeURIComponent(
+                                                name
+                                            )}/orders/${order.invoiceId}`}
                                         >
                                             <button className="user-order-invoice-btn">
                                                 View Invoice

@@ -1,0 +1,25 @@
+/* @media print {
+
+  body * {
+    visibility: hidden;
+  }
+
+  .invoice-card-admin,
+  .invoice-card-admin * {
+    visibility: visible;
+  }
+
+  .invoice-card-admin {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 180mm;
+    margin: 0;
+    overflow: visible;
+  }
+
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+} */

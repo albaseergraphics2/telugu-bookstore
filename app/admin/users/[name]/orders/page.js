@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
 export default function UserOrdersPage() {
-    const { id } = useParams();
+    const { name } = useParams();
     const [orders, setOrders] = useState([]);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -14,18 +14,32 @@ export default function UserOrdersPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const ordersRes = await fetch(`/api/orders?userId=${id}`);
-                const ordersData = await ordersRes.json();
-                if (ordersData.success) {
-                    setOrders(ordersData.orders);
-                }
                 const usersRes = await fetch("/api/admin/users");
                 const usersData = await usersRes.json();
+
                 if (usersData.success) {
+                    const userName = decodeURIComponent(name)
+                        .replace(/-/g, " ")
+                        .toLowerCase();
+
                     const foundUser = usersData.users.find(
-                        (user) => user._id === id
+                        (user) =>
+                            user.name?.toLowerCase() === userName
                     );
+
                     setUser(foundUser || null);
+
+                    if (foundUser) {
+                        const ordersRes = await fetch(
+                            `/api/orders?userId=${foundUser._id}`
+                        );
+
+                        const ordersData = await ordersRes.json();
+
+                        if (ordersData.success) {
+                            setOrders(ordersData.orders);
+                        }
+                    }
                 }
             } catch (error) {
                 console.error("Error fetching user orders:", error);
@@ -33,10 +47,11 @@ export default function UserOrdersPage() {
                 setLoading(false);
             }
         };
-        if (id) {
+
+        if (name) {
             fetchData();
         }
-    }, [id]);
+    }, [name]);
 
 
     /* PAGINATION */
@@ -124,7 +139,11 @@ export default function UserOrdersPage() {
                                         <strong>₹{totalAmount}</strong>
                                     </div>
                                     <div>
-                                        <Link href={`/invoice-admin/${order._id}`}>
+                                        <Link
+                                            href={`/admin/users/${encodeURIComponent(
+                                                name
+                                            )}/orders/${order.invoiceId}`}
+                                        >
                                             <button className="user-order-invoice-btn">
                                                 View Invoice
                                             </button>

@@ -58,7 +58,7 @@ export default function AdminUsers() {
   return (
     <div className="admin-users">
       <div className="users-header">
-        <h2>Customers</h2>
+        <h2>Users</h2>
         <span>Total: {filteredUsers.length}</span>
       </div>
 
@@ -107,7 +107,11 @@ export default function AdminUsers() {
             <div>
               <button
                 onClick={() =>
-                  router.push(`/admin/users/${user._id}/orders`)
+                  router.push(
+                    `/admin/users/${encodeURIComponent(
+                      user.name.replace(/\s+/g, "-")
+                    )}/orders`
+                  )
                 }
                 className="adminuserorderlist"
               >

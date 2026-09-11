@@ -161,6 +161,7 @@ export default function CartPage() {
         qty: item.qty
       })),
       totalAmount: totalPrice,
+      deliveryCharge: shippingCharge,
     };
 
     const res = await fetch("/api/orders", {

@@ -2,15 +2,42 @@ import mongoose from "mongoose";
 
 const OrderSchema = new mongoose.Schema(
   {
-    userId: String,
-    name: String,
-    phone: String,
+    userId: {
+      type: String,
+      required: true,
+    },
+
+    name: {
+      type: String,
+      required: true,
+    },
+
+    phone: {
+      type: String,
+      required: true,
+    },
+
     address: {
-      full: String,
-      pincode: String,
-      area: String,
-      district: String,
-      state: String,
+      full: {
+        type: String,
+        default: "",
+      },
+      pincode: {
+        type: String,
+        default: "",
+      },
+      area: {
+        type: String,
+        default: "",
+      },
+      district: {
+        type: String,
+        default: "",
+      },
+      state: {
+        type: String,
+        default: "",
+      },
     },
 
     items: [
@@ -18,25 +45,46 @@ const OrderSchema = new mongoose.Schema(
         bookId: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Book",
+          required: true,
         },
-        qty: Number,
-        sellingPrice: Number,
-        discount: Number,
+
+        qty: {
+          type: Number,
+          required: true,
+          min: 1,
+        },
+
+        sellingPrice: {
+          type: Number,
+          default: 0,
+        },
+
+        discount: {
+          type: Number,
+          default: 0,
+        },
       },
     ],
 
+    // Books total without delivery charge
     totalAmount: {
       type: Number,
+      required: true,
       default: 0,
+      min: 0,
     },
 
     deliveryType: {
       type: String,
+      default: "",
     },
 
+    // Delivery charge
     deliveryCharge: {
       type: Number,
+      required: true,
       default: 0,
+      min: 0,
     },
 
     status: {
@@ -47,6 +95,7 @@ const OrderSchema = new mongoose.Schema(
     invoiceId: {
       type: Number,
       unique: true,
+      required: true,
     },
 
     paymentMethod: {
@@ -56,7 +105,7 @@ const OrderSchema = new mongoose.Schema(
 
     paymentStatus: {
       type: String,
-      enum: ["Paid", "Pending", "Partial"],
+      enum: ["Paid", "Pending", "Partial", "Verification Pending"],
       default: "Pending",
     },
 
@@ -65,12 +114,14 @@ const OrderSchema = new mongoose.Schema(
       default: "",
     },
 
+    // Amount already paid
     paidAmount: {
       type: Number,
       default: 0,
       min: 0,
     },
 
+    // Remaining amount
     dueAmount: {
       type: Number,
       default: 0,
@@ -114,7 +165,9 @@ const OrderSchema = new mongoose.Schema(
       default: "customer",
     },
   },
-  { timestamps: true, }
+  {
+    timestamps: true,
+  }
 );
 
 export default mongoose.models.Order ||

@@ -186,8 +186,10 @@ export default function CheckoutPage() {
 
         const orderData = {
             userId: user._id,
+
             name,
             phone,
+
             address: {
                 full: address,
                 pincode,
@@ -195,14 +197,18 @@ export default function CheckoutPage() {
                 district,
                 state: stateName,
             },
+
             paymentMethod,
-            utrNumber,
+
+            utrNumber: utrNumber || "",
+
             items: cartItems.map((item) => ({
                 bookId: item._id || item.slug,
                 qty: item.qty,
             })),
-            totalAmount: totalPrice,
-            deliveryCharge: shippingCharge,
+
+            totalAmount: Number(totalPrice),
+            deliveryCharge: Number(shippingCharge),
         };
 
         const res = await fetch("/api/orders", {
@@ -222,9 +228,13 @@ export default function CheckoutPage() {
                 router.push("/orders");
             }, 800);
         } else {
+            console.log(data.message);
             toast.error(data.message || "Something went wrong");
         }
     };
+
+
+
     const buttonText = {
         online: "Proceed to Payment",
         bank: "Submit Payment Details",

@@ -17,8 +17,8 @@ export default function Sidebar() {
     {
       name: "Online Orders",
       children: [
-        { name: "All Orders", path: "/admin/orders" },
-        { name: "Customers", path: "/admin/users" },
+        { name: "Orders List", path: "/admin/online/orders" },
+        { name: "Customers", path: "/admin/online/customers" },
       ],
     },
     {
@@ -38,6 +38,7 @@ export default function Sidebar() {
     },
     { name: "Accounts", path: "/admin/accounts" },
     { name: "Books", path: "/admin/books" },
+    { name: "Users", path: "/admin/users" },
     { name: "HeroCarousel", path: "/admin/heroCarousel" },
     { name: "Payment Settings", path: "/admin/payment-settings" },
   ];

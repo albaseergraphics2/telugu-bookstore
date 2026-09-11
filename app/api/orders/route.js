@@ -1,42 +1,88 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "../../lib/mongodb";
 import Order from "../../models/Orders";
-import Book from "../../models/Books";
 import { sendEmail } from "@/app/lib/sendEmail";
 
 export async function POST(req) {
   try {
     await connectDB();
+
     const body = await req.json();
 
-    const address = typeof body.address === "object"
-      ? body.address
-      : { full: body.address || "" };
+    console.log("ORDER REQUEST BODY:", body);
 
+    const address =
+      typeof body.address === "object" && body.address !== null
+        ? body.address
+        : {
+            full: body.address || "",
+          };
 
-    const lastOrder = await Order.findOne().sort({ invoiceId: -1 });
+    const totalAmount = Number(body.totalAmount || 0);
+    const deliveryCharge = Number(body.deliveryCharge || 0);
+
+    const finalTotal = totalAmount + deliveryCharge;
+
+    const lastOrder = await Order.findOne().sort({
+      invoiceId: -1,
+    });
 
     let nextInvoiceId = 1001;
 
     if (lastOrder && lastOrder.invoiceId) {
-      nextInvoiceId = lastOrder.invoiceId + 1;
+      nextInvoiceId = Number(lastOrder.invoiceId) + 1;
     }
 
-    const finalTotal = Number(body.totalAmount || 0) + Number(body.deliveryCharge || 0);
+    const paymentMethod = body.paymentMethod || "";
+
+    let paidAmount = 0;
+    let dueAmount = finalTotal;
+    let paymentStatus = "Pending";
+
+    if (paymentMethod === "cod") {
+      paidAmount = 0;
+      dueAmount = finalTotal;
+      paymentStatus = "Pending";
+    } else if (paymentMethod === "online") {
+      paidAmount = finalTotal;
+      dueAmount = 0;
+      paymentStatus = "Paid";
+    } else if (paymentMethod === "bank") {
+      paidAmount = finalTotal;
+      dueAmount = 0;
+      paymentStatus = "Verification Pending";
+    }
 
     const order = await Order.create({
-      ...body,
+      userId: body.userId,
+      name: body.name,
+      phone: body.phone,
+
       address,
+
+      items: body.items || [],
+
+      totalAmount,
+      deliveryCharge,
+
+      deliveryType: body.deliveryType || "",
+
       invoiceId: nextInvoiceId,
+
       status: "pending",
 
-      paidAmount: body.paymentMethod === "cod" ? 0 : finalTotal,
+      paymentMethod,
+      utrNumber: body.utrNumber || "",
 
-      dueAmount: body.paymentMethod === "cod" ? finalTotal : 0,
+      paidAmount,
+      dueAmount,
+      paymentStatus,
 
-      paymentStatus: body.paymentMethod === "online" ? "Paid"
-        : body.paymentMethod === "bank" ? "Verification Pending" : "Pending",
+      orderSource: "online",
+      orderCreatedBy: "customer",
     });
+
+    console.log("SAVED ORDER:", order);
 
     await sendEmail({
       to: process.env.ADMIN_EMAIL,
@@ -78,22 +124,27 @@ export async function POST(req) {
             </span>
           </td>
         </tr>
+
         <tr>
-  <td><strong>Payment Method</strong></td>
-  <td>${body.paymentMethod}</td>
-</tr>
+          <td><strong>Payment Method</strong></td>
+          <td>${body.paymentMethod || ""}</td>
+        </tr>
 
-<tr>
-  <td><strong>Payment Status</strong></td>
-  <td>${order.paymentStatus}</td>
-</tr>
+        <tr>
+          <td><strong>Payment Status</strong></td>
+          <td>${order.paymentStatus}</td>
+        </tr>
 
-${body.paymentMethod === "bank" ? `
-<tr>
-  <td><strong>UTR Number</strong></td>
-  <td>${body.utrNumber}</td>
-</tr>
-` : ""}
+        ${
+          body.paymentMethod === "bank"
+            ? `
+        <tr>
+          <td><strong>UTR Number</strong></td>
+          <td>${body.utrNumber || ""}</td>
+        </tr>
+        `
+            : ""
+        }
       </table>
 
       <hr style="margin:25px 0;">
@@ -103,17 +154,15 @@ ${body.paymentMethod === "bank" ? `
       </h2>
 
       <table width="100%" cellpadding="8">
-
         <tr>
           <td width="140"><strong>Name</strong></td>
-          <td>${body.name}</td>
+          <td>${body.name || ""}</td>
         </tr>
 
         <tr>
           <td><strong>Phone</strong></td>
-          <td>${body.phone}</td>
+          <td>${body.phone || ""}</td>
         </tr>
-
       </table>
 
       <hr style="margin:25px 0;">
@@ -129,16 +178,14 @@ ${body.paymentMethod === "bank" ? `
         border-radius:8px;
         line-height:1.8;
       ">
-
-        ${address.full}<br>
+        ${address.full || ""}<br>
         ${address.area || ""}<br>
         ${address.district || ""}<br>
         ${address.state || ""}<br>
         ${address.pincode || ""}
-
       </div>
 
-            <hr style="margin:25px 0;">
+      <hr style="margin:25px 0;">
 
       <table width="100%" cellpadding="10" style="
         background:#f8fafc;
@@ -148,19 +195,18 @@ ${body.paymentMethod === "bank" ? `
         <tr>
           <td><strong>Books Total</strong></td>
           <td align="right">
-            ₹${body.totalAmount}
+            ₹${totalAmount}
           </td>
         </tr>
 
         <tr>
           <td><strong>Delivery Charge</strong></td>
           <td align="right">
-            ${body.totalAmount >= 1000
-          ? "Free"
-          : body.deliveryCharge > 0
-            ? `₹${body.deliveryCharge}`
-            : "To Be Confirmed"
-        }
+            ${
+              deliveryCharge === 0
+                ? "Free"
+                : `₹${deliveryCharge}`
+            }
           </td>
         </tr>
 
@@ -175,12 +221,7 @@ ${body.paymentMethod === "bank" ? `
               font-size:22px;
               font-weight:bold;
             ">
-              ₹${body.totalAmount >= 1000
-          ? body.totalAmount
-          : body.deliveryCharge > 0
-            ? body.totalAmount + body.deliveryCharge
-            : body.totalAmount
-        }
+              ₹${finalTotal}
             </span>
           </td>
         </tr>
@@ -202,14 +243,31 @@ ${body.paymentMethod === "bank" ? `
   </div>
 
 </div>
-`,
+      `,
     });
-    return NextResponse.json({
-      success: true,
-      order,
-    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Order placed successfully",
+        order,
+      },
+      {
+        status: 201,
+      }
+    );
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message });
+    console.error("CREATE ORDER ERROR:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: error.message,
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }
 
@@ -220,12 +278,46 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
 
-    const orders = await Order.find({ userId })
-      .populate("items.bookId")
-      .sort({ createdAt: -1 });
+    if (!userId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "User ID is required",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
-    return NextResponse.json({ success: true, orders });
+    const orders = await Order.find({
+      userId,
+    })
+      .populate("items.bookId")
+      .sort({
+        createdAt: -1,
+      });
+
+    return NextResponse.json(
+      {
+        success: true,
+        orders,
+      },
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message });
+    console.error("GET ORDERS ERROR:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: error.message,
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

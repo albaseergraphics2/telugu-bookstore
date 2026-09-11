@@ -15,7 +15,7 @@ export default function OfflineCustomers() {
 
     const fetchCustomers = async () => {
         try {
-            const res = await fetch("/api/admin/offline/customers");
+            const res = await fetch("/api/admin/online/customers");
             const data = await res.json();
             if (data.success) {
                 setCustomers(data.customers);
@@ -52,7 +52,7 @@ export default function OfflineCustomers() {
     return (
         <div className="admin-users">
             <div className="users-header">
-                <h2>Offline Customers</h2>
+                <h2>Online Customers</h2>
                 <span>Total: {filteredCustomers.length}</span>
             </div>
             <div
@@ -103,7 +103,7 @@ export default function OfflineCustomers() {
                             <button
                                 onClick={() =>
                                     router.push(
-                                        `/admin/offline/customers/${encodeURIComponent(
+                                        `/admin/online/customers/${encodeURIComponent(
                                             customer.name.replace(/\s+/g, "-")
                                         )}/orders`
                                     )
