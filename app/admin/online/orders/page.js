@@ -528,8 +528,11 @@ export default function OfflineOrders() {
                     =================================================== */}
                     <div className="orders-table desktop-orders-table">
                         {currentOrders.map((order) => {
-                            const totalAmount = Number(order.totalAmount) + Number(order.deliveryCharge) || 0;
+                            const subtotal = Number(order.totalAmount) || 0;
                             const deliveryCharge = Number(order.deliveryCharge) || 0;
+                            const totalAmount = subtotal + deliveryCharge;
+                            const paidAmount = Number(order.paidAmount) || 0;
+                            const dueAmount = Math.max(0, totalAmount - paidAmount);
 
                             return (
                                 <div
@@ -583,8 +586,7 @@ export default function OfflineOrders() {
                                                 <span>Qty</span>
                                                 <span>Price</span>
                                             </div>
-                                            {order.items?.map(
-                                                (
+                                            {order.items?.map((
                                                     item,
                                                     index
                                                 ) => (
@@ -933,8 +935,11 @@ export default function OfflineOrders() {
                     =================================================== */}
                     <div className="orders-table mobile-orders-table">
                         {currentOrders.map((order) => {
-                            const totalAmount = Number(order.totalAmount) || 0;
+                            const subtotal = Number(order.totalAmount) || 0;
                             const deliveryCharge = Number(order.deliveryCharge) || 0;
+                            const totalAmount = subtotal + deliveryCharge;
+                            const paidAmount = Number(order.paidAmount) || 0;
+                            const dueAmount = Math.max(0, totalAmount - paidAmount);
 
                             return (
                                 <div
@@ -1084,7 +1089,7 @@ export default function OfflineOrders() {
                                     </div>
 
                                     <div className="admin-Status-mobile">
-                                                                                <div className="payment-section">
+                                        <div className="payment-section">
                                             <b>Payments</b>
 
                                             {(order.paymentMethod === "online" ||

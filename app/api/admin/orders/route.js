@@ -41,7 +41,6 @@ export async function PUT(req) {
 export async function POST(req) {
     try {
         await connectDB();
-
         const {
             userId,
             name,
@@ -62,22 +61,18 @@ export async function POST(req) {
             !items ||
             items.length === 0
         ) {
-            return NextResponse.json(
-                {
+            return NextResponse.json({
                     success: false,
                     message: "Missing required order details.",
-                },
-                { status: 400 }
+                },{ status: 400 }
             );
         }
 
         if (paymentMethod === "bank" && !utrNumber?.trim()) {
-            return NextResponse.json(
-                {
+            return NextResponse.json({
                     success: false,
                     message: "UTR / Transaction ID is required.",
-                },
-                { status: 400 }
+                },{ status: 400 }
             );
         }
 
@@ -92,12 +87,10 @@ export async function POST(req) {
             });
 
             if (!book) {
-                return NextResponse.json(
-                    {
+                return NextResponse.json({
                         success: false,
                         message: `Book not found: ${item.bookId}`,
-                    },
-                    { status: 404 }
+                    },{ status: 404 }
                 );
             }
 
@@ -106,6 +99,10 @@ export async function POST(req) {
                 qty: Number(item.qty),
             });
         }
+
+        const subtotal = Number(totalAmount || 0);
+        const finalDeliveryCharge = Number(deliveryCharge || 0);
+        const finalTotalAmount = subtotal + finalDeliveryCharge;
 
         const order = await Order.create({
             userId,
@@ -116,34 +113,34 @@ export async function POST(req) {
             paymentStatus:
                 paymentMethod === "bank"
                     ? "Verification Pending"
-                    : "Pending",
-            utrNumber: paymentMethod === "bank" ? utrNumber : "",
+                    : paymentMethod === "online"
+                        ? "Paid"
+                        : "Pending",
+            utrNumber:
+                paymentMethod === "bank"
+                    ? utrNumber
+                    : "",
             items: orderItems,
-            totalAmount: Number(totalAmount),
-            deliveryCharge: Number(deliveryCharge || 0),
+            totalAmount: finalTotalAmount,
+            deliveryCharge: finalDeliveryCharge,
             orderSource: "online",
             status: "pending",
         });
 
         notifyClients({});
 
-        return NextResponse.json(
-            {
+        return NextResponse.json({
                 success: true,
                 message: "Order placed successfully.",
                 order,
-            },
-            { status: 201 }
+            },{ status: 201 }
         );
     } catch (error) {
         console.error("CREATE ORDER ERROR:", error);
-
-        return NextResponse.json(
-            {
+        return NextResponse.json({
                 success: false,
-                message: error.message || "Failed to create order.",
-            },
-            { status: 500 }
+                message: error.message ||"Failed to create order.",
+            },{ status: 500 }
         );
     }
 }

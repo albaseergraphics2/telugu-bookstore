@@ -7,17 +7,22 @@ import User from "../../../../models/User";
 export async function GET() {
     try {
         await connectDB();
+
         const orders = await Order.find({
             orderSource: "online",
         })
             .populate("items.bookId")
             .sort({ createdAt: -1 });
-        return NextResponse.json({ success: true, orders, });
+
+        return NextResponse.json({
+            success: true,
+            orders,
+        });
     } catch (error) {
-        console.error("GET OFFLINE ORDERS ERROR:", error);
+        console.error("GET ONLINE ORDERS ERROR:", error);
         return NextResponse.json({
             success: false,
-            message: "Failed to fetch offline orders.",
+            message: "Failed to fetch online orders.",
             error: error.message,
         }, { status: 500 }
         );
@@ -28,6 +33,7 @@ export async function POST(req) {
     try {
         await connectDB();
         const body = await req.json();
+
         const {
             customer,
             items,
@@ -149,6 +155,7 @@ export async function POST(req) {
         let finalPaidAmount = 0;
         let finalDueAmount = finalTotalAmount;
         let finalPaymentStatus = "Pending";
+
         if (finalPaymentMethod === "Credit") {
             finalPaidAmount = 0;
             finalDueAmount = finalTotalAmount;
@@ -159,7 +166,8 @@ export async function POST(req) {
             finalPaymentStatus = "Pending";
         } else {
             if (paymentStatus === "Partial") {
-                finalPaidAmount = Number(requestedPaidAmount) || 0;
+                finalPaidAmount =
+                    Number(requestedPaidAmount) || 0;
 
                 if (finalPaidAmount < 0) {
                     return NextResponse.json({
@@ -198,11 +206,11 @@ export async function POST(req) {
         }
 
         if (!user) {
-            user = await User.findOne({ phone, });
+            user = await User.findOne({ phone });
         }
 
         if (!user && email) {
-            user = await User.findOne({ email, });
+            user = await User.findOne({ email });
         }
 
         if (user) {
@@ -216,12 +224,11 @@ export async function POST(req) {
             user.address = address;
             await user.save();
         } else {
-            const username = `offline_${phone}_${Date.now()}`;
-
+            const username = `online_${phone}_${Date.now()}`;
             user = await User.create({
                 name,
                 username,
-                email: email || `${username}@offline.local`,
+                email: email || `${username}@online.local`,
                 phone,
                 password: "",
                 address,
@@ -237,7 +244,7 @@ export async function POST(req) {
                 $ne: null,
             },
         })
-            .sort({ invoiceId: -1, })
+            .sort({ invoiceId: -1 })
             .select("invoiceId");
 
         if (lastOrder?.invoiceId) {
@@ -254,14 +261,17 @@ export async function POST(req) {
                 ? ""
                 : String(utrNumber || "").trim();
 
-        const initialPaymentHistory = finalPaidAmount > 0
-            ? [{
-                amount: finalPaidAmount,
-                paymentMethod: finalPaymentMethod,
-                utrNumber: cleanUtrNumber,
-                paidAt: new Date(),
-            },
-            ] : [];
+        const initialPaymentHistory =
+            finalPaidAmount > 0
+                ? [
+                    {
+                        amount: finalPaidAmount,
+                        paymentMethod: finalPaymentMethod,
+                        utrNumber: cleanUtrNumber,
+                        paidAt: new Date(),
+                    },
+                ]
+                : [];
 
         const order = await Order.create({
             userId: user._id.toString(),
@@ -270,9 +280,9 @@ export async function POST(req) {
             address: user.address,
             items: orderItems,
             totalAmount: finalTotalAmount,
-            deliveryType: deliveryType || "Self Pickup",
+            deliveryType: deliveryType || "Delivery",
             deliveryCharge: finalDeliveryCharge,
-            status: status || "completed",
+            status: status || "pending",
             invoiceId,
             paymentMethod: finalPaymentMethod,
             paymentStatus: finalPaymentStatus,
@@ -280,18 +290,17 @@ export async function POST(req) {
             paidAmount: finalPaidAmount,
             dueAmount: finalDueAmount,
             paymentHistory: initialPaymentHistory,
-            orderSource: "offline",
-            orderCreatedBy: "admin",
+            orderSource: "online",
+            orderCreatedBy: "customer",
         });
 
         const populatedOrder = await Order.findById(
             order._id
         ).populate("items.bookId");
 
-        return NextResponse.json(
-            {
+        return NextResponse.json({
                 success: true,
-                message: "Offline order created successfully.",
+                message: "Online order created successfully.",
                 user: {
                     _id: user._id,
                     name: user.name,
@@ -299,14 +308,14 @@ export async function POST(req) {
                     email: user.email,
                 },
                 order: populatedOrder,
-            }, { status: 201 }
+            },{ status: 201 }
         );
     } catch (error) {
-        console.error("CREATE OFFLINE ORDER ERROR:", error);
+        console.error("CREATE ONLINE ORDER ERROR:", error);
         return NextResponse.json({
-            success: false,
-            message: error.message || "Failed to create offline order.",
-        }, { status: 500 }
+                success: false,
+                message:error.message ||"Failed to create online order.",
+            },{ status: 500 }
         );
     }
 }
@@ -325,9 +334,9 @@ export async function PUT(req) {
 
         if (!id) {
             return NextResponse.json({
-                success: false,
-                message: "Order ID is required.",
-            }, { status: 400 }
+                    success: false,
+                    message: "Order ID is required.",
+                },{ status: 400 }
             );
         }
 
@@ -336,25 +345,24 @@ export async function PUT(req) {
             orderSource: "online",
         });
 
+        if (!order) {
+            return NextResponse.json({
+                    success: false,
+                    message: "Online order not found.",
+                },{ status: 404 }
+            );
+        }
+
         if (paymentStatus !== undefined) {
             order.paymentStatus = paymentStatus;
 
             if (
-                order.paymentMethod === "bank" && paymentStatus === "Paid"
+                order.paymentMethod === "bank" &&
+                paymentStatus === "Paid"
             ) {
-                order.paidAmount =
-                    Number(order.totalAmount || 0) +
-                    Number(order.deliveryCharge || 0);
+                order.paidAmount = Number(order.totalAmount || 0);
                 order.dueAmount = 0;
             }
-        }
-
-        if (!order) {
-            return NextResponse.json({
-                success: false,
-                message: "Offline order not found.",
-            }, { status: 404 }
-            );
         }
 
         if (status !== undefined) {
@@ -374,7 +382,7 @@ export async function PUT(req) {
             const paidAmount = Number(order.paidAmount) || 0;
             order.deliveryCharge = newDeliveryCharge;
             order.totalAmount = newTotalAmount;
-            order.dueAmount = Math.max(0, newTotalAmount - paidAmount);
+            order.dueAmount = Math.max(0,newTotalAmount - paidAmount);
 
             if (order.dueAmount === 0) {
                 order.paymentStatus = "Paid";
@@ -391,15 +399,15 @@ export async function PUT(req) {
 
         return NextResponse.json({
             success: true,
-            message: "Offline order updated successfully.",
+            message: "Online order updated successfully.",
             order: populatedOrder,
         });
     } catch (error) {
-        console.error("UPDATE OFFLINE ORDER ERROR:", error);
+        console.error("UPDATE ONLINE ORDER ERROR:", error);
         return NextResponse.json({
-            success: false,
-            message: error.message || "Failed to update offline order.",
-        }, { status: 500 }
+                success: false,
+                message: error.message ||"Failed to update online order.",
+            },{ status: 500 }
         );
     }
 }
