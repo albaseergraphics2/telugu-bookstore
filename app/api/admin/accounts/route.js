@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "../../../lib/mongodb";
-
 import Purchase from "../../../models/Purchase";
 import Payment from "../../../models/Payment";
 import Supplier from "../../../models/Supplier";
@@ -10,61 +9,43 @@ import CustomerPayment from "../../../models/CustomerPayment";
 export async function GET() {
     try {
         await connectDB();
-
         const orders = await Order.find().lean();
-
         const customerPayments = await CustomerPayment.find().lean();
-
         const purchases = await Purchase.find()
             .populate("supplier", "name companyName")
             .lean();
-
         const payments = await Payment.find()
             .populate("supplier", "name companyName")
             .lean();
-
         const paymentsByPurchase = {};
-
         payments.forEach((payment) => {
             const purchaseId = payment.purchase?.toString();
-
             if (!purchaseId) {
                 return;
             }
-
             if (!paymentsByPurchase[purchaseId]) {
                 paymentsByPurchase[purchaseId] = [];
             }
-
             paymentsByPurchase[purchaseId].push(payment);
         });
 
         const purchaseTransactions = purchases.map((purchase) => {
             const purchaseId = purchase._id.toString();
-
-            const relatedPayments =
-                paymentsByPurchase[purchaseId] || [];
-
+            const relatedPayments = paymentsByPurchase[purchaseId] || [];
             const laterPaymentsTotal =
                 relatedPayments.reduce(
                     (total, payment) =>
                         total + (Number(payment.amount) || 0),
                     0
                 );
-
-            const currentPaidAmount =
-                Number(purchase.paidAmount) || 0;
-
+            const currentPaidAmount = Number(purchase.paidAmount) || 0;
             const originalPaidAmount = Math.max(
-                0,
-                currentPaidAmount - laterPaymentsTotal
+                0, currentPaidAmount - laterPaymentsTotal
             );
 
             return {
                 _id: `purchase-${purchase._id}`,
-                date:
-                    purchase.purchaseDate ||
-                    purchase.createdAt,
+                date: purchase.purchaseDate || purchase.createdAt,
                 createdAt: purchase.createdAt,
                 type: "Purchase",
                 party:
@@ -79,9 +60,7 @@ export async function GET() {
                 debit: originalPaidAmount,
                 credit: 0,
                 due: Math.max(
-                    0,
-                    (Number(purchase.totalAmount) || 0) -
-                    originalPaidAmount
+                    0, (Number(purchase.totalAmount) || 0) - originalPaidAmount
                 ),
                 paymentMethod: "",
                 referenceNumber: "",
@@ -89,9 +68,7 @@ export async function GET() {
         });
 
         const paymentTransactions = payments.map((payment) => {
-            const purchaseId =
-                payment.purchase?.toString();
-
+            const purchaseId = payment.purchase?.toString();
             const purchase = purchases.find(
                 (item) =>
                     item._id.toString() === purchaseId
@@ -100,23 +77,16 @@ export async function GET() {
             let remainingDue = 0;
 
             if (purchase) {
-                const relatedPayments =
-                    paymentsByPurchase[purchaseId] || [];
-
+                const relatedPayments = paymentsByPurchase[purchaseId] || [];
                 const totalPayments =
                     relatedPayments.reduce(
                         (total, item) =>
-                            total +
-                            (Number(item.amount) || 0),
-                        0
+                            total + (Number(item.amount) || 0), 0
                     );
 
-                const currentPaidAmount =
-                    Number(purchase.paidAmount) || 0;
-
+                const currentPaidAmount = Number(purchase.paidAmount) || 0;
                 const originalPaidAmount = Math.max(
-                    0,
-                    currentPaidAmount - totalPayments
+                    0, currentPaidAmount - totalPayments
                 );
 
                 const paymentDate = new Date(
@@ -129,32 +99,26 @@ export async function GET() {
                         .filter((item) => {
                             const itemDate =
                                 new Date(
-                                    item.paymentDate ||
-                                    item.createdAt
+                                    item.paymentDate || item.createdAt
                                 ).getTime();
-
                             return itemDate <= paymentDate;
                         })
                         .reduce(
                             (total, item) =>
-                                total +
-                                (Number(item.amount) || 0),
-                            0
+                                total + (Number(item.amount) || 0), 0
                         );
 
                 remainingDue = Math.max(
                     0,
                     (Number(purchase.totalAmount) || 0) -
-                    originalPaidAmount -
-                    paymentsUpToThisPayment
+                    originalPaidAmount - paymentsUpToThisPayment
                 );
             }
 
             return {
                 _id: `payment-${payment._id}`,
                 date:
-                    payment.paymentDate ||
-                    payment.createdAt,
+                    payment.paymentDate || payment.createdAt,
                 createdAt: payment.createdAt,
                 type: "Supplier Payment",
                 party:
@@ -166,16 +130,11 @@ export async function GET() {
                     payment.referenceNumber
                         ? `Supplier Payment - ${payment.referenceNumber}`
                         : "Supplier Payment",
-                debit:
-                    Number(payment.amount) || 0,
+                debit: Number(payment.amount) || 0,
                 credit: 0,
                 due: remainingDue,
-                paymentMethod:
-                    String(
-                        payment.paymentMethod || ""
-                    ).trim(),
-                referenceNumber:
-                    payment.referenceNumber || "",
+                paymentMethod: String(payment.paymentMethod || "").trim(),
+                referenceNumber: payment.referenceNumber || "",
             };
         });
 
@@ -183,8 +142,7 @@ export async function GET() {
             (payment) => {
                 const order = orders.find(
                     (item) =>
-                        item._id.toString() ===
-                        payment.order?.toString()
+                        item._id.toString() === payment.order?.toString()
                 );
 
                 if (!order) {
@@ -196,35 +154,28 @@ export async function GET() {
                         order.orderSource || ""
                     ).trim().toLowerCase();
 
-                const source =
-                    orderSource === "offline"
-                        ? "Offline"
-                        : "Online";
+                const source = orderSource === "offline" ? "Offline" : "Online";
 
                 const orderLabel = order.invoiceId
                     ? `${source} Order #${order.invoiceId}`
                     : `${source} Order`;
 
                 const paymentDate = new Date(
-                    payment.paymentDate ||
-                    payment.createdAt
+                    payment.paymentDate || payment.createdAt
                 ).getTime();
 
                 const orderPayments = customerPayments
                     .filter(
                         (item) =>
-                            item.order?.toString() ===
-                            order._id.toString()
+                            item.order?.toString() === order._id.toString()
                     )
                     .sort(
                         (a, b) =>
                             new Date(
-                                a.paymentDate ||
-                                a.createdAt
+                                a.paymentDate || a.createdAt
                             ).getTime() -
                             new Date(
-                                b.paymentDate ||
-                                b.createdAt
+                                b.paymentDate || b.createdAt
                             ).getTime()
                     );
 
@@ -233,37 +184,31 @@ export async function GET() {
                         .filter((item) => {
                             const itemDate =
                                 new Date(
-                                    item.paymentDate ||
-                                    item.createdAt
+                                    item.paymentDate || item.createdAt
                                 ).getTime();
 
                             return (
-                                itemDate <=
-                                paymentDate
+                                itemDate <= paymentDate
                             );
                         })
                         .reduce(
                             (total, item) =>
                                 total +
-                                (Number(item.amount) || 0),
-                            0
+                                (Number(item.amount) || 0), 0
                         );
 
                 const totalAmount =
                     Number(order.totalAmount || 0) +
                     Number(order.deliveryCharge || 0);
 
-                const currentPaidAmount =
-                    Number(order.paidAmount || 0);
+                const currentPaidAmount = Number(order.paidAmount || 0);
 
                 const originalPaidAmount = Math.max(
                     0,
                     currentPaidAmount -
                     orderPayments.reduce(
                         (total, item) =>
-                            total +
-                            (Number(item.amount) || 0),
-                        0
+                            total + (Number(item.amount) || 0), 0
                     )
                 );
 
@@ -276,42 +221,27 @@ export async function GET() {
 
                 let displayPaymentMethod = "";
 
-                if (
-                    payment.paymentMethod ===
-                    "Bank Transfer"
-                ) {
-                    displayPaymentMethod =
-                        "Bank Transfer";
-                } else if (
-                    payment.paymentMethod === "UPI"
-                ) {
+                if (payment.paymentMethod === "Bank Transfer") {
+                    displayPaymentMethod = "Bank Transfer";
+                } else if (payment.paymentMethod === "UPI") {
                     displayPaymentMethod = "UPI";
                 } else {
-                    displayPaymentMethod =
-                        payment.paymentMethod || "";
+                    displayPaymentMethod = payment.paymentMethod || "";
                 }
 
                 return {
                     _id: `customer-payment-${payment._id}`,
-                    date:
-                        payment.paymentDate ||
-                        payment.createdAt,
-                    createdAt:
-                        payment.createdAt ||
-                        payment.paymentDate,
+                    date: payment.paymentDate || payment.createdAt,
+                    createdAt: payment.createdAt || payment.paymentDate,
                     type: "Sale",
                     party: order.name || "-",
                     partyType: "Customer",
-                    description:
-                        `Payment Received of ${orderLabel}`,
+                    description: `Payment Received of ${orderLabel}`,
                     debit: 0,
-                    credit:
-                        Number(payment.amount) || 0,
+                    credit: Number(payment.amount) || 0,
                     due: remainingDue,
-                    paymentMethod:
-                        displayPaymentMethod,
-                    referenceNumber:
-                        payment.referenceNumber || "",
+                    paymentMethod: displayPaymentMethod,
+                    referenceNumber: payment.referenceNumber || "",
                 };
             }
         ).filter(Boolean);
@@ -322,10 +252,7 @@ export async function GET() {
                     order.orderSource || ""
                 ).trim().toLowerCase();
 
-            const source =
-                orderSource === "offline"
-                    ? "Offline"
-                    : "Online";
+            const source = orderSource === "offline" ? "Offline" : "Online";
 
             const orderLabel = order.invoiceId
                 ? `${source} Order #${order.invoiceId}`
@@ -334,48 +261,34 @@ export async function GET() {
             const orderPayments =
                 customerPayments.filter(
                     (payment) =>
-                        payment.order?.toString() ===
-                        order._id.toString()
+                        payment.order?.toString() === order._id.toString()
                 );
 
             const laterPaymentsTotal =
                 orderPayments.reduce(
                     (total, payment) =>
-                        total +
-                        (Number(payment.amount) || 0),
-                    0
+                        total + (Number(payment.amount) || 0), 0
                 );
 
-            const currentPaidAmount =
-                Number(order.paidAmount) || 0;
+            const currentPaidAmount = Number(order.paidAmount) || 0;
 
             const originalPaidAmount = Math.max(
-                0,
-                currentPaidAmount -
-                laterPaymentsTotal
+                0, currentPaidAmount - laterPaymentsTotal
             );
 
             let displayPaymentMethod = "";
 
             if (order.paymentMethod === "bank") {
-                displayPaymentMethod =
-                    "Bank Transfer";
-            } else if (
-                order.paymentMethod === "cod"
-            ) {
+                displayPaymentMethod = "Bank Transfer";
+            } else if (order.paymentMethod === "cod") {
                 displayPaymentMethod = "COD";
-            } else if (
-                order.paymentMethod === "online"
-            ) {
+            } else if (order.paymentMethod === "online") {
                 displayPaymentMethod = "UPI";
             } else {
-                displayPaymentMethod =
-                    order.paymentMethod || "";
+                displayPaymentMethod = order.paymentMethod || "";
             }
 
-            const totalAmount =
-                Number(order.totalAmount || 0) +
-                Number(order.deliveryCharge || 0);
+            const totalAmount = Number(order.totalAmount || 0);
 
             return {
                 _id: `order-${order._id}`,
@@ -387,15 +300,9 @@ export async function GET() {
                 description: orderLabel,
                 debit: 0,
                 credit: originalPaidAmount,
-                due: Math.max(
-                    0,
-                    totalAmount -
-                    originalPaidAmount
-                ),
-                paymentMethod:
-                    displayPaymentMethod,
-                referenceNumber:
-                    order.utrNumber || "",
+                due: Math.max(0, totalAmount - originalPaidAmount),
+                paymentMethod: displayPaymentMethod,
+                referenceNumber: order.utrNumber || "",
             };
         });
 
@@ -407,12 +314,8 @@ export async function GET() {
         ];
 
         transactions.sort((a, b) => {
-            const timeA =
-                new Date(a.createdAt).getTime();
-
-            const timeB =
-                new Date(b.createdAt).getTime();
-
+            const timeA = new Date(a.createdAt).getTime();
+            const timeB = new Date(b.createdAt).getTime();
             if (timeA !== timeB) {
                 return timeA - timeB;
             }
@@ -426,16 +329,9 @@ export async function GET() {
 
         const transactionsWithBalance =
             transactions.map((transaction) => {
-                const debit =
-                    Number(transaction.debit) || 0;
-
-                const credit =
-                    Number(transaction.credit) || 0;
-
-                balance =
-                    balance +
-                    credit -
-                    debit;
+                const debit = Number(transaction.debit) || 0;
+                const credit = Number(transaction.credit) || 0;
+                balance = balance + credit - debit;
 
                 return {
                     ...transaction,
@@ -449,21 +345,16 @@ export async function GET() {
         const totalDebit =
             transactions.reduce(
                 (total, transaction) =>
-                    total +
-                    (Number(transaction.debit) || 0),
-                0
+                    total + (Number(transaction.debit) || 0), 0
             );
 
         const totalCredit =
             transactions.reduce(
                 (total, transaction) =>
-                    total +
-                    (Number(transaction.credit) || 0),
-                0
+                    total + (Number(transaction.credit) || 0), 0
             );
 
-        const finalBalance =
-            totalCredit - totalDebit;
+        const finalBalance = totalCredit - totalDebit;
 
         return NextResponse.json({
             success: true,
@@ -472,22 +363,14 @@ export async function GET() {
                 totalCredit,
                 balance: finalBalance,
             },
-            transactions:
-                latestFirstTransactions,
+            transactions: latestFirstTransactions,
         });
     } catch (error) {
-        console.error(
-            "GET ACCOUNTS ERROR:",
-            error
-        );
-
-        return NextResponse.json(
-            {
+        console.error("GET ACCOUNTS ERROR:",error);
+        return NextResponse.json({
                 success: false,
-                message:
-                    "Failed to load accounts.",
-            },
-            { status: 500 }
+                message: "Failed to load accounts.",
+            },{ status: 500 }
         );
     }
 }
