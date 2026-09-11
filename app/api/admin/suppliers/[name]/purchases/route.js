@@ -7,7 +7,7 @@ export async function POST(request, { params }) {
   try {
     await connectDB();
 
-    const { id } = await params;
+    const { name } = await params;
     const body = await request.json();
 
     const {
@@ -23,7 +23,11 @@ export async function POST(request, { params }) {
       paymentMethod,
     } = body;
 
-    const supplier = await Supplier.findById(id);
+    const supplierName = decodeURIComponent(name).replace(/-/g, " ");
+
+    const supplier = await Supplier.findOne({
+      name: supplierName,
+    });
 
     if (!supplier) {
       return NextResponse.json(
@@ -99,7 +103,7 @@ export async function POST(request, { params }) {
     });
 
     const purchase = await Purchase.create({
-      supplier: id,
+      supplier: supplier._id,
       purchaseDate,
       invoiceNumber: finalInvoiceNumber,
       books: formattedBooks,
@@ -151,10 +155,26 @@ export async function GET(request, { params }) {
   try {
     await connectDB();
 
-    const { id } = await params;
+    const { name } = await params;
+
+    const supplierName = decodeURIComponent(name).replace(/-/g, " ");
+
+    const supplier = await Supplier.findOne({
+      name: supplierName,
+    }).lean();
+
+    if (!supplier) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Supplier not found.",
+        },
+        { status: 404 }
+      );
+    }
 
     const purchases = await Purchase.find({
-      supplier: id,
+      supplier: supplier._id,
     })
       .sort({ purchaseDate: -1 })
       .lean();

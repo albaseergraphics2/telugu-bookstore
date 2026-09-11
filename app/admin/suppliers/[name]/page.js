@@ -9,7 +9,7 @@ import { FaTrash } from "react-icons/fa";
 export default function SupplierDetails() {
     const params = useParams();
     const router = useRouter();
-    const supplierId = params.id;
+    const supplierName = params.name;
     const purchaseId = params.purchaseId;
     const [purchases, setPurchases] = useState([]);
     const [supplier, setSupplier] = useState(null);
@@ -18,10 +18,10 @@ export default function SupplierDetails() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        if (params?.id) {
+        if (params?.name) {
             fetchSupplier();
         }
-    }, [params?.id]);
+    }, [params?.name]);
 
     useRealtime(() => {
         fetchSupplier();
@@ -30,7 +30,7 @@ export default function SupplierDetails() {
     });
 
     const fetchPayments = async () => {
-        const res = await fetch(`/api/admin/suppliers/${params.id}/payments`);
+        const res = await fetch(`/api/admin/suppliers/${params.name}/payments`)
         const data = await res.json();
         if (data.success) {
             setPayments(data.payments);
@@ -40,7 +40,7 @@ export default function SupplierDetails() {
     const fetchSupplier = async () => {
         try {
             setLoading(true);
-            const res = await fetch(`/api/admin/suppliers/${params.id}`);
+            const res = await fetch(`/api/admin/suppliers/${params.name}`)
             const data = await res.json();
             if (!res.ok || !data.success) {
                 setError(data.message || "Failed to load supplier.");
@@ -56,7 +56,7 @@ export default function SupplierDetails() {
     };
 
     const fetchPurchases = async () => {
-        const res = await fetch(`/api/admin/suppliers/${params.id}/purchases`);
+        const res = await fetch(`/api/admin/suppliers/${params.name}/purchases`)
         const data = await res.json();
         if (data.success) {
             setPurchases(data.purchases);
@@ -121,21 +121,33 @@ export default function SupplierDetails() {
         (total, purchase) => total + (purchase.balanceAmount || 0), 0
     );
 
-    const handleDeletePurchase = async (purchaseId) => {
-        const confirmed = window.confirm("Are you sure you want to delete this purchase?");
+    const handleDeletePurchase = async (purchase) => {
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this purchase?"
+        );
 
         if (!confirmed) {
             return;
         }
 
         try {
-            const res = await fetch(`/api/admin/suppliers/${supplier._id}/purchases/${purchaseId}`,
+            const supplierSlug = supplier.name.replace(/\s+/g, "-");
+
+            const res = await fetch(
+                `/api/admin/suppliers/${encodeURIComponent(
+                    supplierSlug
+                )}/purchases/${encodeURIComponent(
+                    purchase.invoiceNumber
+                )}`,
                 {
                     method: "DELETE",
                 }
             );
+
             const text = await res.text();
+
             let data = {};
+
             if (text) {
                 try {
                     data = JSON.parse(text);
@@ -150,8 +162,8 @@ export default function SupplierDetails() {
             }
 
             setPurchases((prev) =>
-                prev.filter((purchase) =>
-                    purchase._id !== purchaseId
+                prev.filter(
+                    (item) => item._id !== purchase._id
                 )
             );
 
@@ -215,7 +227,11 @@ export default function SupplierDetails() {
                             <strong>
                                 {purchases.length > 0 && purchases[0]?.purchaseDate
                                     ? new Date(purchases[0].purchaseDate
-                                    ).toLocaleDateString("en-IN")
+                                    ).toLocaleDateString("en-IN", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                    })
                                     : "-"}
                             </strong>
                         </div>
@@ -225,7 +241,11 @@ export default function SupplierDetails() {
                             <strong>
                                 {payments.length > 0 && payments[0]?.paymentDate
                                     ? new Date(payments[0].paymentDate
-                                    ).toLocaleDateString("en-IN")
+                                    ).toLocaleDateString("en-IN", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                    })
                                     : "-"}
                             </strong>
                         </div>
@@ -238,7 +258,11 @@ export default function SupplierDetails() {
                         <button
                             type="button"
                             onClick={() =>
-                                router.push(`/admin/suppliers/${supplier._id}/purchases/create`)
+                                router.push(
+                                    `/admin/suppliers/${encodeURIComponent(
+                                        supplier.name.replace(/\s+/g, "-")
+                                    )}/purchases/create`
+                                )
                             }
                             className="supplier-add-purchase-btn"
                         >
@@ -268,7 +292,11 @@ export default function SupplierDetails() {
                                     <div>
                                         {purchase.purchaseDate
                                             ? new Date(purchase.purchaseDate
-                                            ).toLocaleDateString("en-IN")
+                                            ).toLocaleDateString("en-IN", {
+                                                day: "2-digit",
+                                                month: "2-digit",
+                                                year: "numeric",
+                                            })
                                             : "-"}
                                     </div>
                                     <div>{purchase.invoiceNumber || "-"}</div>
@@ -280,7 +308,13 @@ export default function SupplierDetails() {
                                         <button
                                             type="button"
                                             onClick={() =>
-                                                router.push(`/admin/suppliers/${supplier._id}/purchases/${purchase._id}`)
+                                                router.push(
+                                                    `/admin/suppliers/${encodeURIComponent(
+                                                        supplier.name.replace(/\s+/g, "-")
+                                                    )}/purchases/${encodeURIComponent(
+                                                        purchase.invoiceNumber
+                                                    )}`
+                                                )
                                             }
                                             className="supplier-view-btn"
                                         >
@@ -289,11 +323,10 @@ export default function SupplierDetails() {
 
                                         <button
                                             type="button"
-                                            onClick={() => handleDeletePurchase(purchase._id)}
+                                            onClick={() => handleDeletePurchase(purchase)}
                                             className="supplier-delete-btn"
                                             title="Delete"
                                         >
-                                            {/* <RiDeleteBin6Line /> */}
                                             <FaTrash />
                                         </button>
                                     </div>
@@ -309,7 +342,11 @@ export default function SupplierDetails() {
                         <button
                             type="button"
                             onClick={() =>
-                                router.push(`/admin/suppliers/${supplier._id}/edit`)
+                                router.push(
+                                    `/admin/suppliers/${encodeURIComponent(
+                                        supplier.name.replace(/\s+/g, "-")
+                                    )}/edit`
+                                )
                             }
                             className="supplier-edit-btn"
                         >
@@ -427,7 +464,11 @@ export default function SupplierDetails() {
                             <strong>
                                 {purchases.length > 0
                                     ? new Date(purchases[0].purchaseDate
-                                    ).toLocaleDateString("en-IN")
+                                    ).toLocaleDateString("en-IN", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                    })
                                     : "-"}
                             </strong>
                         </div>
@@ -482,7 +523,11 @@ export default function SupplierDetails() {
                                     <div>
                                         {purchase.purchaseDate
                                             ? new Date(purchase.purchaseDate
-                                            ).toLocaleDateString("en-IN")
+                                            ).toLocaleDateString("en-IN", {
+                                                day: "2-digit",
+                                                month: "2-digit",
+                                                year: "numeric",
+                                            })
                                             : "-"}
                                     </div>
                                     <div>{purchase.invoiceNumber || "-"}</div>
@@ -503,12 +548,11 @@ export default function SupplierDetails() {
 
                                         <button
                                             type="button"
-                                            onClick={() =>
-                                                handleDeletePurchase(purchase._id)
-                                            }
+                                            onClick={() => handleDeletePurchase(purchase)}
                                             className="supplier-delete-btn"
+                                            title="Delete"
                                         >
-                                            Delete
+                                            <FaTrash />
                                         </button>
                                     </div>
                                 </div>
@@ -583,7 +627,11 @@ export default function SupplierDetails() {
                     <button
                         type="button"
                         onClick={() =>
-                            router.push(`/admin/suppliers/${supplier._id}/edit`)}
+                            router.push(
+                                `/admin/suppliers/${encodeURIComponent(
+                                    supplier.name.replace(/\s+/g, "-")
+                                )}/edit`
+                            )}
                         className="supplier-edit-btn"
                     >
                         Edit Supplier

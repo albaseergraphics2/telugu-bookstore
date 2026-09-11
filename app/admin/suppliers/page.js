@@ -91,11 +91,15 @@ export default function AdminSuppliers() {
                         <div>{supplier.phone || "-"}</div>
                         <div>₹{supplier.totalPurchases || 0}</div>
                         <div>₹{supplier.totalPaid.toFixed(0) || 0}</div>
-                        <div>₹{supplier.totalDue.toFixed(0)|| 0}</div>
+                        <div>₹{supplier.totalDue.toFixed(0) || 0}</div>
                         <div>
                             <button
                                 onClick={() =>
-                                    router.push(`/admin/suppliers/${supplier._id}`)
+                                    router.push(
+                                        `/admin/suppliers/${encodeURIComponent(
+                                            supplier.name.replace(/\s+/g, "-")
+                                        )}`
+                                    )
                                 }
                                 className="adminuserorderlist"
                             >
@@ -142,11 +146,15 @@ export default function AdminSuppliers() {
                         <div className="supplier-user-mobile-row">
                             <button
                                 onClick={() =>
-                                    router.push(`/admin/suppliers/${supplier._id}`)
+                                    router.push(
+                                        `/admin/suppliers/${encodeURIComponent(
+                                            supplier.name.replace(/\s+/g, "-")
+                                        )}`
+                                    )
                                 }
                                 className="adminuserorderlist"
                             >
-                                View
+                                View Details
                             </button>
                         </div>
                     </div>

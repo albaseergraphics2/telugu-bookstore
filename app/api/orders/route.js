@@ -1,28 +1,23 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "../../lib/mongodb";
-import Order from "../../models/Orders";
 import { sendEmail } from "@/app/lib/sendEmail";
+import Order from "../../models/Orders";
+import Book from "../../models/Books"
 
 export async function POST(req) {
   try {
     await connectDB();
-
     const body = await req.json();
-
-    console.log("ORDER REQUEST BODY:", body);
-
     const address =
       typeof body.address === "object" && body.address !== null
         ? body.address
         : {
-            full: body.address || "",
-          };
+          full: body.address || "",
+        };
 
     const totalAmount = Number(body.totalAmount || 0);
     const deliveryCharge = Number(body.deliveryCharge || 0);
-
     const finalTotal = totalAmount + deliveryCharge;
-
     const lastOrder = await Order.findOne().sort({
       invoiceId: -1,
     });
@@ -57,32 +52,21 @@ export async function POST(req) {
       userId: body.userId,
       name: body.name,
       phone: body.phone,
-
       address,
-
       items: body.items || [],
-
       totalAmount,
       deliveryCharge,
-
       deliveryType: body.deliveryType || "",
-
       invoiceId: nextInvoiceId,
-
       status: "pending",
-
       paymentMethod,
       utrNumber: body.utrNumber || "",
-
       paidAmount,
       dueAmount,
       paymentStatus,
-
       orderSource: "online",
       orderCreatedBy: "customer",
     });
-
-    console.log("SAVED ORDER:", order);
 
     await sendEmail({
       to: process.env.ADMIN_EMAIL,
@@ -135,15 +119,14 @@ export async function POST(req) {
           <td>${order.paymentStatus}</td>
         </tr>
 
-        ${
-          body.paymentMethod === "bank"
-            ? `
+        ${body.paymentMethod === "bank"
+          ? `
         <tr>
           <td><strong>UTR Number</strong></td>
           <td>${body.utrNumber || ""}</td>
         </tr>
         `
-            : ""
+          : ""
         }
       </table>
 
@@ -202,11 +185,10 @@ export async function POST(req) {
         <tr>
           <td><strong>Delivery Charge</strong></td>
           <td align="right">
-            ${
-              deliveryCharge === 0
-                ? "Free"
-                : `₹${deliveryCharge}`
-            }
+            ${deliveryCharge === 0
+          ? "Free"
+          : `₹${deliveryCharge}`
+        }
           </td>
         </tr>
 
@@ -246,27 +228,18 @@ export async function POST(req) {
       `,
     });
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Order placed successfully",
-        order,
-      },
-      {
-        status: 201,
-      }
+    return NextResponse.json({
+      success: true,
+      message: "Order placed successfully",
+      order,
+    }, { status: 201, }
     );
   } catch (error) {
     console.error("CREATE ORDER ERROR:", error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message,
-      },
-      {
-        status: 500,
-      }
+    return NextResponse.json({
+      success: false,
+      error: error.message,
+    }, { status: 500, }
     );
   }
 }
@@ -279,14 +252,10 @@ export async function GET(req) {
     const userId = searchParams.get("userId");
 
     if (!userId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "User ID is required",
-        },
-        {
-          status: 400,
-        }
+      return NextResponse.json({
+        success: false,
+        error: "User ID is required",
+      }, { status: 400, }
       );
     }
 
@@ -294,30 +263,20 @@ export async function GET(req) {
       userId,
     })
       .populate("items.bookId")
-      .sort({
-        createdAt: -1,
-      });
+      .sort({ createdAt: -1, });
 
-    return NextResponse.json(
-      {
+    return NextResponse.json({
         success: true,
         orders,
-      },
-      {
-        status: 200,
-      }
+      },{status: 200,}
     );
   } catch (error) {
     console.error("GET ORDERS ERROR:", error);
 
-    return NextResponse.json(
-      {
+    return NextResponse.json({
         success: false,
         error: error.message,
-      },
-      {
-        status: 500,
-      }
+      },{status: 500,}
     );
   }
 }

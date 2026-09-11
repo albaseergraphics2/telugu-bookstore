@@ -29,25 +29,38 @@ export default function CreatePurchase() {
   ]);
 
   useEffect(() => {
-    if (params?.id) {
+    if (params?.name) {
       fetchSupplier();
     }
-  }, [params?.id]);
+  }, [params?.name]);
 
   const fetchSupplier = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/admin/suppliers/${params.id}`);
+      setError("");
+
+      if (!params?.name) {
+        setError("Supplier name is missing.");
+        return;
+      }
+
+      const res = await fetch(
+        `/api/admin/suppliers/${encodeURIComponent(params.name)}`
+      );
+
       const data = await res.json();
+
       if (!res.ok || !data.success) {
         setError(data.message || "Failed to load supplier.");
         return;
       }
+
       setSupplier(data.supplier);
+
       const today = new Date().toISOString().split("T")[0];
       setPurchaseDate(today);
     } catch (error) {
-      console.error(error);
+      console.error("FETCH SUPPLIER ERROR:", error);
       setError("Something went wrong.");
     } finally {
       setLoading(false);
@@ -212,13 +225,13 @@ export default function CreatePurchase() {
 
     try {
       setSaving(true);
-      const res = await fetch(`/api/admin/suppliers/${params.id}/purchases`, {
+      const res = await fetch(`/api/admin/suppliers/${encodeURIComponent(params.name)}/purchases`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          supplierId: params.id,
+          supplierName: params.name,
           purchaseDate,
           invoiceNumber,
           books: books.map((book) => ({
@@ -250,7 +263,7 @@ export default function CreatePurchase() {
         setError(data.message || "Failed to create purchase.");
         return;
       }
-      router.push(`/admin/suppliers/${params.id}`);
+      router.push(`/admin/suppliers/${encodeURIComponent(params.name)}`);
     } catch (error) {
       console.error(error);
       setError("Something went wrong.");

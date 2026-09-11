@@ -6,15 +6,21 @@ export async function GET(request, { params }) {
   try {
     await connectDB();
 
-    const { id } = await params;
+    const { name } = await params;
 
-    const supplier = await Supplier.findById(id);
+    const supplierName = decodeURIComponent(name).replace(/-/g, " ");
+
+    const supplier = await Supplier.findOne({
+      name: supplierName,
+    }).lean();
 
     if (!supplier) {
-      return NextResponse.json({
-        success: false,
-        message: "Supplier not found",
-      }, { status: 404 }
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Supplier not found",
+        },
+        { status: 404 }
       );
     }
 
@@ -24,11 +30,13 @@ export async function GET(request, { params }) {
     });
   } catch (error) {
     console.error("GET SUPPLIER ERROR:", error);
-    return NextResponse.json({
-      success: false,
-      message: "Failed to fetch supplier",
-      error: error.message,
-    }, { status: 500 }
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to fetch supplier",
+      },
+      { status: 500 }
     );
   }
 }
@@ -36,7 +44,8 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     await connectDB();
-    const { id } = await params;
+
+    const { name: routeName } = await params;
     const body = await request.json();
 
     const {
@@ -58,7 +67,9 @@ export async function PUT(request, { params }) {
       );
     }
 
-    const supplier = await Supplier.findById(id);
+    const supplier = await Supplier.findOne({
+      name: decodeURIComponent(routeName),
+    });
 
     if (!supplier) {
       return NextResponse.json({
@@ -75,6 +86,7 @@ export async function PUT(request, { params }) {
     supplier.alternatePhone = alternatePhone?.trim() || "";
     supplier.email = email?.trim() || "";
     supplier.gstNumber = gstNumber?.trim() || "";
+
     supplier.address = {
       full: address?.full?.trim() || "",
       area: address?.area?.trim() || "",

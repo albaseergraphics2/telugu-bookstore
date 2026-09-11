@@ -21,10 +21,10 @@ export default function PurchaseDetails() {
     const [paymentSuccess, setPaymentSuccess] = useState("");
 
     useEffect(() => {
-        if (params?.id && params?.purchaseId) {
+        if (params?.name && params?.invoiceNumber) {
             fetchPurchase();
         }
-    }, [params?.id, params?.purchaseId]);
+    }, [params?.name, params?.invoiceNumber]);
 
     useEffect(() => {
         if (purchase) {
@@ -35,12 +35,22 @@ export default function PurchaseDetails() {
     const fetchPurchase = async () => {
         try {
             setLoading(true);
-            const res = await fetch(`/api/admin/suppliers/${params.id}/purchases/${params.purchaseId}`);
+
+            const res = await fetch(
+                `/api/admin/suppliers/${encodeURIComponent(
+                    params.name
+                )}/purchases/${encodeURIComponent(
+                    params.invoiceNumber
+                )}`
+            );
+
             const data = await res.json();
+
             if (!res.ok || !data.success) {
                 setError(data.message || "Failed to load purchase.");
                 return;
             }
+
             setPurchase(data.purchase);
         } catch (error) {
             console.error(error);
@@ -55,7 +65,11 @@ export default function PurchaseDetails() {
             setPaymentsLoading(true);
 
             const res = await fetch(
-                `/api/admin/suppliers/${params.id}/purchases/${params.purchaseId}/payments`
+                `/api/admin/suppliers/${encodeURIComponent(
+                    params.name
+                )}/purchases/${encodeURIComponent(
+                    params.invoiceNumber
+                )}/payments`
             );
 
             const data = await res.json();
@@ -82,7 +96,8 @@ export default function PurchaseDetails() {
                         _id: `initial-${purchase._id}`,
                         paymentDate: purchase.purchaseDate,
                         amount: initialPayment,
-                        paymentMethod: purchase.paidPaymentMethod || "Initial Payment",
+                        paymentMethod:
+                            purchase.paidPaymentMethod || "Initial Payment",
                         referenceNumber: "",
                         notes: "Initial Payment",
                     });
@@ -146,7 +161,11 @@ export default function PurchaseDetails() {
         try {
             setSavingPayment(true);
             const res = await fetch(
-                `/api/admin/suppliers/${params.id}/purchases/${params.purchaseId}/payments`,
+                `/api/admin/suppliers/${encodeURIComponent(
+                    params.name
+                )}/purchases/${encodeURIComponent(
+                    params.invoiceNumber
+                )}/payments`,
                 {
                     method: "POST",
                     headers: {
@@ -202,7 +221,11 @@ export default function PurchaseDetails() {
                 <button
                     type="button"
                     onClick={() =>
-                        router.push(`/admin/suppliers/${params.id}`)
+                        router.push(
+                            `/admin/suppliers/${encodeURIComponent(
+                                params.name
+                            )}`
+                        )
                     }
                     className="create-supplier-back-btn"
                 >
@@ -219,7 +242,11 @@ export default function PurchaseDetails() {
                 <button
                     type="button"
                     onClick={() =>
-                        router.push(`/admin/suppliers/${params.id}`)
+                        router.push(
+                            `/admin/suppliers/${encodeURIComponent(
+                                params.name
+                            )}`
+                        )
                     }
                     className="create-supplier-back-btn"
                 >
@@ -244,7 +271,11 @@ export default function PurchaseDetails() {
                         <button
                             type="button"
                             onClick={() =>
-                                router.push(`/admin/suppliers/${params.id}`)
+                                router.push(
+                                    `/admin/suppliers/${encodeURIComponent(
+                                        params.name
+                                    )}`
+                                )
                             }
                             className="create-supplier-back-btn"
                         >
@@ -543,7 +574,11 @@ export default function PurchaseDetails() {
                             <button
                                 type="button"
                                 onClick={() =>
-                                    router.push(`/admin/suppliers/${params.id}`)
+                                    router.push(
+                                        `/admin/suppliers/${encodeURIComponent(
+                                            params.name
+                                        )}`
+                                    )
                                 }
                                 className="create-supplier-back-btn"
                             >
