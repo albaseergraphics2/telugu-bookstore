@@ -76,7 +76,8 @@ export default function Accounts() {
         setTransactionTypes([]);
         setPaymentMethods([]);
         setPartyType("All");
-        setDueStatus("All");
+        setDueStatus([]);
+        setCurrentPage(1);
     };
 
     const matchesDue =
