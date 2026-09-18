@@ -2203,7 +2203,7 @@ nav {
 }
 
 .payment-section {
-  width: 100%;
+  width: 70%;
 }
 
 /* admin users order list*/
@@ -2444,9 +2444,27 @@ nav {
   width: 70%;
 }
 
+.admin-invoice-items-header-online {
+  display: grid;
+  grid-template-columns: 1fr 70px 70px;
+  padding: 4px 0;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.admin-invoice-item-online {
+  display: grid;
+  grid-template-columns: 1fr 60px 70px !important;
+  padding: 4px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
 .admin-invoice-items-header {
   display: grid;
-  grid-template-columns: 1fr 60px 60px;
+  grid-template-columns: 1fr 70px 90px 50px 70px;
   padding: 4px 0;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
@@ -2456,7 +2474,7 @@ nav {
 
 .admin-invoice-item {
   display: grid;
-  grid-template-columns: 1fr 50px 60px;
+  grid-template-columns: 1fr 70px 90px 50px 70px !important;
   padding: 4px 0;
   border-bottom: 1px solid #eee;
   font-size: 14px;
@@ -2464,7 +2482,7 @@ nav {
 
 .admin-invoice-item-total {
   display: grid;
-  grid-template-columns: 1fr 60px;
+  grid-template-columns: 1fr 70px;
   padding: 6px 0;
   font-size: 14px;
   border-bottom: 1px solid #eee;
@@ -3045,8 +3063,25 @@ nav {
 /* MOBILE */
 
 @media (max-width: 768px) {
+  .admin-invoice-item-online {
+    font-size: 13px;
+  }
 
   .admin-users-header {}
+
+  .admin-invoice-items-header {
+    grid-template-columns: 1fr 60px 50px 40px 70px;
+  }
+
+  .admin-invoice-item {
+    font-size: 13px;
+    grid-template-columns: 1fr 60px 50px 40px 70px !important;
+  }
+
+  .payment-section {
+    width: 100%;
+  }
+
 
   .admin-users-header span {
     font-size: 14px;

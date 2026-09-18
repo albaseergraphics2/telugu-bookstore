@@ -25,6 +25,7 @@ export default function OfflineOrders() {
             if (!res.ok || !data.success) {
                 throw new Error(data.message || "Failed to fetch offline orders");
             }
+            console.log(data);
             setOrders(data.orders || []);
         } catch (error) {
             console.error("FETCH OFFLINE ORDERS ERROR:", error);
@@ -234,13 +235,13 @@ export default function OfflineOrders() {
             const status = order.status?.toLowerCase();
 
             if ([
-                    "pending",
-                    "shipped",
-                    "completed",
-                    "cancelled",
-                    "confirmed",
-                    "processing",
-                ].includes(orderFilter)
+                "pending",
+                "shipped",
+                "completed",
+                "cancelled",
+                "confirmed",
+                "processing",
+            ].includes(orderFilter)
             ) {
                 if (status !== orderFilter) {
                     return false;
@@ -549,8 +550,10 @@ export default function OfflineOrders() {
                                         <div className="admin-invoice1">
                                             <div className="admin-invoice-items-header">
                                                 <span>Book</span>
-                                                <span>Qty</span>
                                                 <span>Price</span>
+                                                <span>Discount</span>
+                                                <span>Qty</span>
+                                                <span>Subtotal</span>
                                             </div>
                                             {order.items?.map(
                                                 (
@@ -562,9 +565,10 @@ export default function OfflineOrders() {
                                                         className="admin-invoice-item"
                                                     >
                                                         <span>{item.bookId?.title || "Book"}</span>
+                                                        <span>₹{""}{Number(item.bookId?.price) || 0}</span>
+                                                        <span>{item.discount ? `${item.discount}%` : "-"}</span>
                                                         <span>{item.qty || 0}</span>
-                                                        <span>₹{""}{Number(item.bookId?.price) || 0}
-                                                        </span>
+                                                        <span>₹{item.sellingPrice}</span>
                                                     </div>
                                                 )
                                             )}
@@ -960,8 +964,10 @@ export default function OfflineOrders() {
 
                                     <div className="admin-invoice-items-header">
                                         <span>Book</span>
-                                        <span>Qty</span>
                                         <span>Price</span>
+                                        <span>Disc.</span>
+                                        <span>Qty</span>
+                                        <span>Subtotal</span>
                                     </div>
                                     {order.items?.map(
                                         (
@@ -973,9 +979,10 @@ export default function OfflineOrders() {
                                                 className="admin-invoice-item"
                                             >
                                                 <span>{item.bookId?.title || "Book"}</span>
+                                                <span>₹{""}{Number(item.bookId?.price) || 0}</span>
+                                                <span>{item.discount ? `${item.discount}%` : "-"}</span>
                                                 <span>{item.qty || 0}</span>
-                                                <span>₹{""}{Number(item.bookId?.price) || 0}
-                                                </span>
+                                                <span>₹{item.sellingPrice}</span>
                                             </div>
                                         )
                                     )}
@@ -1007,11 +1014,11 @@ export default function OfflineOrders() {
                                                                     <strong>
                                                                         {payment.paidAt
                                                                             ? new Date(payment.paidAt).toLocaleDateString(
-                                                                                "en-IN",{
-                                                                                    day: "2-digit",
-                                                                                    month: "2-digit",
-                                                                                    year: "numeric",
-                                                                                }): "—"}
+                                                                                "en-IN", {
+                                                                                day: "2-digit",
+                                                                                month: "2-digit",
+                                                                                year: "numeric",
+                                                                            }) : "—"}
                                                                     </strong>
                                                                 </div>
 
@@ -1060,7 +1067,7 @@ export default function OfflineOrders() {
                                                                         ? {
                                                                             ...o,
                                                                             newPaymentDate: e.target.value,
-                                                                        }: o
+                                                                        } : o
                                                                 ));
                                                         }}
                                                     />
@@ -1075,7 +1082,7 @@ export default function OfflineOrders() {
                                                                         ? {
                                                                             ...o,
                                                                             newPaymentMethod: e.target.value,
-                                                                        }: o
+                                                                        } : o
                                                                 ));
                                                         }}
                                                     >
@@ -1100,7 +1107,7 @@ export default function OfflineOrders() {
                                                                         ? {
                                                                             ...o,
                                                                             newPaymentAmount: e.target.value,
-                                                                        }: o
+                                                                        } : o
                                                                 ));
                                                         }}
                                                     />
@@ -1119,7 +1126,7 @@ export default function OfflineOrders() {
                                                                                 ? {
                                                                                     ...o,
                                                                                     newPaymentUtr: e.target.value,
-                                                                                }: o
+                                                                                } : o
                                                                         ));
                                                                 }}
                                                             />

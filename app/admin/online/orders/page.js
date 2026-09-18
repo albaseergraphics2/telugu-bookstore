@@ -57,8 +57,7 @@ export default function OfflineOrders() {
                     id,
                     status,
                     deliveryType,
-                    deliveryCharge:
-                        Number(deliveryCharge) || 0,
+                    deliveryCharge:Number(deliveryCharge) || 0,
                 }),
             });
 
@@ -581,7 +580,7 @@ export default function OfflineOrders() {
                                     </div>
                                     <div className="admin-box">
                                         <div className="admin-invoice1">
-                                            <div className="admin-invoice-items-header">
+                                            <div className="admin-invoice-items-header-online">
                                                 <span>Book</span>
                                                 <span>Qty</span>
                                                 <span>Price</span>
@@ -592,7 +591,7 @@ export default function OfflineOrders() {
                                                 ) => (
                                                     <div
                                                         key={index}
-                                                        className="admin-invoice-item"
+                                                        className="admin-invoice-item-online"
                                                     >
                                                         <span>{item.bookId?.title || "Book"}</span>
                                                         <span>{item.qty || 0}</span>
@@ -1055,7 +1054,7 @@ export default function OfflineOrders() {
                                         </div>
                                     </div>
 
-                                    <div className="admin-invoice-items-header">
+                                    <div className="admin-invoice-items-header-online">
                                         <span>Book</span>
                                         <span>Qty</span>
                                         <span>Price</span>
@@ -1067,7 +1066,7 @@ export default function OfflineOrders() {
                                         ) => (
                                             <div
                                                 key={index}
-                                                className="admin-invoice-item"
+                                                className="admin-invoice-item-online"
                                             >
                                                 <span>{item.bookId?.title || "Book"}</span>
                                                 <span>{item.qty || 0}</span>
