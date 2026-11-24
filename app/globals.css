@@ -8078,7 +8078,7 @@ body:has(.admin-layout) .navbar2 {
     padding: 8px;
     font-size: 12px;
     width: 90%;
-    margin: 15px 0 0;
+    margin: 10px 0 0;
   }
 
   /* PRINTING SERVICE */
@@ -8148,7 +8148,7 @@ body:has(.admin-layout) .navbar2 {
     display: flex !important;
     flex-direction: column !important;
     height: auto !important;
-    min-height: auto;
+    min-height: 331px !important;
   }
 
   .allbook-img {
@@ -8200,7 +8200,7 @@ body:has(.admin-layout) .navbar2 {
   }
 
   .price {
-    margin: 8px 0 0;
+    margin: 8px 0 0 !important;
     font-size: 18px;
     font-weight: 700;
     color: #0b8b67;
