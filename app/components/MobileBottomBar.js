@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -10,19 +11,40 @@ import {
   FaBook,
 } from "react-icons/fa";
 
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../context/translations";
+
 export default function MobileBottomBar() {
   const pathname = usePathname();
   const { cartItems } = useSelector((state) => state.cart);
 
+  const { language } = useLanguage();
+
+  const labels = {
+    en: {
+      home: "Home",
+      books: "Books",
+      cart: "Cart",
+      menu: "Menu",
+    },
+    te: {
+      home: "హోమ్",
+      books: "పుస్తకాలు",
+      cart: "కార్ట్",
+      menu: "మెనూ",
+    },
+  };
+
+  const t = labels[language] || labels.en;
+
   return (
     <div className="mobile-bar">
-
       <Link
         href="/"
         className={`bar-item ${pathname === "/" ? "active" : ""}`}
       >
         <FaHome />
-        <span>Home</span>
+        <span>{t.home}</span>
       </Link>
 
       <Link
@@ -32,7 +54,7 @@ export default function MobileBottomBar() {
         }`}
       >
         <FaBook />
-        <span>Books</span>
+        <span>{t.books}</span>
       </Link>
 
       <Link
@@ -51,7 +73,7 @@ export default function MobileBottomBar() {
           )}
         </div>
 
-        <span>Cart</span>
+        <span>{t.cart}</span>
       </Link>
 
       <Link
@@ -61,7 +83,7 @@ export default function MobileBottomBar() {
         }`}
       >
         <FaBars />
-        <span>Menu</span>
+        <span>{t.menu}</span>
       </Link>
     </div>
   );
