@@ -1,13 +1,18 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import AddToCart from "../../components/AddToCart";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 export default function CategoryPage() {
   const params = useParams();
   const slug = params.slug;
+
+  const { language } = useLanguage();
+  const isTelugu = language === "te";
 
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -65,20 +70,27 @@ export default function CategoryPage() {
     return (
       <div style={{ textAlign: "center", marginTop: "100px" }}>
         <div className="loader"></div>
-        <p>Loading books...</p>
+        <p>{isTelugu ? "పుస్తకాలు లోడ్ అవుతున్నాయి..." : "Loading books..."}</p>
       </div>
     );
   }
+
+  const currentCategory = allBooks.find(
+    (book) => book.category?.toLowerCase() === slug.toLowerCase()
+  );
 
   return (
     <section className="allbooks">
 
       <Link href="/" className="back-home">
-        ← Back to Home
+        ← {isTelugu ? "హోమ్‌కు తిరిగి వెళ్లండి" : "Back to Home"}
       </Link>
 
       <h2 style={{ marginBottom: "20px" }}>
-        {slug.toUpperCase()} BOOKS
+        {isTelugu
+          ? currentCategory?.teluguCategory || slug.toUpperCase()
+          : slug.toUpperCase()}{" "}
+        {isTelugu ? "పుస్తకాలు" : "BOOKS"}
       </h2>
 
       <div
@@ -87,7 +99,7 @@ export default function CategoryPage() {
       >
         <input
           type="text"
-          placeholder="Search book..."
+          placeholder={isTelugu ? "పుస్తకం కోసం వెతకండి..." : "Search book..."}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -126,48 +138,49 @@ export default function CategoryPage() {
 
                   {book.inStock === false && (
                     <span className="stock-badge">
-                      Out of Stock
+                      {isTelugu ? "స్టాక్‌లో లేదు" : "Out of Stock"}
                     </span>
                   )}
 
                 </div>
+
                 <div className="book-actions">
-                <h3>{book.title}</h3>
 
-                <p className="telugu-title">
-                  {book.teluguTitle}
-                </p>
+                  <h3>
+                    {isTelugu
+                      ? book.teluguTitle || book.title
+                      : book.title}
+                  </h3>
 
-                <p className="author">
-                  by {book.author}
-                </p>
+                  <p className="author">
+                    {isTelugu ? "రచయిత:" : "by"}{" "}
+                    {isTelugu
+                      ? book.teluguAuthor || book.author
+                      : book.author}
+                  </p>
 
-                <p className="telugu-author">
-                  రచయిత: {book.teluguAuthor}
-                </p>
+                  <p className="price">
+                    ₹{book.price}
+                  </p>
 
-                <p className="price">
-                  Rs. {book.price}.00
-                </p>
+                  {book.inStock !== false && (
+                    <div
+                      className="cart12"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                    >
+                      <AddToCart book={book} />
+                    </div>
+                  )}
 
-                {book.inStock !== false && (
-                  <div
-                    className="cart12"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  >
-                    <AddToCart book={book} />
-                  </div>
-                )}
-
-              </div>
                 </div>
+              </div>
             </Link>
 
           ))}
@@ -175,8 +188,8 @@ export default function CategoryPage() {
         </div>
       ) : (
         <div className="no-result">
-          <h2>No books found</h2>
-          <p>Try another search</p>
+          <h2>{isTelugu ? "పుస్తకాలు కనుగొనబడలేదు" : "No books found"}</h2>
+          <p>{isTelugu ? "మరొక పదంతో వెతకండి" : "Try another search"}</p>
         </div>
       )}
 

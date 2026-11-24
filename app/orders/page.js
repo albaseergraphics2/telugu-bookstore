@@ -1,9 +1,11 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import useRealtime from "@/app/hooks/useRealtime";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
@@ -12,6 +14,9 @@ export default function OrdersPage() {
   const { user, loading: authLoading } = useSelector(
     (state) => state.auth
   );
+
+  const { language } = useLanguage();
+  const isTelugu = language === "te";
 
   const fetchOrders = async () => {
     if (authLoading) return;
@@ -34,7 +39,8 @@ export default function OrdersPage() {
       } else {
         setOrders([]);
       }
-      console.log(data)
+
+      console.log(data);
     } catch (error) {
       console.error("Error fetching orders:", error);
       setOrders([]);
@@ -55,26 +61,28 @@ export default function OrdersPage() {
     return (
       <div style={{ textAlign: "center", marginTop: "100px" }}>
         <div className="loader"></div>
-        <p>Loading...</p>
+        <p>{isTelugu ? "లోడ్ అవుతోంది..." : "Loading..."}</p>
       </div>
     );
   }
 
   return (
     <section className="orders-page">
-      <Link href="/" className="back-home">
-        ← Back to Home
+      <Link href="/" className="back-home back-home2">
+        {isTelugu ? "← హోమ్‌కు తిరిగి వెళ్ళండి" : "← Back to Home"}
       </Link>
 
       <h1 className="orders-title">
-        My Orders{" "}
+        {isTelugu ? "నా ఆర్డర్లు" : "My Orders"}{" "}
         <span className="order-count">
           ({orders.length})
         </span>
       </h1>
 
       {orders.length === 0 ? (
-        <p>No orders found</p>
+        <p>
+          {isTelugu ? "ఆర్డర్లు ఏవీ కనుగొనబడలేదు" : "No orders found"}
+        </p>
       ) : (
         <div className="orders-container">
           {orders.map((order) => (
@@ -83,25 +91,38 @@ export default function OrdersPage() {
               <div className="order-header">
                 <div>
                   <h3>
-                    Order #
+                    {isTelugu ? "ఆర్డర్ #" : "Order #"}
                     {order.invoiceId ||
                       order._id.slice(-6).toUpperCase()}
                   </h3>
 
                   <p>
-                    {new Date(order.createdAt).toLocaleString()}
+                    {new Date(order.createdAt).toLocaleString(
+                      isTelugu ? "te-IN" : "en-IN"
+                    )}
                   </p>
                 </div>
 
                 <span
                   className={`order-status ${order.status?.toLowerCase()}`}
                 >
-                  {order.status}
+                  {isTelugu
+                    ? ({
+                        pending: "పెండింగ్",
+                        confirmed: "నిర్ధారించబడింది",
+                        processing: "ప్రాసెస్ అవుతోంది",
+                        shipped: "షిప్పింగ్ చేయబడింది",
+                        delivered: "డెలివరీ చేయబడింది",
+                        cancelled: "రద్దు చేయబడింది",
+                      }[order.status?.toLowerCase()] || order.status)
+                    : order.status}
                 </span>
               </div>
 
               <div className="order-section">
-                <h4>Delivery Address</h4>
+                <h4>
+                  {isTelugu ? "డెలివరీ చిరునామా" : "Delivery Address"}
+                </h4>
 
                 <div className="address-card">
                   <p className="customer-name">
@@ -121,13 +142,15 @@ export default function OrdersPage() {
                   </p>
 
                   <p className="phone">
-                    Phone: {order.phone}
+                    {isTelugu ? "ఫోన్:" : "Phone:"} {order.phone}
                   </p>
                 </div>
               </div>
 
               <div className="order-section">
-                <h4>Books ({order.items.length})</h4>
+                <h4>
+                  {isTelugu ? "పుస్తకాలు" : "Books"} ({order.items.length})
+                </h4>
 
                 {order.items.map((item, index) => (
                   <div
@@ -135,11 +158,15 @@ export default function OrdersPage() {
                     className="book-row"
                   >
                     <span className="book-name">
-                      {item.bookId?.title || "Book"}
+                      {isTelugu
+                        ? item.bookId?.teluguTitle || item.bookId?.title || "పుస్తకం"
+                        : item.bookId?.title || "Book"}
                     </span>
 
                     <div className="orders-book-info">
-                      <span>Qty: {item.qty}</span>
+                      <span>
+                        {isTelugu ? "పరిమాణం:" : "Qty:"} {item.qty}
+                      </span>
 
                       <strong>
                         ₹{item.bookId?.price || "-"}
@@ -149,30 +176,38 @@ export default function OrdersPage() {
                 ))}
               </div>
 
-
-
               <div className="payment-summary-page">
                 <div className="summary-row">
-                  <span>Delivery Type</span>
+                  <span>
+                    {isTelugu ? "డెలివరీ రకం" : "Delivery Type"}
+                  </span>
                   <span>
                     {order.deliveryType ||
-                      "To Be Confirmed"}
+                      (isTelugu
+                        ? "తర్వాత నిర్ధారించబడుతుంది"
+                        : "To Be Confirmed")}
                   </span>
                 </div>
 
                 <div className="summary-row">
-                  <span>Delivery Charges</span>
+                  <span>
+                    {isTelugu ? "డెలివరీ ఛార్జీలు" : "Delivery Charges"}
+                  </span>
                   <span>
                     {order.totalAmount >= 1000
-                      ? "Free"
+                      ? isTelugu ? "ఉచితం" : "Free"
                       : order.deliveryCharge > 0
                         ? `₹${order.deliveryCharge}`
-                        : "To Be Confirmed"}
+                        : isTelugu
+                          ? "తర్వాత నిర్ధారించబడుతుంది"
+                          : "To Be Confirmed"}
                   </span>
                 </div>
 
                 <div className="summary-row grand-total">
-                  <span>Total</span>
+                  <span>
+                    {isTelugu ? "మొత్తం" : "Total"}
+                  </span>
                   <strong>
                     ₹{""}
                     {order.totalAmount >= 1000
@@ -190,7 +225,7 @@ export default function OrdersPage() {
                   href={`/invoice/${order._id}`}
                   className="invoice-btn"
                 >
-                  View Invoice
+                  {isTelugu ? "ఇన్వాయిస్ చూడండి" : "View Invoice"}
                 </Link>
               </div>
             </div>

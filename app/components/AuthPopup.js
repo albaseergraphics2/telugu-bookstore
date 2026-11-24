@@ -315,7 +315,7 @@ export default function AuthPopup({ show, onClose }) {
               <p
                 style={{
                   fontSize: "13px",
-                  color: "#0a5c36",
+                  color: "#092f55",
                   cursor: "pointer",
                   textAlign: "right",
                   marginTop: "-5px",
@@ -523,7 +523,7 @@ export default function AuthPopup({ show, onClose }) {
               Back to{" "}
               <span
                 style={{
-                  color: "#0a5c36",
+                  color: "#092f55",
                   cursor: "pointer",
                   fontWeight: "600"
                 }}
@@ -548,7 +548,7 @@ export default function AuthPopup({ show, onClose }) {
             <>
               Already have an account?{" "}
               <span
-                style={{ color: "#0a5c36", cursor: "pointer", fontWeight: "600" }}
+                style={{ color: "#092f55", cursor: "pointer", fontWeight: "600" }}
                 onClick={() => {
                   setIsRegister(false);
                   setName("");
@@ -565,7 +565,7 @@ export default function AuthPopup({ show, onClose }) {
             <>
               New user?{" "}
               <span
-                style={{ color: "#0a5c36", cursor: "pointer", fontWeight: "600" }}
+                style={{ color: "#092f55", cursor: "pointer", fontWeight: "600" }}
                 onClick={() => {
                   setIsRegister(true);
                   setLoginId("");

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,19 +10,26 @@ export default function HeroCarousel() {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    import("bootstrap/dist/js/bootstrap.bundle.min.js").then((bootstrap) => {
-      const el = document.querySelector("#carouselExampleIndicators");
+    import("bootstrap/dist/js/bootstrap.bundle.min.js").then(
+      (bootstrap) => {
+        const el = document.querySelector("#carouselExampleIndicators");
 
-      if (el) {
-        new bootstrap.Carousel(el, {
-          interval: 4000,
-          ride: "carousel",
-          pause: false,
-          wrap: true,
-          touch: true,
-        });
+        if (el) {
+          const existing =
+            bootstrap.Carousel.getInstance(el);
+
+          if (!existing) {
+            new bootstrap.Carousel(el, {
+              interval: 5000,
+              ride: "carousel",
+              pause: "hover",
+              wrap: true,
+              touch: true,
+            });
+          }
+        }
       }
-    });
+    );
   }, []);
 
   useEffect(() => {
@@ -55,6 +63,7 @@ export default function HeroCarousel() {
           "/images/2.jpeg",
           "/images/3.png",
         ];
+
         globalImages = fallback;
         setImages(fallback);
       }
@@ -64,8 +73,12 @@ export default function HeroCarousel() {
   }, []);
 
   return (
-    <div id="carouselExampleIndicators" className="carousel slide">
+    <div
+      id="carouselExampleIndicators"
+      className="carousel slide hero-carousel"
+    >
 
+      {/* Indicators */}
       <div className="carousel-indicators">
         {images.map((_, i) => (
           <button
@@ -74,15 +87,19 @@ export default function HeroCarousel() {
             data-bs-target="#carouselExampleIndicators"
             data-bs-slide-to={i}
             className={i === 0 ? "active" : ""}
+            aria-label={`Slide ${i + 1}`}
           />
         ))}
       </div>
 
+      {/* Images */}
       <div className="carousel-inner">
         {images.map((img, i) => (
           <div
             key={i}
-            className={`carousel-item ${i === 0 ? "active" : ""}`}
+            className={`carousel-item ${
+              i === 0 ? "active" : ""
+            }`}
           >
             <div className="hero-img">
               <Image
@@ -90,15 +107,14 @@ export default function HeroCarousel() {
                   img.includes("cloudinary")
                     ? img.replace(
                         "/upload/",
-                        "/upload/f_auto,q_auto,w_1200/"
+                        "/upload/f_auto,q_auto,w_1400/"
                       )
                     : img
                 }
-                alt={`slide-${i}`}
+                alt={`Telugu Islamic Book Store Banner ${i + 1}`}
                 fill
-                sizes="(max-width: 768px) 100vw, 1200px" // 🔥 better than 100vw
+                sizes="(max-width: 768px) 100vw, 1200px"
                 priority={i === 0}
-                loading={i === 0 ? "eager" : "lazy"}
                 className="hero-image"
               />
             </div>
@@ -106,22 +122,26 @@ export default function HeroCarousel() {
         ))}
       </div>
 
+      {/* Previous */}
       <button
         className="carousel-control-prev"
         type="button"
         data-bs-target="#carouselExampleIndicators"
         data-bs-slide="prev"
+        aria-label="Previous slide"
       >
-        <span className="carousel-control-prev-icon"></span>
+        <span className="carousel-control-prev-icon" />
       </button>
 
+      {/* Next */}
       <button
         className="carousel-control-next"
         type="button"
         data-bs-target="#carouselExampleIndicators"
         data-bs-slide="next"
+        aria-label="Next slide"
       >
-        <span className="carousel-control-next-icon"></span>
+        <span className="carousel-control-next-icon" />
       </button>
 
     </div>

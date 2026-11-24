@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ import {
 } from "@/redux/actions/cartActions";
 import Link from "next/link";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 export default function CartPage() {
   const [name, setName] = useState("");
@@ -22,6 +24,9 @@ export default function CartPage() {
   const [stateName, setStateName] = useState("");
   const [defaultShipping, setDefaultShipping] = useState(0);
   const [freeShippingAmount, setFreeShippingAmount] = useState(1000);
+
+  const { language } = useLanguage();
+  const isTelugu = language === "te";
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -148,17 +153,17 @@ export default function CartPage() {
 
   const placeOrder = async () => {
     if (!user) {
-      alert("Please login first");
+      alert(isTelugu ? "దయచేసి ముందుగా లాగిన్ అవ్వండి" : "Please login first");
       return;
     }
 
     if (!name || !phone || !address) {
-      alert("Fill all details");
+      alert(isTelugu ? "అన్ని వివరాలను నమోదు చేయండి" : "Fill all details");
       return;
     }
 
     if (cartItems.length === 0) {
-      alert("Cart is empty");
+      alert(isTelugu ? "మీ కార్ట్ ఖాళీగా ఉంది" : "Cart is empty");
       return;
     }
 
@@ -170,8 +175,11 @@ export default function CartPage() {
           item.price?.replace("₹", "") || 0
         );
 
-        return `${item.title} (Qty: ${item.qty}) - ₹${price * item.qty
-          }`;
+        const title = isTelugu
+          ? item.teluguTitle || item.title
+          : item.title;
+
+        return `${title} (${isTelugu ? "పరిమాణం" : "Qty"}: ${item.qty}) - ₹${price * item.qty}`;
       })
       .join("\n");
 
@@ -206,9 +214,20 @@ export default function CartPage() {
       const data = await res.json();
 
       if (data.success) {
-        const invoiceId = data.order.invoiceId;
+        const message = isTelugu
+          ? `అస్సలాము అలైకుం
 
-        const message = `Assalamu Alaikum
+నేను ఈ పుస్తకాలను ఆర్డర్ చేయాలనుకుంటున్నాను:
+
+${orderList}
+
+మొత్తం ధర: ₹${totalPrice}
+
+కస్టమర్ వివరాలు:
+పేరు: ${name}
+ఫోన్: ${phone}
+చిరునామా: ${address}`
+          : `Assalamu Alaikum
 
 I want to order these books:
 
@@ -233,11 +252,15 @@ Address: ${address}`;
           router.push("/orders");
         }, 500);
       } else {
-        alert("Something went wrong");
+        alert(
+          isTelugu ? "ఏదో తప్పు జరిగింది" : "Something went wrong"
+        );
       }
     } catch (error) {
       console.error("Place order error:", error);
-      alert("Something went wrong");
+      alert(
+        isTelugu ? "ఏదో తప్పు జరిగింది" : "Something went wrong"
+      );
     }
   };
 
@@ -253,32 +276,33 @@ Address: ${address}`;
 
   if (loading) {
     return (
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "100px",
-        }}
-      >
+      <div style={{ textAlign: "center", marginTop: "100px" }}>
         <div className="loader"></div>
-        <p>Loading Cart...</p>
+        <p>
+          {isTelugu ? "కార్ట్ లోడ్ అవుతోంది..." : "Loading Cart..."}
+        </p>
       </div>
     );
   }
 
   return (
     <section className="cart-page">
-      <Link href="/books" className="back-home">
-        ← View All Books
+      <Link href="/books" className="back-home back-home1">
+        {isTelugu ? "← అన్ని పుస్తకాలు చూడండి" : "← View All Books"}
       </Link>
 
-      <h1 className="cart-title">Cart</h1>
+      <h1 className="cart-title">
+        {isTelugu ? "షాపింగ్ కార్ట్" : "Cart"}
+      </h1>
 
       {cartItems.length === 0 ? (
         <div className="empty-cart">
-          <p>Your cart is empty</p>
+          <p>
+            {isTelugu ? "మీ కార్ట్ ఖాళీగా ఉంది" : "Your cart is empty"}
+          </p>
 
           <Link href="/books" className="shop-btn">
-            View Books
+            {isTelugu ? "పుస్తకాలు చూడండి" : "View Books"}
           </Link>
         </div>
       ) : (
@@ -288,9 +312,9 @@ Address: ${address}`;
             <div className="cart-container">
               <div className="cart-header-flex">
                 <div className="cart-header">
-                  <div>BOOKS</div>
-                  <div>QUANTITY</div>
-                  <div>TOTAL</div>
+                  <div>{isTelugu ? "పుస్తకాలు" : "BOOKS"}</div>
+                  <div>{isTelugu ? "పరిమాణం" : "QUANTITY"}</div>
+                  <div>{isTelugu ? "మొత్తం" : "TOTAL"}</div>
                 </div>
 
                 {cartItems.map((item) => {
@@ -301,55 +325,47 @@ Address: ${address}`;
                   const subTotal = price * item.qty;
 
                   return (
-                    <div
-                      className="cart-item"
-                      key={item.slug}
-                    >
+                    <div className="cart-item" key={item.slug}>
                       <div className="cart-product">
                         <img
                           src={
                             item.img
                               ? item.img.replace(
-                                "/upload/",
-                                "/upload/f_auto,q_auto,w_150/"
-                              )
+                                  "/upload/",
+                                  "/upload/f_auto,q_auto,w_150/"
+                                )
                               : "/images/No_Image_Available.jpg"
                           }
                           alt={item.title}
                         />
 
                         <div className="cart-info">
-                          <h3>{item.title}</h3>
+                          <h3>
+                            {isTelugu
+                              ? item.teluguTitle || item.title
+                              : item.title}
+                          </h3>
                           <p>₹{item.price}</p>
                         </div>
                       </div>
 
                       <div className="cart-quantity">
                         <div className="qty-box">
-                          <button
-                            onClick={() =>
-                              decreaseQty(item.slug)
-                            }
-                          >
+                          <button onClick={() => decreaseQty(item.slug)}>
                             -
                           </button>
 
                           <span>{item.qty}</span>
 
-                          <button
-                            onClick={() =>
-                              increaseQty(item.slug)
-                            }
-                          >
+                          <button onClick={() => increaseQty(item.slug)}>
                             +
                           </button>
                         </div>
 
                         <button
                           className="remove-icon-btn"
-                          onClick={() =>
-                            removeItem(item.slug)
-                          }
+                          onClick={() => removeItem(item.slug)}
+                          aria-label={isTelugu ? "తొలగించు" : "Remove"}
                         >
                           <RiDeleteBin6Line />
                         </button>
@@ -362,9 +378,10 @@ Address: ${address}`;
                   );
                 })}
               </div>
+
               <div className="cart-summary">
                 <h2 className="summary-title">
-                  Order Summary
+                  {isTelugu ? "ఆర్డర్ సారాంశం" : "Order Summary"}
                 </h2>
 
                 {shippingCharge > 0 && (
@@ -373,8 +390,11 @@ Address: ${address}`;
 
                     <div className="summary-note">
                       <p>
-                        Free shipping on orders above ₹
+                        {isTelugu
+                          ? "₹"
+                          : "Free shipping on orders above ₹"}
                         {freeShippingAmount}
+                        {isTelugu ? " కంటే ఎక్కువ ఆర్డర్లకు ఉచిత డెలివరీ" : ""}
                       </p>
                     </div>
 
@@ -384,35 +404,40 @@ Address: ${address}`;
 
                 <div className="summary-box">
                   <div className="summary-row">
-                    <span>Total Books</span>
+                    <span>
+                      {isTelugu ? "మొత్తం పుస్తకాలు" : "Total Books"}
+                    </span>
                     <strong>{totalBooks}</strong>
                   </div>
 
                   <div className="summary-row">
-                    <span>Total Amount</span>
+                    <span>
+                      {isTelugu ? "మొత్తం ధర" : "Total Amount"}
+                    </span>
                     <strong>₹{totalPrice}</strong>
                   </div>
 
                   <div className="summary-row">
-                    <span>Delivery Charges</span>
+                    <span>
+                      {isTelugu ? "డెలివరీ ఛార్జీలు" : "Delivery Charges"}
+                    </span>
                     <strong>
                       {shippingCharge === 0
-                        ? "Free"
+                        ? isTelugu
+                          ? "ఉచితం"
+                          : "Free"
                         : `₹${shippingCharge}`}
                     </strong>
                   </div>
 
                   <div className="summary-row grand-total">
-                    <span>Total</span>
+                    <span>{isTelugu ? "మొత్తం" : "Total"}</span>
                     <strong>₹{grandTotal}</strong>
                   </div>
                 </div>
 
-                <Link
-                  href="/checkout"
-                  className="checkout-btn"
-                >
-                  Proceed to checkout
+                <Link href="/checkout" className="checkout-btn">
+                  {isTelugu ? "చెక్‌అవుట్‌కు వెళ్లండి" : "Proceed to checkout"}
                 </Link>
               </div>
             </div>
@@ -422,9 +447,9 @@ Address: ${address}`;
           <div className="mobile-cart-view">
             <div className="cart-container">
               <div className="cart-header">
-                <div>BOOKS</div>
-                <div>QUANTITY</div>
-                <div>TOTAL</div>
+                <div>{isTelugu ? "పుస్తకాలు" : "BOOKS"}</div>
+                <div>{isTelugu ? "పరిమాణం" : "QUANTITY"}</div>
+                <div>{isTelugu ? "మొత్తం" : "TOTAL"}</div>
               </div>
 
               {cartItems.map((item) => {
@@ -435,61 +460,52 @@ Address: ${address}`;
                 const subTotal = price * item.qty;
 
                 return (
-                  <div
-                    className="cart-item"
-                    key={item.slug}
-                  >
+                  <div className="cart-item" key={item.slug}>
                     <div className="cart-product">
                       <img
                         src={
                           item.img
                             ? item.img.replace(
-                              "/upload/",
-                              "/upload/f_auto,q_auto,w_150/"
-                            )
+                                "/upload/",
+                                "/upload/f_auto,q_auto,w_150/"
+                              )
                             : "/images/No_Image_Available.jpg"
                         }
                         alt={item.title}
                       />
 
                       <div className="cart-info">
-                        <h3>{item.title}</h3>
+                        <h3>
+                          {isTelugu
+                            ? item.teluguTitle || item.title
+                            : item.title}
+                        </h3>
+
                         <p>₹{item.price}</p>
+
                         <div className="cart-quantity">
                           <div className="qty-box">
-                            <button
-                              onClick={() =>
-                                decreaseQty(item.slug)
-                              }
-                            >
+                            <button onClick={() => decreaseQty(item.slug)}>
                               -
                             </button>
 
                             <span>{item.qty}</span>
 
-                            <button
-                              onClick={() =>
-                                increaseQty(item.slug)
-                              }
-                            >
+                            <button onClick={() => increaseQty(item.slug)}>
                               +
                             </button>
                           </div>
 
                           <button
                             className="remove-icon-btn"
-                            onClick={() =>
-                              removeItem(item.slug)
-                            }
+                            onClick={() => removeItem(item.slug)}
+                            aria-label={isTelugu ? "తొలగించు" : "Remove"}
                           >
                             <RiDeleteBin6Line />
                           </button>
                         </div>
                       </div>
-
                     </div>
-
-
 
                     <div className="cart-total">
                       ₹{subTotal}
@@ -500,7 +516,7 @@ Address: ${address}`;
 
               <div className="cart-summary">
                 <h2 className="summary-title">
-                  Order Summary
+                  {isTelugu ? "ఆర్డర్ సారాంశం" : "Order Summary"}
                 </h2>
 
                 {shippingCharge > 0 && (
@@ -509,8 +525,9 @@ Address: ${address}`;
 
                     <div className="summary-note">
                       <p>
-                        Free shipping on orders above ₹
-                        {freeShippingAmount}
+                        {isTelugu
+                          ? `₹${freeShippingAmount} కంటే ఎక్కువ ఆర్డర్లకు ఉచిత డెలివరీ`
+                          : `Free shipping on orders above ₹${freeShippingAmount}`}
                       </p>
                     </div>
 
@@ -520,35 +537,40 @@ Address: ${address}`;
 
                 <div className="summary-box">
                   <div className="summary-row">
-                    <span>Total Books</span>
+                    <span>
+                      {isTelugu ? "మొత్తం పుస్తకాలు" : "Total Books"}
+                    </span>
                     <strong>{totalBooks}</strong>
                   </div>
 
                   <div className="summary-row">
-                    <span>Total Amount</span>
+                    <span>
+                      {isTelugu ? "మొత్తం ధర" : "Total Amount"}
+                    </span>
                     <strong>₹{totalPrice}</strong>
                   </div>
 
                   <div className="summary-row">
-                    <span>Delivery Charges</span>
+                    <span>
+                      {isTelugu ? "డెలివరీ ఛార్జీలు" : "Delivery Charges"}
+                    </span>
                     <strong>
                       {shippingCharge === 0
-                        ? "Free"
+                        ? isTelugu
+                          ? "ఉచితం"
+                          : "Free"
                         : `₹${shippingCharge}`}
                     </strong>
                   </div>
 
                   <div className="summary-row grand-total">
-                    <span>Total</span>
+                    <span>{isTelugu ? "మొత్తం" : "Total"}</span>
                     <strong>₹{grandTotal}</strong>
                   </div>
                 </div>
 
-                <Link
-                  href="/checkout"
-                  className="checkout-btn"
-                >
-                  Checkout
+                <Link href="/checkout" className="checkout-btn">
+                  {isTelugu ? "చెక్‌అవుట్" : "Checkout"}
                 </Link>
               </div>
             </div>

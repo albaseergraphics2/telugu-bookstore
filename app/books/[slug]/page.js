@@ -1,12 +1,17 @@
+
 "use client";
 
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import AddToCart from "../../components/AddToCart";
 import PopularBooks from "../../components/PopularBooks";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function BookDetails({ params }) {
   const { slug } = use(params);
+
+  const { language } = useLanguage();
+  const isTelugu = language === "te";
 
   const [loading, setLoading] = useState(true);
   const [book, setBook] = useState(null);
@@ -20,16 +25,15 @@ export default function BookDetails({ params }) {
 
         if (data.success) {
           setBook(data.book);
+
           let imagesArray = [];
+
           if (data.book.img) {
             imagesArray.push(data.book.img);
           }
 
           if (data.book.images && data.book.images.length > 0) {
-            imagesArray = [
-              ...imagesArray,
-              ...data.book.images,
-            ];
+            imagesArray = [...imagesArray, ...data.book.images];
           }
 
           imagesArray = imagesArray.filter(
@@ -41,8 +45,10 @@ export default function BookDetails({ params }) {
       } catch (err) {
         console.log(err);
       }
+
       setLoading(false);
     };
+
     fetchBook();
   }, [slug]);
 
@@ -50,7 +56,11 @@ export default function BookDetails({ params }) {
     return (
       <div style={{ textAlign: "center", marginTop: "100px" }}>
         <div className="loader"></div>
-        <p>Loading book details...</p>
+        <p>
+          {isTelugu
+            ? "పుస్తకం వివరాలు లోడ్ అవుతున్నాయి..."
+            : "Loading book details..."}
+        </p>
       </div>
     );
   }
@@ -59,10 +69,11 @@ export default function BookDetails({ params }) {
     return (
       <section className="book-details">
         <Link href="/books" className="back-home">
-          ← Back to Books
+          {isTelugu ? "← పుస్తకాల వద్దకు తిరిగి వెళ్ళండి" : "← Back to Books"}
         </Link>
+
         <h2 style={{ textAlign: "center", marginTop: "20px" }}>
-          Book Not Found
+          {isTelugu ? "పుస్తకం కనుగొనబడలేదు" : "Book Not Found"}
         </h2>
       </section>
     );
@@ -78,13 +89,15 @@ export default function BookDetails({ params }) {
     imagesList = [...imagesList, ...book.images];
   }
 
-  imagesList = imagesList.filter((img) => img && img.trim() !== "");
+  imagesList = imagesList.filter(
+    (img) => img && img.trim() !== ""
+  );
 
   return (
     <>
       <section className="book-details">
         <Link href="/books" className="back-home">
-          ← Back to Books
+          {isTelugu ? "← పుస్తకాల వద్దకు తిరిగి వెళ్ళండి" : "← Back to Books"}
         </Link>
 
         <div className="book-details-container">
@@ -96,7 +109,11 @@ export default function BookDetails({ params }) {
                     ? mainImage.trim()
                     : "/images/No_Image_Available.jpg"
                 }
-                alt={book.title}
+                alt={
+                  isTelugu
+                    ? book.teluguTitle || book.title
+                    : book.title
+                }
               />
             </div>
 
@@ -113,20 +130,57 @@ export default function BookDetails({ params }) {
           </div>
 
           <div className="book-details-info">
-            <h1>{book.title}</h1>
-            <h2 className="telugu-title">{book.teluguTitle}</h2>
-            <p className="author">Author: {book.author}</p>
-            <p className="telugu-author">రచయిత: {book.teluguAuthor}</p>
-            <p className="desc">{book.desc}</p>
-            <p className="telugu-desc">{book.teluguDesc}</p>
+            <h1>
+              {isTelugu
+                ? book.teluguTitle || book.title
+                : book.title}
+            </h1>
+
+            <p className="author">
+              {isTelugu
+                ? `రచయిత: ${book.teluguAuthor || book.author || ""}`
+                : `Author: ${book.author || ""}`}
+            </p>
+
+            <p className="desc">
+              {isTelugu
+                ? book.teluguDesc || book.desc
+                : book.desc}
+            </p>
+
             <p className="price">₹{book.price}</p>
 
-            <p><strong>Publisher:</strong> {book.publisher}</p>
-            <p><strong>Pages:</strong> {book.pages}</p>
-            <p><strong>Binding:</strong> {book.binding}</p>
-            <p><strong>Size:</strong> {book.size}</p>
-            <p><strong>Language:</strong> {book.language}</p>
-            <p><strong>Category:</strong> {book.category}</p>
+            <p>
+              <strong>{isTelugu ? "ప్రచురణకర్త:" : "Publisher:"}</strong>{" "}
+              {book.publisher}
+            </p>
+
+            <p>
+              <strong>{isTelugu ? "పేజీలు:" : "Pages:"}</strong>{" "}
+              {book.pages}
+            </p>
+
+            <p>
+              <strong>{isTelugu ? "బైండింగ్:" : "Binding:"}</strong>{" "}
+              {book.binding}
+            </p>
+
+            <p>
+              <strong>{isTelugu ? "పరిమాణం:" : "Size:"}</strong>{" "}
+              {book.size}
+            </p>
+
+            <p>
+              <strong>{isTelugu ? "భాష:" : "Language:"}</strong>{" "}
+              {book.language}
+            </p>
+
+            <p>
+              <strong>{isTelugu ? "వర్గం:" : "Category:"}</strong>{" "}
+              {isTelugu
+                ? book.teluguCategory || book.category
+                : book.category}
+            </p>
 
             <div style={{ textAlign: "center" }}>
               {book.inStock !== false ? (
@@ -134,7 +188,7 @@ export default function BookDetails({ params }) {
               ) : (
                 <div className="book-out-of-stock">
                   <span className="book-stock-badge">
-                    Out of Stock
+                    {isTelugu ? "స్టాక్ లేదు" : "Out of Stock"}
                   </span>
                 </div>
               )}
@@ -142,6 +196,7 @@ export default function BookDetails({ params }) {
           </div>
         </div>
       </section>
+
       <PopularBooks />
     </>
   );

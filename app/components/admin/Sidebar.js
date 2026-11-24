@@ -1,16 +1,41 @@
+
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const mobileDropdownRef = useRef(null);
 
+  const { language } = useLanguage();
+  const isTelugu = language === "te";
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const [mobileOpenMenu, setMobileOpenMenu] = useState(null);
+
+  const translations = {
+    "Admin": "అడ్మిన్",
+    "Dashboard": "డ్యాష్‌బోర్డ్",
+    "Online Orders": "ఆన్‌లైన్ ఆర్డర్లు",
+    "Orders List": "ఆర్డర్ల జాబితా",
+    "Customers": "కస్టమర్లు",
+    "Offline Orders": "ఆఫ్‌లైన్ ఆర్డర్లు",
+    "Create Order": "ఆర్డర్ సృష్టించండి",
+    "Suppliers": "సరఫరాదారులు",
+    "Create Supplier": "సరఫరాదారుని సృష్టించండి",
+    "Accounts": "ఖాతాలు",
+    "Books": "పుస్తకాలు",
+    "Users": "వినియోగదారులు",
+    "HeroCarousel": "హీరో క్యారౌసెల్",
+    "Payment Settings": "చెల్లింపు సెట్టింగ్‌లు",
+  };
+
+  const translate = (text) =>
+    isTelugu ? translations[text] || text : text;
 
   const menu = [
     { name: "Dashboard", path: "/admin" },
@@ -78,7 +103,7 @@ export default function Sidebar() {
 
         <div className="admintext">
           <h3 className="adminhead">
-            Admin
+            {translate("Admin")}
           </h3>
         </div>
 
@@ -97,7 +122,7 @@ export default function Sidebar() {
               }
             }}
           >
-            {currentMenu}
+            {translate(currentMenu)}
           </button>
 
           {mobileMenuOpen && (
@@ -122,7 +147,7 @@ export default function Sidebar() {
                           )
                         }
                       >
-                        {item.name}
+                        {translate(item.name)}
 
                         <span style={{ float: "right" }}>
                           {mobileOpenMenu === item.name ? "▼" : "▶"}
@@ -148,7 +173,7 @@ export default function Sidebar() {
                               router.push(child.path);
                             }}
                           >
-                            {child.name}
+                            {translate(child.name)}
                           </button>
                         ))}
                       </div>
@@ -166,7 +191,7 @@ export default function Sidebar() {
                         router.push(item.path);
                       }}
                     >
-                      {item.name}
+                      {translate(item.name)}
                     </button>
                   )}
 
@@ -199,7 +224,7 @@ export default function Sidebar() {
                 )
               }
             >
-              {item.name}
+              {translate(item.name)}
 
               <span>
                 {openMenu === item.name ? "▼" : "▶"}
@@ -224,7 +249,7 @@ export default function Sidebar() {
                     router.push(child.path)
                   }
                 >
-                  {child.name}
+                  {translate(child.name)}
                 </button>
               ))}
 
@@ -244,7 +269,7 @@ export default function Sidebar() {
               router.push(item.path);
             }}
           >
-            {item.name}
+            {translate(item.name)}
           </button>
         )
       )}

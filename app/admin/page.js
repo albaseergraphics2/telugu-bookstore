@@ -1,9 +1,14 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 export default function AdminDashboard() {
+  const { language } = useLanguage();
+  const isTelugu = language === "te";
+
   const [defaultShipping, setDefaultShipping] = useState("");
   const [stats, setStats] = useState({
     users: 0,
@@ -43,7 +48,11 @@ export default function AdminDashboard() {
         }
       } catch (err) {
         console.error(err);
-        toast.error("Failed to load dashboard");
+        toast.error(
+          isTelugu
+            ? "డ్యాష్‌బోర్డ్ లోడ్ చేయడంలో విఫలమైంది"
+            : "Failed to load dashboard"
+        );
       }
     };
 
@@ -52,55 +61,62 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
-      <h2>Dashboard</h2>
+      <h2>{isTelugu ? "డ్యాష్‌బోర్డ్" : "Dashboard"}</h2>
 
       <div className="analytics-grid">
         <div className="analytics-card">
-          <h3>Total Users</h3>
+          <h3>{isTelugu ? "మొత్తం వినియోగదారులు" : "Total Users"}</h3>
           <p>{stats.users}</p>
         </div>
 
         <div className="analytics-card">
-          <h3>Total Orders</h3>
+          <h3>{isTelugu ? "మొత్తం ఆర్డర్లు" : "Total Orders"}</h3>
           <p>{stats.orders}</p>
         </div>
 
         <div className="analytics-card">
-          <h3>Total Income</h3>
+          <h3>{isTelugu ? "మొత్తం ఆదాయం" : "Total Income"}</h3>
           <p>₹{stats.revenue}</p>
         </div>
 
         <div className="analytics-card">
-          <h3>Total Delivery Charges</h3>
+          <h3>
+            {isTelugu ? "మొత్తం డెలివరీ ఛార్జీలు" : "Total Delivery Charges"}
+          </h3>
           <p>₹{stats.deliveryTotal}</p>
         </div>
 
         <div className="analytics-card">
-          <h3>Total Amount (With Delivery)</h3>
+          <h3>
+            {isTelugu
+              ? "మొత్తం మొత్తం (డెలివరీతో సహా)"
+              : "Total Amount (With Delivery)"}
+          </h3>
           <p>₹{stats.revenue + stats.deliveryTotal}</p>
         </div>
+
         <div className="analytics-card">
-          <h3>Pending Orders</h3>
+          <h3>{isTelugu ? "పెండింగ్ ఆర్డర్లు" : "Pending Orders"}</h3>
           <p>{stats.pending}</p>
         </div>
 
         <div className="analytics-card">
-          <h3>Completed Orders</h3>
+          <h3>{isTelugu ? "పూర్తయిన ఆర్డర్లు" : "Completed Orders"}</h3>
           <p>{stats.completed}</p>
         </div>
 
         <div className="analytics-card">
-          <h3>Today's Orders</h3>
+          <h3>{isTelugu ? "నేటి ఆర్డర్లు" : "Today's Orders"}</h3>
           <p>{stats.todayOrders}</p>
         </div>
 
         <div className="analytics-card">
-          <h3>Today's Revenue</h3>
+          <h3>{isTelugu ? "నేటి ఆదాయం" : "Today's Revenue"}</h3>
           <p>₹{stats.todayRevenue}</p>
         </div>
 
         <div className="analytics-card">
-          <h3>Avg Order Value</h3>
+          <h3>{isTelugu ? "సగటు ఆర్డర్ విలువ" : "Avg Order Value"}</h3>
           <p>₹{stats.avgOrderValue}</p>
         </div>
       </div>

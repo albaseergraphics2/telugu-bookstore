@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Categories() {
   const [catalog, setCatalog] = useState([]);
+  const { language } = useLanguage();
 
   useEffect(() => {
     const fetchCatalog = async () => {
@@ -13,18 +15,27 @@ export default function Categories() {
         const data = await res.json();
 
         if (data.success) {
-          const categories = [
-            ...new Set(
+          const formattedCatalog = [
+            ...new Map(
               data.books
-                .map((b) => b.category?.toLowerCase().trim())
-                .filter(Boolean)
-            ),
-          ];
+                .filter((book) => book.category)
+                .map((book) => {
+                  const slug = book.category.toLowerCase().trim();
 
-          const formattedCatalog = categories.map((cat) => ({
-            name: cat.charAt(0).toUpperCase() + cat.slice(1),
-            slug: cat,
-          }));
+                  return [
+                    slug,
+                    {
+                      name:
+                        book.category.charAt(0).toUpperCase() +
+                        book.category.slice(1),
+                      teluguName:
+                        book.teluguCategory || book.category,
+                      slug,
+                    },
+                  ];
+                })
+            ).values(),
+          ];
 
           setCatalog(formattedCatalog);
         }
@@ -38,7 +49,9 @@ export default function Categories() {
 
   return (
     <section className="categories">
-      <h2 className="cat-title">Catalog</h2>
+      <h2 className="cat-title">
+        {language === "te" ? "పుస్తకాల విభాగాలు" : "Catalog"}
+      </h2>
 
       <div className="cat-tabs">
         {catalog.map((cat) => (
@@ -47,12 +60,14 @@ export default function Categories() {
             key={cat.slug}
             className="cat-tab"
           >
-            {cat.name}
+            {language === "te" ? cat.teluguName : cat.name}
           </Link>
         ))}
 
         <Link href="/books" className="cat-tab">
-          View All Books
+          {language === "te"
+            ? "అన్ని పుస్తకాలు చూడండి"
+            : "View All Books"}
         </Link>
       </div>
     </section>

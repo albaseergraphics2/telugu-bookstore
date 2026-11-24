@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import { Analytics } from '@vercel/analytics/next';
 import Provider from "./provider";
 import LoadUser from "./components/LoadUser";
+import { LanguageProvider } from "./context/LanguageContext";
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -31,36 +32,42 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={poppins.className}>
         <Provider>
-          <LoadUser />
-          <BootstrapClient />
-          <Navbar />
-          <main className="min-h-screen">
-            {children}
-            <Toaster
-              position="top-right"
-              containerStyle={{
-                top: "75px",
-                right: "20px",
-                zIndex: 999999,
-              }}
-              toastOptions={{
-                duration: 2500,
-                style: {
-                  background: "#404040",
-                  color: "#fff",
-                  borderRadius: "8px",
-                  padding: "12px 16px",
-                  fontSize: "14px",
+          <LanguageProvider>
+            <LoadUser />
+            <BootstrapClient />
+            <Navbar />
+
+            <main className="min-h-screen">
+              {children}
+
+              <Toaster
+                position="top-right"
+                containerStyle={{
+                  top: "75px",
+                  right: "20px",
                   zIndex: 999999,
-                },
-              }}
-            />
-            <Analytics />
-          </main>
-          <Footer />
-          <MobileBottomBar />
+                }}
+                toastOptions={{
+                  duration: 2500,
+                  style: {
+                    background: "#404040",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    padding: "12px 16px",
+                    fontSize: "14px",
+                    zIndex: 999999,
+                  },
+                }}
+              />
+
+              <Analytics />
+            </main>
+
+            <Footer />
+            <MobileBottomBar />
+          </LanguageProvider>
         </Provider>
       </body>
     </html>
-  )
+  );
 };

@@ -80,6 +80,12 @@ export default function AddBookPopup({
           <input name="publisher" placeholder="Publisher" value={form.publisher || ""} onChange={handleChange} />
           <input name="weight" placeholder="Weight" value={form.weight || ""} onChange={handleChange} />
           <input name="category" placeholder="Category" value={form.category || ""} onChange={handleChange} />
+          <input
+            name="teluguCategory"
+            placeholder="Telugu Category"
+            value={form.teluguCategory || ""}
+            onChange={handleChange}
+          />
           <input name="tag" placeholder="Tag" value={form.tag || ""} onChange={handleChange} />
 
           <input type="file" onChange={handleImageUpload} />

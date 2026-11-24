@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -7,12 +8,18 @@ import { clearCart } from "@/redux/actions/cartActions";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import useRealtime from "../hooks/useRealtime";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 export default function CheckoutPage() {
     const dispatch = useDispatch();
     const router = useRouter();
+
     const { cartItems } = useSelector((state) => state.cart);
     const { user } = useSelector((state) => state.auth);
+
+    const { language } = useLanguage();
+    const isTelugu = language === "te";
+
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
@@ -27,6 +34,7 @@ export default function CheckoutPage() {
     const [placingOrder, setPlacingOrder] = useState(false);
     const [defaultShipping, setDefaultShipping] = useState(0);
     const [freeShippingAmount, setFreeShippingAmount] = useState(1000);
+
     const [paymentSettings, setPaymentSettings] = useState({
         bankName: "",
         accountHolder: "",
@@ -44,41 +52,6 @@ export default function CheckoutPage() {
 
         return () => clearTimeout(timer);
     }, []);
-
-
-    const handleCheckout = async () => {
-        if (placingOrder) return;
-
-        setPlacingOrder(true);
-
-        try {
-            if (!user) {
-                toast.error("Please login to continue");
-                return;
-            }
-            if (!paymentMethod) {
-                toast.error("Please select a payment method");
-                return;
-            }
-            if (paymentMethod === "online") {
-                router.push("/payment");
-                return;
-            }
-            if (paymentMethod === "bank") {
-                if (!utrNumber.trim()) {
-                    toast.error("Please enter UTR / Transaction ID");
-                    return;
-                }
-                await placeOrder();
-                return;
-            }
-            if (paymentMethod === "cod") {
-                await placeOrder();
-            }
-        } finally {
-            setPlacingOrder(false);
-        }
-    };
 
     useEffect(() => {
         if (user) {
@@ -147,7 +120,6 @@ export default function CheckoutPage() {
         }
     }, [pincode]);
 
-
     const fetchSettings = async () => {
         try {
             const res = await fetch("/api/admin/settings", {
@@ -157,10 +129,14 @@ export default function CheckoutPage() {
             const data = await res.json();
 
             if (data.success) {
-                setDefaultShipping(Number(data.setting.defaultShipping || 0));
+                setDefaultShipping(
+                    Number(data.setting.defaultShipping || 0)
+                );
+
                 setFreeShippingAmount(
                     Number(data.setting.freeShippingAmount || 0)
                 );
+
                 setPaymentSettings(data.setting);
             }
         } catch (error) {
@@ -172,21 +148,30 @@ export default function CheckoutPage() {
 
     const placeOrder = async () => {
         if (!user) {
-            toast.error("Please login first");
+            toast.error(
+                isTelugu ? "దయచేసి ముందుగా లాగిన్ అవ్వండి" : "Please login first"
+            );
             return;
         }
+
         if (!name || !phone || !address) {
-            toast.error("Please fill all delivery details");
+            toast.error(
+                isTelugu
+                    ? "దయచేసి డెలివరీ వివరాలన్నీ నమోదు చేయండి"
+                    : "Please fill all delivery details"
+            );
             return;
         }
+
         if (cartItems.length === 0) {
-            toast.error("Your cart is empty");
+            toast.error(
+                isTelugu ? "మీ కార్ట్ ఖాళీగా ఉంది" : "Your cart is empty"
+            );
             return;
         }
 
         const orderData = {
             userId: user._id,
-
             name,
             phone,
 
@@ -199,7 +184,6 @@ export default function CheckoutPage() {
             },
 
             paymentMethod,
-
             utrNumber: utrNumber || "",
 
             items: cartItems.map((item) => ({
@@ -222,52 +206,124 @@ export default function CheckoutPage() {
         const data = await res.json();
 
         if (data.success) {
-            toast.success("Order placed successfully!");
+            toast.success(
+                isTelugu
+                    ? "ఆర్డర్ విజయవంతంగా నమోదు చేయబడింది!"
+                    : "Order placed successfully!"
+            );
+
             dispatch(clearCart());
+
             setTimeout(() => {
                 router.push("/orders");
             }, 800);
         } else {
             console.log(data.message);
-            toast.error(data.message || "Something went wrong");
+
+            toast.error(
+                data.message ||
+                (isTelugu ? "ఏదో తప్పు జరిగింది" : "Something went wrong")
+            );
         }
     };
 
+    const handleCheckout = async () => {
+        if (placingOrder) return;
 
+        setPlacingOrder(true);
+
+        try {
+            if (!user) {
+                toast.error(
+                    isTelugu
+                        ? "కొనసాగించడానికి దయచేసి లాగిన్ అవ్వండి"
+                        : "Please login to continue"
+                );
+                return;
+            }
+
+            if (!paymentMethod) {
+                toast.error(
+                    isTelugu
+                        ? "దయచేసి చెల్లింపు పద్ధతిని ఎంచుకోండి"
+                        : "Please select a payment method"
+                );
+                return;
+            }
+
+            if (paymentMethod === "online") {
+                router.push("/payment");
+                return;
+            }
+
+            if (paymentMethod === "bank") {
+                if (!utrNumber.trim()) {
+                    toast.error(
+                        isTelugu
+                            ? "దయచేసి UTR / లావాదేవీ ID నమోదు చేయండి"
+                            : "Please enter UTR / Transaction ID"
+                    );
+                    return;
+                }
+
+                await placeOrder();
+                return;
+            }
+
+            if (paymentMethod === "cod") {
+                await placeOrder();
+            }
+        } finally {
+            setPlacingOrder(false);
+        }
+    };
 
     const buttonText = {
-        online: "Proceed to Payment",
-        bank: "Submit Payment Details",
-        cod: "Place Order",
-    }[paymentMethod] || "Select Payment Method";
+        online: isTelugu ? "చెల్లింపుకు వెళ్లండి" : "Proceed to Payment",
+        bank: isTelugu ? "చెల్లింపు వివరాలను సమర్పించండి" : "Submit Payment Details",
+        cod: isTelugu ? "ఆర్డర్ చేయండి" : "Place Order",
+    }[paymentMethod] || (isTelugu ? "చెల్లింపు పద్ధతిని ఎంచుకోండి" : "Select Payment Method");
 
     if (loading) {
         return (
             <div style={{ textAlign: "center", marginTop: "100px" }}>
                 <div className="loader"></div>
-                <p>Loading Checkout...</p>
+                <p>
+                    {isTelugu ? "చెక్‌అవుట్ లోడ్ అవుతోంది..." : "Loading Checkout..."}
+                </p>
             </div>
         );
     }
 
     return (
         <section className="checkout-page">
+
             <Link href="/cart" className="back-home">
-                ← Back to Cart
+                {isTelugu ? "← కార్ట్‌కు తిరిగి వెళ్ళండి" : "← Back to Cart"}
             </Link>
 
-            <h1 className="checkout-title">Checkout</h1>
+            <h1 className="checkout-title">
+                {isTelugu ? "చెక్‌అవుట్" : "Checkout"}
+            </h1>
 
+            {/* ORDER SUMMARY */}
             <div className="checkout-card">
-                <h2>Order Summary</h2>
+                <h2>
+                    {isTelugu ? "ఆర్డర్ సారాంశం" : "Order Summary"}
+                </h2>
+
                 <hr />
+
                 <div className="summary-single-row">
-                    <span><strong>Books</strong> {totalBooks}</span>
+                    <span>
+                        <strong>{isTelugu ? "పుస్తకాలు" : "Books"}</strong> {totalBooks}
+                    </span>
                     <span>₹{totalPrice}</span>
                 </div>
+
                 <div className="summary-single-row">
                     <span className="shipping-label">
-                        <strong>Shipping</strong>
+                        <strong>{isTelugu ? "డెలివరీ" : "Shipping"}</strong>
 
                         <button
                             type="button"
@@ -279,54 +335,63 @@ export default function CheckoutPage() {
 
                         {showShippingInfo && (
                             <div className="shipping-tooltip">
-                                Free shipping on orders above ₹{freeShippingAmount}
+                                {isTelugu
+                                    ? `₹${freeShippingAmount} కంటే ఎక్కువ ఆర్డర్లకు ఉచిత డెలివరీ`
+                                    : `Free shipping on orders above ₹${freeShippingAmount}`}
                             </div>
                         )}
                     </span>
 
                     <span>
                         {shippingCharge === 0
-                            ? "Free"
+                            ? isTelugu ? "ఉచితం" : "Free"
                             : defaultShipping > 0
                                 ? `₹${defaultShipping}`
-                                : "To Be Confirmed"}
+                                : isTelugu ? "తర్వాత నిర్ధారించబడుతుంది" : "To Be Confirmed"}
                     </span>
                 </div>
 
                 <hr />
 
                 <div className="summary-single-row">
-                    <span><strong>Total</strong></span>
-                    <span><strong>₹{grandTotal}</strong></span>
+                    <span>
+                        <strong>{isTelugu ? "మొత్తం" : "Total"}</strong>
+                    </span>
+                    <span>
+                        <strong>₹{grandTotal}</strong>
+                    </span>
                 </div>
             </div>
 
+            {/* DELIVERY ADDRESS */}
             <div className="checkout-card">
-                <h2>Delivery Address</h2>
+                <h2>
+                    {isTelugu ? "డెలివరీ చిరునామా" : "Delivery Address"}
+                </h2>
 
                 <input
                     type="text"
-                    placeholder="Full Name"
+                    placeholder={isTelugu ? "పూర్తి పేరు" : "Full Name"}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
 
                 <input
                     type="tel"
-                    placeholder="Phone Number"
+                    placeholder={isTelugu ? "ఫోన్ నంబర్" : "Phone Number"}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                 />
 
                 <textarea
-                    placeholder="Full Address"
+                    placeholder={isTelugu ? "పూర్తి చిరునామా" : "Full Address"}
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                 />
 
                 <input
                     type="text"
-                    placeholder="Pincode"
+                    placeholder={isTelugu ? "పిన్‌కోడ్" : "Pincode"}
                     value={pincode}
                     onChange={(e) => setPincode(e.target.value)}
                 />
@@ -336,7 +401,7 @@ export default function CheckoutPage() {
                         type="text"
                         value={area}
                         readOnly
-                        placeholder="Area"
+                        placeholder={isTelugu ? "ప్రాంతం" : "Area"}
                     />
                 )}
 
@@ -345,7 +410,7 @@ export default function CheckoutPage() {
                         type="text"
                         value={district}
                         readOnly
-                        placeholder="District"
+                        placeholder={isTelugu ? "జిల్లా" : "District"}
                     />
                 )}
 
@@ -354,13 +419,16 @@ export default function CheckoutPage() {
                         type="text"
                         value={stateName}
                         readOnly
-                        placeholder="State"
+                        placeholder={isTelugu ? "రాష్ట్రం" : "State"}
                     />
                 )}
             </div>
 
+            {/* PAYMENT */}
             <div className="checkout-card">
-                <h2>Payment</h2>
+                <h2>
+                    {isTelugu ? "చెల్లింపు" : "Payment"}
+                </h2>
 
                 <div className="payment-option">
                     <label>
@@ -372,13 +440,19 @@ export default function CheckoutPage() {
                             onChange={(e) => setPaymentMethod(e.target.value)}
                             disabled
                         />
-                        Online Payment
+                        {isTelugu ? "ఆన్‌లైన్ చెల్లింపు" : "Online Payment"}
                     </label>
 
                     <p className="payment-text">
-                        Pay securely using UPI, Credit/Debit Card or Net Banking.
+                        {isTelugu
+                            ? "UPI, క్రెడిట్/డెబిట్ కార్డ్ లేదా నెట్ బ్యాంకింగ్ ద్వారా సురక్షితంగా చెల్లించండి."
+                            : "Pay securely using UPI, Credit/Debit Card or Net Banking."}
+
                         <br />
-                        <small>(Coming Soon)</small>
+
+                        <small>
+                            {isTelugu ? "(త్వరలో అందుబాటులోకి వస్తుంది)" : "(Coming Soon)"}
+                        </small>
                     </p>
                 </div>
 
@@ -391,16 +465,31 @@ export default function CheckoutPage() {
                             checked={paymentMethod === "bank"}
                             onChange={(e) => setPaymentMethod(e.target.value)}
                         />
-                        Bank Deposit / Bank Transfer
+                        {isTelugu ? "బ్యాంక్ డిపాజిట్ / బ్యాంక్ బదిలీ" : "Bank Deposit / Bank Transfer"}
                     </label>
 
                     <div className={`bank-dropdown ${paymentMethod === "bank" ? "active" : ""}`}>
                         <div className="bank-left">
-                            <p><strong>Bank:</strong> {paymentSettings.bankName}</p>
-                            <p><strong>A/C Name:</strong> {paymentSettings.accountHolder}</p>
-                            <p><strong>A/C No:</strong> {paymentSettings.accountNumber}</p>
-                            <p><strong>IFSC:</strong> {paymentSettings.ifscCode}</p>
-                            <p><strong>Branch:</strong> {paymentSettings.branch}</p>
+
+                            <p>
+                                <strong>{isTelugu ? "బ్యాంక్:" : "Bank:"}</strong> {paymentSettings.bankName}
+                            </p>
+
+                            <p>
+                                <strong>{isTelugu ? "ఖాతాదారు పేరు:" : "A/C Name:"}</strong> {paymentSettings.accountHolder}
+                            </p>
+
+                            <p>
+                                <strong>{isTelugu ? "ఖాతా నంబర్:" : "A/C No:"}</strong> {paymentSettings.accountNumber}
+                            </p>
+
+                            <p>
+                                <strong>IFSC:</strong> {paymentSettings.ifscCode}
+                            </p>
+
+                            <p>
+                                <strong>{isTelugu ? "శాఖ:" : "Branch:"}</strong> {paymentSettings.branch}
+                            </p>
 
                             {paymentSettings.upiAccounts?.length > 0 && (
                                 <>
@@ -409,14 +498,19 @@ export default function CheckoutPage() {
                                     </p>
 
                                     <p>
-                                        <strong>UPI Number:</strong> {paymentSettings.upiAccounts[0].mobile}
+                                        <strong>{isTelugu ? "UPI నంబర్:" : "UPI Number:"}</strong> {paymentSettings.upiAccounts[0].mobile}
                                     </p>
                                 </>
                             )}
+
                             <input
                                 type="text"
                                 className="utr-input"
-                                placeholder="Enter UTR / Transaction ID"
+                                placeholder={
+                                    isTelugu
+                                        ? "UTR / లావాదేవీ ID నమోదు చేయండి"
+                                        : "Enter UTR / Transaction ID"
+                                }
                                 value={utrNumber}
                                 onChange={(e) => setUtrNumber(e.target.value)}
                             />
@@ -443,25 +537,27 @@ export default function CheckoutPage() {
                             checked={paymentMethod === "cod"}
                             onChange={(e) => setPaymentMethod(e.target.value)}
                         />
-                        Cash on Delivery
+                        {isTelugu ? "వస్తువు అందుకున్నప్పుడు నగదు చెల్లింపు" : "Cash on Delivery"}
                     </label>
                 </div>
             </div>
 
+            {/* CHECKOUT BUTTON */}
             <button
                 className="checkout-btn"
-                disabled={!paymentMethod || placingOrder}
+                disabled={placingOrder}
                 onClick={handleCheckout}
             >
                 {placingOrder ? (
                     <>
                         <span className="btn-spinner"></span>
-                        Processing...
+                        {isTelugu ? "ప్రాసెస్ అవుతోంది..." : "Processing..."}
                     </>
                 ) : (
                     buttonText
                 )}
             </button>
+
         </section>
     );
 }

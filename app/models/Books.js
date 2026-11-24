@@ -14,6 +14,7 @@ const BookSchema = new mongoose.Schema({
   publisher: String,
   weight: String,
   category: String,
+  teluguCategory: String,
   tag: String,
   img: String,
   images: [String],

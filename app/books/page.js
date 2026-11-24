@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -5,12 +6,16 @@ import Link from "next/link";
 import AddToCart from "../components/Addtocartnonav";
 import toast from "react-hot-toast";
 import useRealtime from "@/app/hooks/useRealtime";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function BooksPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [books, setBooks] = useState([]);
   const [sortOrder, setSortOrder] = useState("high");
+
+  const { language } = useLanguage();
+  const isTelugu = language === "te";
 
   const fetchBooks = async () => {
     try {
@@ -42,7 +47,6 @@ export default function BooksPage() {
   );
 
   const sortedBooks = [...filteredBooks].sort((a, b) => {
-
     if ((b.sold || 0) !== (a.sold || 0)) {
       return (b.sold || 0) - (a.sold || 0);
     }
@@ -64,7 +68,7 @@ export default function BooksPage() {
     return (
       <div style={{ textAlign: "center", marginTop: "100px" }}>
         <div className="loader"></div>
-        <p>Loading books...</p>
+        <p>{isTelugu ? "పుస్తకాలు లోడ్ అవుతున్నాయి..." : "Loading books..."}</p>
       </div>
     );
   }
@@ -72,14 +76,18 @@ export default function BooksPage() {
   return (
     <section className="allbooks">
       <Link href="/" className="back-home">
-        ← Back to Home
+        {isTelugu ? "← హోమ్‌కు తిరిగి వెళ్ళండి" : "← Back to Home"}
       </Link>
 
       <div className="allbooks-header">
         <div className="search-box">
           <input
             type="text"
-            placeholder="Search by book or author..."
+            placeholder={
+              isTelugu
+                ? "పుస్తకం లేదా రచయిత పేరు ద్వారా వెతకండి..."
+                : "Search by book or author..."
+            }
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -87,13 +95,17 @@ export default function BooksPage() {
 
         <button onClick={toggleSort} className="sort-btn">
           {sortOrder === "low"
-            ? "Price (Low → High)"
-            : "Price (High → Low)"}
+            ? isTelugu
+              ? "ధర (తక్కువ → ఎక్కువ)"
+              : "Price (Low → High)"
+            : isTelugu
+              ? "ధర (ఎక్కువ → తక్కువ)"
+              : "Price (High → Low)"}
         </button>
       </div>
 
       <h2 className="bookheading">
-        All Books
+        {isTelugu ? "అన్ని పుస్తకాలు" : "All Books"}
         <span style={{ fontSize: "24px", color: "#5b5656" }}>
           {" "}({sortedBooks.length})
         </span>
@@ -107,41 +119,52 @@ export default function BooksPage() {
             className="cardlink"
           >
             <div
-              className={`allbook-card ${book.inStock === false ? "out-of-stock-card" : ""
-                }`}
+              className={`allbook-card ${
+                book.inStock === false ? "out-of-stock-card" : ""
+              }`}
             >
               <div className="allbook-img">
                 <img
                   src={book.img || "/images/No_Image_Available.jpg"}
-                  alt={book.title}
+                  alt={
+                    isTelugu
+                      ? book.teluguTitle || book.title
+                      : book.title
+                  }
                 />
 
                 {book.inStock === false && (
                   <span className="stock-badge">
-                    Out of Stock
+                    {isTelugu ? "స్టాక్ లేదు" : "Out of Stock"}
                   </span>
                 )}
               </div>
 
-              {(book.sold > 50) && (
+              {book.sold > 50 && (
                 <p style={{ color: "green", fontSize: "12px" }}>
-                  ⭐ Best Seller
+                  ⭐ {isTelugu ? "అత్యధికంగా అమ్ముడైన పుస్తకం" : "Best Seller"}
                 </p>
               )}
 
-              {(book.views > 100) && (
+              {book.views > 100 && (
                 <p style={{ color: "orange", fontSize: "12px" }}>
-                  🔥 Popular
+                  🔥 {isTelugu ? "ప్రసిద్ధమైనది" : "Popular"}
                 </p>
               )}
 
-              {/* <p className="author">by {book.author}</p>
-        <p className="telugu-author">
-          రచయిత: {book.teluguAuthor}
-        </p> */}
               <div className="book-actions">
-                <h3>{book.title}</h3>
-                <p className="telugu-title">{book.teluguTitle}</p>
+                <h3>
+                  {isTelugu
+                    ? book.teluguTitle || book.title
+                    : book.title}
+                </h3>
+
+                {/* <p className="telugu-title">
+                  {isTelugu
+                    ? book.teluguAuthor || book.author
+                    : book.author}
+                </p> */}
+
                 <p className="price">₹{book.price}</p>
 
                 {book.inStock !== false && (
@@ -167,8 +190,12 @@ export default function BooksPage() {
 
       {filteredBooks.length === 0 && (
         <div className="no-result">
-          <h2>No books found</h2>
-          <p>Try searching another book or author</p>
+          <h2>{isTelugu ? "పుస్తకాలు కనుగొనబడలేదు" : "No books found"}</h2>
+          <p>
+            {isTelugu
+              ? "మరొక పుస్తకం లేదా రచయిత పేరుతో వెతకండి"
+              : "Try searching another book or author"}
+          </p>
         </div>
       )}
     </section>
