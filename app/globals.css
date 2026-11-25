@@ -123,7 +123,6 @@ nav {
 /* Language Toggle */
 .language-toggle {
   display: flex;
-  gap: 4px;
   border-radius: 30px;
   background: #f0f0f0;
 }
@@ -3393,10 +3392,6 @@ body:has(.admin-layout) .navbar2 {
   .create-supplier-btn {
     font-size: 14px;
     padding: 4px !important;
-  }
-
-  .admin-create-supplier {
-    padding: 15px;
   }
 
   .create-supplier-form {
@@ -7938,7 +7933,7 @@ body:has(.admin-layout) .navbar2 {
 
   .logo h2 {
     font-size: 20px;
-    padding-right: 46px;
+    padding-right: 70px;
   }
 
   .nav-links {

@@ -49,8 +49,8 @@ export default function Sidebar() {
     {
       name: "Offline Orders",
       children: [
-        { name: "Orders List", path: "/admin/offline/orders" },
         { name: "Create Order", path: "/admin/offline/orders/create" },
+        { name: "Orders List", path: "/admin/offline/orders" },
         { name: "Customers", path: "/admin/offline/customers" },
       ],
     },
